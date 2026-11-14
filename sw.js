@@ -1,7 +1,7 @@
 // Tater Tapper service worker: lets the game open offline and load instantly.
 // Bump VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'tater-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
+const VERSION = 'tater-v2';
+const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -23,6 +23,14 @@ self.addEventListener('fetch', e => {
     e.respondWith(fetch(req)
       .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put('./index.html', copy)); return res; })
       .catch(() => caches.match('./index.html')));
+    return;
+  }
+
+  // Settings file: also network first, so new Firebase keys take effect right away
+  if (url.origin === location.origin && url.pathname.endsWith('/config.js')) {
+    e.respondWith(fetch(req)
+      .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return res; })
+      .catch(() => caches.match(req)));
     return;
   }
 
