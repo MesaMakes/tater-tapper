@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7fc3dc">
+<title>Tater Tapper</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tater Tapper">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Tokens: field by day ---------- */
+  :root {
+    --kraft: #e7d6b5;  --paper: #f6ecd6;  --paper-2: #efe1c3;
+    --ink: #2f2117;    --ink-soft: #6e5844;  --line: rgba(47,33,23,.18);
+    --red: #c8372d;    --green: #3f6b2a;    --butter: #f4c542;  --blue: #2b5ea8;
+    --sky-1: #7fc3dc;  --sky-2: #cfe9e6;    --sun: #ffd45c;
+    --hill: #7aa64a;   --hill-2: #5a8a34;   --soil: #6b4226;    --soil-2: #57351e;
+    --wood: #b9834f;   --wood-2: #9c6a3c;   --sign-text: #fff6e2;
+    --skin-hi: #ecc993; --skin: #c99258;  --skin-lo: #8f5f30;  --eye: #4f321b;
+    --heat: #e8641f; --outline: #2f2117; --on-green: #fff;
+    --slab: "Alfa Slab One", "Rockwell", "Roboto Slab", Georgia, serif;
+    --sans: "Lexend", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color-scheme: light;
+  }
+  /* ---------- Tokens: field by night ---------- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --kraft: #1d1913; --paper: #2a241b; --paper-2: #231e16;
+      --ink: #f0e5cc;   --ink-soft: #bfae8f; --line: rgba(240,229,204,.16);
+      --red: #ff6b55;   --green: #8fc96a;    --butter: #f5cd63; --blue: #7aa7ec;
+      --sky-1: #121a33; --sky-2: #2b3a5e;    --sun: #f3ecd2;
+      --hill: #2f4a26;  --hill-2: #233a1c;   --soil: #3b2617;   --soil-2: #2c1c10;
+      --wood: #7e5631;  --wood-2: #664424;   --sign-text: #fff1d6;
+      --heat: #ff8a3d;  --outline: #0f0b07; --on-green: #1d1913; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --kraft: #1d1913; --paper: #2a241b; --paper-2: #231e16;
+    --ink: #f0e5cc;   --ink-soft: #bfae8f; --line: rgba(240,229,204,.16);
+    --red: #ff6b55;   --green: #8fc96a;    --butter: #f5cd63; --blue: #7aa7ec;
+    --sky-1: #121a33; --sky-2: #2b3a5e;    --sun: #f3ecd2;
+    --hill: #2f4a26;  --hill-2: #233a1c;   --soil: #3b2617;   --soil-2: #2c1c10;
+    --wood: #7e5631;  --wood-2: #664424;   --sign-text: #fff1d6;
+    --heat: #ff8a3d;  --outline: #0f0b07; --on-green: #1d1913; color-scheme: dark;
+  }
+
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    background: var(--kraft); color: var(--ink); font: 400 15px/1.5 var(--sans); overflow-x: hidden; overscroll-behavior-y: none;
+    background-image: radial-gradient(rgba(47,33,23,.06) 1px, transparent 1.2px);
+    background-size: 7px 7px;
+  }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  svg.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  .app { max-width: 1080px; margin: 0 auto; padding: 12px 14px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  @media (min-width: 880px) {
+    .app { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 22px; padding-top: 20px; }
+    .scene { position: sticky; top: calc(20px + env(safe-area-inset-top, 0px)); }
+  }
+
+  /* ---------- Scene: the hero ---------- */
+  .scene {
+    position: relative; overflow: hidden; border-radius: 26px; isolation: isolate;
+    background: linear-gradient(var(--sky-1), var(--sky-2) 62%);
+    box-shadow: 0 0 0 3px var(--ink);
+    display: grid; justify-items: center; padding: 14px 14px 0; container-type: inline-size;
+  }
+  .sun {
+    position: absolute; z-index: -1; top: -110px; right: -110px; width: 300px; aspect-ratio: 1; border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--sun) 40%, transparent) 0 9deg, transparent 9deg 18deg);
+    animation: spin 90s linear infinite;
+  }
+  .sun::after { content: ""; position: absolute; inset: 34%; border-radius: 50%; background: var(--sun); box-shadow: 0 0 40px var(--sun); }
+  @keyframes spin { to { rotate: 360deg; } }
+
+  .topbar { width: 100%; display: flex; justify-content: space-between; gap: 8px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--ink); border-radius: 999px;
+    padding: 5px 12px 5px 10px; background: var(--paper); font-weight: 600; font-size: .9rem; cursor: pointer;
+  }
+  .pill svg.i { width: 18px; height: 18px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-soft); flex: none; }
+  .dot.on { background: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 30%, transparent); }
+  .dot.wait { background: var(--butter); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+
+  .logo { font: 400 clamp(1.9rem, 8vw, 2.5rem)/1 var(--slab); margin: 16px 0 10px; color: var(--sign-text); letter-spacing: .01em;
+          -webkit-text-stroke: 2px var(--outline); paint-order: stroke fill; text-shadow: 3px 3px 0 var(--red); rotate: -2deg; }
+
+  .sign { position: relative; display: grid; justify-items: center; padding: 8px 26px 10px; min-width: 230px;
+          background: repeating-linear-gradient(0deg, var(--wood) 0 11px, var(--wood-2) 11px 12px), var(--wood);
+          border: 3px solid var(--outline); border-radius: 10px; box-shadow: 0 5px 0 var(--outline); color: var(--sign-text); }
+  .sign::before, .sign::after { content: ""; position: absolute; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: var(--outline); translate: 0 -50%; }
+  .sign::before { left: 9px; } .sign::after { right: 9px; }
+  .sign b { font: 400 clamp(2.4rem, 11vw, 3.6rem)/1.05 var(--slab); font-variant-numeric: tabular-nums; letter-spacing: .01em; text-shadow: 0 2px 0 rgba(0,0,0,.25); }
+  .sign span { font-weight: 600; font-size: .9rem; opacity: .92; }
+
+  .field { position: relative; width: calc(100% + 28px); margin: 0 -14px; height: calc(222px + 37.5cqw); display: grid; justify-items: center; align-items: end; }
+  .land { position: absolute; inset: auto 0 0; width: 100%; height: auto; aspect-ratio: 2 / 1; display: block; }
+  .land .item.new > * { transform-box: fill-box; transform-origin: 50% 100%; animation: plop .5s cubic-bezier(.3,1.7,.5,1) backwards; animation-delay: var(--d, 0s); }
+  @keyframes plop { from { transform: scale(0); } }
+  .land .drive { animation: drive 26s linear infinite; }
+  @keyframes drive { from { transform: translateX(-70px); } to { transform: translateX(470px); } }
+  .land .smoke { transform-box: fill-box; transform-origin: center; animation: puff 3.2s ease-out infinite; opacity: 0; }
+  @keyframes puff { 0% { opacity: .8; transform: translate(0, 0) scale(.6); } 100% { opacity: 0; transform: translate(6px, -22px) scale(1.6); } }
+  .mars { position: absolute; z-index: 0; top: 62px; left: 16px; width: clamp(48px, 13cqw, 74px); height: auto; overflow: visible; }
+  .mars .count { font: 400 13px var(--slab); fill: var(--sign-text); stroke: var(--outline); stroke-width: 3px; paint-order: stroke; }
+  .tater-btn { position: relative; z-index: 2; border: 0; background: none; padding: 0; cursor: pointer; width: min(72vw, 320px);
+               margin-bottom: calc(37.5cqw - 22px); -webkit-tap-highlight-color: transparent; touch-action: manipulation; border-radius: 40%; }
+  .tater-btn svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 85%; }
+  .tater-btn.tap svg { animation: squash .22s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes squash { 0% { scale: 1.09 .88; } 55% { scale: .97 1.04; } 100% { scale: 1 1; } }
+  .tater-btn.hot svg { filter: drop-shadow(0 0 18px var(--heat)) drop-shadow(0 0 4px var(--heat)); }
+  .tater-btn:focus-visible { outline-offset: 6px; }
+
+  .pop { position: absolute; z-index: 5; pointer-events: none; font: 400 1.7rem var(--slab); color: var(--paper);
+         -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; animation: rise .9s ease-out forwards; white-space: nowrap; }
+  .pop.fidget { color: var(--butter); }
+  @keyframes rise { to { translate: 0 -110px; opacity: 0; } }
+  .clod { position: absolute; z-index: 1; width: var(--s); height: var(--s); border-radius: 45%; background: var(--soil-2); pointer-events: none;
+          animation: fling .6s cubic-bezier(.2,.7,.4,1) forwards; }
+  .clod.spud { background: var(--skin); border-radius: 50% 45% 55% 48%; box-shadow: inset -2px -2px 0 var(--skin-lo); }
+  @keyframes fling { to { translate: var(--dx) var(--dy); rotate: var(--r); opacity: 0; } }
+
+  /* Fryer thermometer sits in the soil */
+  .fryer { position: relative; z-index: 3; width: min(100%, 380px); margin-top: 14px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+           background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 6px 12px 6px 8px; }
+  .fryer .bulb { width: 26px; height: 26px; border-radius: 50%; background: var(--heat); border: 2px solid var(--ink); display: grid; place-items: center; color: #fff; }
+  .fryer .bulb svg { width: 15px; height: 15px; stroke-width: 2.2; }
+  .tube { position: relative; height: 12px; border-radius: 999px; background: var(--paper-2); border: 2px solid var(--ink); overflow: hidden; }
+  .tube i { position: absolute; inset: 0 auto 0 0; width: 0%; background: linear-gradient(90deg, var(--butter), var(--heat)); transition: width .1s linear; }
+  .tube::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), var(--line) calc(20% - 2px) 20%); }
+  .fryer small { font-weight: 700; font-size: .82rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .fryer.hot { background: var(--butter); color: #2f2117; }
+
+  .buffs { position: absolute; z-index: 3; left: 0; right: 0; top: 8px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; pointer-events: none; }
+  .buff { background: var(--ink); color: var(--paper); border-radius: 999px; padding: 3px 12px; font-weight: 700; font-size: .82rem; }
+
+  /* ---------- Ledger: the quiet side ---------- */
+  .ledger { position: relative; }
+  .tabs { display: flex; gap: 4px; padding: 0 10px; overflow-x: auto; scrollbar-width: none; }
+  .tabs button {
+    position: relative; display: inline-flex; align-items: center; gap: 6px; border: 2px solid var(--ink); border-bottom: 0;
+    border-radius: 12px 12px 0 0; background: var(--paper-2); padding: 7px 12px 6px; font-weight: 600; font-size: .9rem; cursor: pointer; color: var(--ink-soft);
+    translate: 0 4px; transition: translate .12s;
+  }
+  .tabs button svg.i { width: 18px; height: 18px; }
+  .tabs button[aria-selected="true"] { background: var(--paper); color: var(--ink); translate: 0 2px; z-index: 1; }
+  @media (max-width: 460px) { .tabs { gap: 3px; padding: 0 6px; } .tabs button { padding: 7px 10px 6px; } .tabs button:not([aria-selected="true"]) .lbl { display: none; } }
+  .tabs .badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; border-radius: 999px; background: var(--red); color: #fff;
+                 border: 2px solid var(--ink); font-size: .7rem; font-weight: 700; display: grid; place-items: center; padding: 0 4px; }
+  .sheet { background: var(--paper); border: 2px solid var(--ink); border-radius: 18px; box-shadow: 0 5px 0 var(--ink); position: relative; }
+  .panel { padding: 6px 14px 16px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 10px 2px 6px; }
+  .panel-head h2 { font: 400 1.35rem/1.2 var(--slab); margin: 0; }
+  .note { color: var(--ink-soft); font-size: .9rem; margin: 2px 0 10px; }
+
+  .seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; flex: none; }
+  .seg button { border: 0; background: transparent; padding: 3px 12px; font-weight: 700; font-size: .85rem; cursor: pointer; }
+  .seg button + button { border-left: 2px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .seg button:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Shop and upgrade rows: stitched like a seed-catalog page */
+  .row {
+    width: 100%; display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; text-align: left;
+    border: 0; background: transparent; padding: 11px 4px; cursor: pointer; border-top: 2px dashed var(--line); border-radius: 0;
+  }
+  .row:first-child { border-top: 0; }
+  .row .tile { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--paper-2); border: 2px solid var(--ink); color: var(--green); transition: transform .12s; }
+  .row .tile svg.i { width: 28px; height: 28px; }
+  .row strong { display: block; font-weight: 700; font-size: 1rem; line-height: 1.25; }
+  .row small { display: block; color: var(--ink-soft); font-size: .82rem; line-height: 1.35; }
+  .row small.rate { color: var(--green); font-weight: 600; }
+  .row .side { text-align: right; display: grid; justify-items: end; gap: 2px; }
+  .row .owned { font: 400 1.6rem/1 var(--slab); }
+  .row .tile { position: relative; }
+  .row .tile[data-tier="1"] { background: #e8bd8e; color: #2f2117; }
+  .row .tile[data-tier="2"] { background: #d7dee2; color: #2f2117; }
+  .row .tile[data-tier="3"] { background: #f4c542; color: #2f2117; }
+  .row .tile[data-tier="4"] { background: linear-gradient(135deg, #fff1b0, #f4c542 45%, #d79a1e); color: #2f2117; }
+  .row .tile[data-tier="4"]::after { content: "★"; position: absolute; top: -9px; right: -9px; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--red); color: #fff; border: 2px solid var(--ink); font-size: 11px; line-height: 16px; text-align: center; }
+  .herd { display: flex; flex-wrap: wrap; gap: 1px; margin-top: 5px; color: var(--green); align-items: center; }
+  .herd svg.i { width: 15px; height: 15px; stroke-width: 2.2; }
+  .herd[data-tier="1"] { color: #b06f2e; } .herd[data-tier="2"] { color: #6f7f88; } .herd[data-tier="3"], .herd[data-tier="4"] { color: #c08a12; }
+  .herd .more { font-size: .75rem; font-weight: 700; color: var(--ink-soft); margin-left: 4px; }
+  .herd svg.i.new { animation: plop .4s cubic-bezier(.3,1.7,.5,1) backwards; }
+  .price { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-variant-numeric: tabular-nums; border-radius: 999px; padding: 2px 10px 2px 6px; background: var(--paper-2); }
+  .price svg { width: 16px; height: 12px; }
+  .row:not(:disabled):hover .tile { transform: rotate(-6deg) scale(1.05); }
+  .row:not(:disabled) .price { background: var(--green); color: var(--on-green); }
+  .row:disabled { cursor: not-allowed; }
+  .row:disabled .tile, .row:disabled strong, .row:disabled small { opacity: .5; }
+  .row.bought .tile { animation: thunk .35s ease-out; }
+  @keyframes thunk { 40% { transform: scale(1.18) rotate(8deg); background: var(--butter); } }
+  .row.locked .tile { color: var(--ink-soft); }
+  .empty { text-align: center; padding: 24px 12px; color: var(--ink-soft); }
+
+  /* Ribbons */
+  .ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .ach { display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: start; padding: 10px; border-radius: 14px; border: 2px dashed var(--line); }
+  .ach svg { width: 34px; height: 44px; }
+  .ach strong { display: block; font-weight: 700; font-size: .92rem; line-height: 1.25; }
+  .ach small { color: var(--ink-soft); font-size: .78rem; line-height: 1.3; display: block; }
+  .ach.got { border: 2px solid var(--ink); background: var(--paper-2); }
+  .ach:not(.got) svg { opacity: .35; filter: grayscale(1); }
+  .progress { height: 10px; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--paper-2); margin: 4px 0 14px; }
+  .progress i { display: block; height: 100%; background: var(--butter); }
+
+  /* Leaderboard */
+  .board { list-style: none; margin: 0; padding: 0; }
+  .board li { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; padding: 9px 4px; border-top: 2px dashed var(--line); }
+  .board li:first-child { border-top: 0; }
+  .board .place { font: 400 1.25rem var(--slab); text-align: center; color: var(--ink-soft); }
+  .board .place svg { width: 30px; height: 40px; display: block; margin: auto; }
+  .board .nm { font-weight: 700; }
+  .board small { display: block; color: var(--ink-soft); font-size: .8rem; }
+  .board .score { font: 400 1.1rem var(--slab); font-variant-numeric: tabular-nums; }
+  .board .me { background: color-mix(in srgb, var(--butter) 35%, transparent); border-radius: 12px; border-top-color: transparent; }
+
+  /* Me */
+  .fieldset { display: grid; gap: 4px; margin: 10px 0; }
+  .fieldset label { font-weight: 600; font-size: .9rem; }
+  .fieldset input { font: inherit; padding: 9px 12px; border-radius: 12px; border: 2px solid var(--ink); background: var(--kraft); color: var(--ink); }
+  .btn { border: 2px solid var(--ink); border-radius: 999px; padding: 8px 18px; font-weight: 700; cursor: pointer; background: var(--paper); box-shadow: 0 3px 0 var(--ink); }
+  .btn:active { translate: 0 2px; box-shadow: 0 1px 0 var(--ink); }
+  .btn.go { background: var(--red); color: #fff; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .card { border: 2px solid var(--ink); border-radius: 16px; padding: 12px 14px; margin: 16px 0; background: var(--paper-2); }
+  .card h3 { font: 400 1.15rem var(--slab); margin: 0 0 2px; }
+  .stats { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 6px 0 0; }
+  .pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-top: 8px; }
+  .pt-grid .btn { padding: 8px 10px; font-size: .9rem; }
+  .stats dt { color: var(--ink-soft); }
+  .stats dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Golden tater + toasts */
+  .lucky { position: fixed; z-index: 20; width: 86px; border: 0; background: none; padding: 0; cursor: pointer; translate: -50% -50%; animation: bob 1.4s ease-in-out infinite; }
+  .lucky svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 0 14px #ffd45c); }
+  @keyframes bob { 50% { transform: translateY(-8px) rotate(10deg); } }
+  .toasts { position: fixed; left: 50%; translate: -50% 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; justify-items: center; z-index: 30; width: max-content; max-width: 94vw; pointer-events: none; }
+  .toast { display: flex; align-items: center; gap: 10px; background: var(--ink); color: var(--paper); padding: 9px 22px; font-weight: 600; text-align: center;
+           clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%, 12px 50%); animation: toastIn .3s cubic-bezier(.3,1.4,.5,1); }
+  .toast.award { background: var(--butter); color: #2f2117; }
+  .toast svg { width: 22px; height: 28px; flex: none; }
+  @keyframes toastIn { from { translate: 0 24px; opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sun, .lucky, .dot.wait, .land .drive, .land .smoke, .land .item.new > *, .herd svg.i.new { animation: none; }
+    .land .smoke { opacity: 0; }
+    .tater-btn.tap svg, .row.bought .tile { animation: none; }
+    .pop, .clod, .toast { animation-duration: .01s; }
+    .tube i { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="scene" aria-label="Your field">
+    <div class="sun" aria-hidden="true"></div>
+    <svg class="mars" id="mars" viewBox="0 0 64 64" hidden aria-hidden="true">
+      <circle cx="32" cy="38" r="22" fill="#c4502f" stroke="var(--outline)" stroke-width="2.5"/>
+      <circle cx="22" cy="44" r="4" fill="#9e3b22"/><circle cx="40" cy="50" r="3" fill="#9e3b22"/><circle cx="44" cy="36" r="2.4" fill="#9e3b22"/>
+      <path d="M20 19a12 12 0 0 1 24 0z" fill="rgba(191,227,239,.75)" stroke="var(--outline)" stroke-width="2"/>
+      <path d="M32 19v-5" stroke="#2f6b25" stroke-width="2"/><path d="M32 15c-3 0-4.5-2-4.5-4 3 0 4.5 2 4.5 4 0-2 1.5-4 4.5-4 0 2-1.5 4-4.5 4z" fill="#5fa83d"/>
+      <text class="count" id="marsCount" x="50" y="62"></text>
+    </svg>
+    <div class="topbar">
+      <button class="pill" id="fidgetBtn"><i class="dot" id="dot"></i><span id="fidgetText">Connect fidget</span></button>
+      <button class="pill" id="accountBtn"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span id="accountText">Sign in</span></button>
+    </div>
+
+    <h1 class="logo">Tater Tapper</h1>
+    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span></div>
+
+    <div class="fryer" id="fryer" role="progressbar" aria-label="Fryer heat" aria-valuemin="0" aria-valuemax="100">
+      <span class="bulb"><svg class="i" viewBox="0 0 24 24"><path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/></svg></span>
+      <span class="tube"><i id="heatFill"></i></span>
+      <small id="heatText">Fryer 250°F</small>
+    </div>
+
+    <div class="field" id="field">
+      <svg class="land" id="land" viewBox="0 0 400 200" aria-hidden="true">
+        <defs>
+          <symbol id="s-hoe" viewBox="0 0 16 40"><rect x="6.5" y="6" width="3" height="34" rx="1.5" fill="#a4723f" stroke="var(--outline)" stroke-width="1.2"/><path d="M1.5 1.5h13v6.5H4z" fill="#b4bec3" stroke="var(--outline)" stroke-width="1.2"/></symbol>
+          <symbol id="s-sprout" viewBox="0 0 20 20"><ellipse cx="10" cy="18" rx="8" ry="2.4" fill="var(--soil-2)"/><path d="M10 18V9.5" stroke="#2f6b25" stroke-width="2" stroke-linecap="round"/><path d="M10 11.5C6 11.5 3 8.5 3 5.5c4 0 7 2 7 6zM10 9.5c0-4 3-6 7-6 0 3-3 6-7 6z" fill="#5fa83d" stroke="var(--outline)" stroke-width="1"/></symbol>
+          <symbol id="s-stand" viewBox="0 0 60 52"><rect x="8" y="17" width="3.5" height="33" fill="#8a5a2e" stroke="var(--outline)" stroke-width="1"/><rect x="48.5" y="17" width="3.5" height="33" fill="#8a5a2e" stroke="var(--outline)" stroke-width="1"/><path d="M3 18 L10 5 H50 L57 18Z" fill="#fff6e2" stroke="var(--outline)" stroke-width="1.5"/><path d="M10 5h8l-3 13H3zM26 5h8l1 13H25zM42 5h8l7 13H45z" fill="#c8372d"/><path d="M3 18 L10 5 H50 L57 18Z" fill="none" stroke="var(--outline)" stroke-width="1.5"/><path d="M14 31c-2.5-6 0-9.5 4-9.5s6.5 3.5 4 9.5zM38 31c-2.5-6 0-9.5 4-9.5s6.5 3.5 4 9.5z" fill="#d8c08f" stroke="var(--outline)" stroke-width="1.2"/><circle cx="29" cy="28" r="3.2" fill="#c99258" stroke="var(--outline)"/><circle cx="34" cy="29" r="2.8" fill="#c99258" stroke="var(--outline)"/><rect x="5" y="31" width="50" height="7" fill="#a4723f" stroke="var(--outline)" stroke-width="1.4"/></symbol>
+          <symbol id="s-tractor" viewBox="0 0 60 42"><path d="M15 25V9h14l4 14h18v9H15z" fill="#c8372d" stroke="var(--outline)" stroke-width="1.6"/><rect x="17.5" y="11.5" width="9" height="9" fill="#bfe3ef" stroke="var(--outline)" stroke-width="1.2"/><rect x="43" y="12" width="3" height="11" fill="#4a4a4a"/><circle cx="20" cy="31" r="10" fill="#2a2a2a" stroke="var(--outline)" stroke-width="1.4"/><circle cx="20" cy="31" r="4" fill="#d9d9d9"/><circle cx="48" cy="35" r="6.5" fill="#2a2a2a" stroke="var(--outline)" stroke-width="1.4"/><circle cx="48" cy="35" r="2.6" fill="#d9d9d9"/></symbol>
+          <symbol id="s-barn" viewBox="0 0 70 56"><rect x="50" y="10" width="15" height="45" fill="#c9d1d6" stroke="var(--outline)" stroke-width="1.5"/><path d="M50 10a7.5 7.5 0 0 1 15 0z" fill="#8f9aa0" stroke="var(--outline)" stroke-width="1.5"/><path d="M50 22h15M50 34h15" stroke="var(--outline)" stroke-width="1"/><path d="M3 27 L10 14 L23 6 L36 14 L43 27 V55 H3Z" fill="#c8372d" stroke="var(--outline)" stroke-width="1.5"/><path d="M1 28 L10 13 L23 4.5 L36 13 L45 28" fill="none" stroke="#5a3a28" stroke-width="3" stroke-linejoin="round"/><rect x="19" y="16" width="8" height="7" fill="#fff6e2" stroke="var(--outline)"/><rect x="13" y="36" width="20" height="19" fill="#fff6e2" stroke="var(--outline)" stroke-width="1.2"/><path d="M13 36l20 19M33 36L13 55" stroke="#c8372d" stroke-width="2"/></symbol>
+          <symbol id="s-harvester" viewBox="0 0 80 46"><path d="M24 12 L4 4" stroke="#e0a52a" stroke-width="4" stroke-linecap="round"/><path d="M18 31V12h24l6 10h12v12H18z" fill="#f4c542" stroke="var(--outline)" stroke-width="1.6"/><rect x="22" y="3" width="14" height="10" fill="#bfe3ef" stroke="var(--outline)" stroke-width="1.2"/><rect x="60" y="27" width="18" height="9" fill="#9aa5ab" stroke="var(--outline)" stroke-width="1.2"/><circle cx="68" cy="24" r="7.5" fill="none" stroke="var(--outline)" stroke-width="1.8"/><path d="M68 16.5v15M60.5 24h15" stroke="var(--outline)" stroke-width="1.2"/><circle cx="50" cy="36" r="9" fill="#2a2a2a" stroke="var(--outline)" stroke-width="1.4"/><circle cx="50" cy="36" r="3.5" fill="#d9d9d9"/><circle cx="24" cy="39" r="6" fill="#2a2a2a"/><circle cx="24" cy="39" r="2.3" fill="#d9d9d9"/></symbol>
+          <symbol id="s-factory" viewBox="0 0 70 60"><rect x="53" y="5" width="9" height="54" fill="#7d3e2a" stroke="var(--outline)" stroke-width="1.5"/><rect x="3" y="25" width="51" height="34" fill="#a8553a" stroke="var(--outline)" stroke-width="1.5"/><path d="M3 25 L13 14 V25 L23 14 V25 L33 14 V25 L43 14 V25" fill="#7d3e2a" stroke="var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><rect x="9" y="31" width="30" height="11" rx="2" fill="#fff6e2" stroke="var(--outline)" stroke-width="1.2"/><path d="M16 40v-6M20 40v-7M24 40v-5.5M28 40v-7M32 40v-6" stroke="#e0a52a" stroke-width="2.2" stroke-linecap="round"/><rect x="9" y="47" width="7" height="6" fill="#ffd45c" stroke="var(--outline)"/><rect x="21" y="47" width="7" height="6" fill="#ffd45c" stroke="var(--outline)"/><rect x="40" y="44" width="10" height="15" fill="#5a3a28" stroke="var(--outline)"/></symbol>
+        </defs>
+        <path d="M0 50 C80 26 160 30 220 40 C290 50 350 28 400 38 V200 H0Z" fill="var(--hill-2)"/>
+        <path d="M0 92 C90 74 180 80 240 88 C310 96 360 78 400 84 V200 H0Z" fill="var(--hill)"/>
+        <g id="landBack"></g>
+        <g id="landMid"></g>
+        <path d="M0 136 C120 122 280 122 400 136 V200 H0Z" fill="var(--soil)"/>
+        <g fill="none" stroke="var(--soil-2)" stroke-width="4" stroke-linecap="round">
+          <path d="M-10 154 C110 142 290 142 410 154"/><path d="M-10 172 C110 162 290 162 410 172"/><path d="M-10 190 C110 182 290 182 410 190"/>
+        </g>
+        <g id="landFront"></g>
+      </svg>
+      <button class="tater-btn" id="tater" aria-label="Tap the potato">
+        <svg viewBox="0 0 300 220" aria-hidden="true">
+          <defs>
+            <radialGradient id="skin" cx="38%" cy="30%" r="75%">
+              <stop offset="0" stop-color="var(--skin-hi)"/><stop offset=".55" stop-color="var(--skin)"/><stop offset="1" stop-color="var(--skin-lo)"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="152" cy="200" rx="118" ry="16" fill="rgba(0,0,0,.28)"/>
+          <path d="M38 112 C26 72 62 36 120 32 C150 30 168 42 196 36 C246 28 284 64 274 114 C266 160 228 190 168 188 C140 187 128 196 100 190 C62 182 44 150 38 112Z"
+                fill="url(#skin)" stroke="var(--outline)" stroke-width="5"/>
+          <path d="M70 70 C90 50 124 44 150 48" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="10" stroke-linecap="round"/>
+          <g fill="var(--eye)">
+            <ellipse cx="96" cy="88" rx="7" ry="4.5" transform="rotate(20 96 88)"/>
+            <ellipse cx="206" cy="80" rx="7.5" ry="4.5" transform="rotate(-15 206 80)"/>
+            <ellipse cx="156" cy="146" rx="6.5" ry="4" transform="rotate(8 156 146)"/>
+            <ellipse cx="76" cy="138" rx="5.5" ry="3.5" transform="rotate(-30 76 138)"/>
+            <ellipse cx="236" cy="134" rx="5" ry="3.2" transform="rotate(25 236 134)"/>
+          </g>
+          <g fill="var(--eye)" opacity=".35">
+            <circle cx="140" cy="70" r="2.6"/><circle cx="120" cy="116" r="2.2"/><circle cx="186" cy="116" r="2.6"/>
+            <circle cx="210" cy="156" r="2.2"/><circle cx="104" cy="160" r="2.4"/><circle cx="250" cy="104" r="2"/><circle cx="170" cy="60" r="2"/>
+          </g>
+          <g stroke="var(--outline)" stroke-width="3" stroke-linejoin="round">
+            <path d="M206 78 C204 60 210 46 222 38" fill="none" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M222 38 C236 28 252 32 256 40 C244 48 230 46 222 38Z" fill="var(--green)"/>
+            <path d="M216 52 C206 40 192 40 188 46 C196 56 208 56 216 52Z" fill="var(--green)"/>
+          </g>
+        </svg>
+      </button>
+      <div class="buffs" id="buffs"></div>
+    </div>
+  </section>
+
+  <section class="ledger">
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="shop" aria-selected="true" aria-label="Farm"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-6 9 6v9H3z"/><path d="M9 20v-6h6v6"/></svg><span class="lbl">Farm</span></button>
+      <button role="tab" data-tab="upgrades" aria-selected="false" aria-label="Upgrades"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 5.5a4 4 0 0 0 4.9 4.9l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8a4 4 0 0 0-1.9-1.9z"/></svg><span class="lbl">Upgrades</span><span class="badge" id="upBadge" hidden></span></button>
+      <button role="tab" data-tab="awards" aria-selected="false" aria-label="Ribbons"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M9 14l-1.5 7 2.5-1.5 2 1.5M15 14l1.5 7-2.5-1.5-2 1.5"/></svg><span class="lbl">Ribbons</span></button>
+      <button role="tab" data-tab="ranks" aria-selected="false" aria-label="Ranks"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V13h5v7M9 20V8h6v12M15 20v-9h5v9M3 20h18"/></svg><span class="lbl">Ranks</span></button>
+      <button role="tab" data-tab="me" aria-selected="false" aria-label="Me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span class="lbl">Me</span></button>
+    </nav>
+    <div class="sheet">
+      <div class="panel" id="tab-shop" role="tabpanel">
+        <div class="panel-head"><h2>Your farm</h2><div class="seg"><button data-qty="1" aria-pressed="true">Buy 1</button><button data-qty="10" aria-pressed="false">Buy 10</button></div></div>
+        <div id="shopList"></div>
+      </div>
+
+      <div class="panel" id="tab-upgrades" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Upgrades</h2></div>
+        <div id="upgradeList"></div>
+        <p class="empty" id="upgradeEmpty">New upgrades show up here as your farm grows. Keep tapping and buying.</p>
+      </div>
+
+      <div class="panel" id="tab-awards" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Ribbons</h2><span id="achCount"></span></div>
+        <div class="progress"><i id="achBar"></i></div>
+        <p class="note" id="achSummary"></p>
+        <div class="ach-grid" id="achGrid"></div>
+      </div>
+
+      <div class="panel" id="tab-ranks" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Leaderboard</h2><div class="seg"><button data-sort="allTime" aria-pressed="true">Taters</button><button data-sort="fidgetClicks" aria-pressed="false">Fidget taps</button></div></div>
+        <p class="note" id="boardNote"></p>
+        <ol class="board" id="board"></ol>
+      </div>
+
+      <div class="panel" id="tab-me" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Farmer</h2></div>
+        <div id="accountBox"></div>
+        <div class="fieldset"><label for="nameInput">Leaderboard name</label><input id="nameInput" maxlength="20" autocomplete="nickname"></div>
+        <button class="btn" id="profileSave">Save profile</button>
+
+        <div class="card" id="installCard" hidden>
+          <h3>Get the app</h3>
+          <p class="note" id="installText">Add Tater Tapper to your home screen so it opens full screen, like any other app.</p>
+          <button class="btn go" id="installBtn" hidden>Add to Home Screen</button>
+        </div>
+
+        <div class="card">
+          <h3>Replant</h3>
+          <p class="note" id="replantText"></p>
+          <button class="btn go" id="replantBtn">Replant</button>
+        </div>
+
+        <h2 style="font: 400 1.2rem var(--slab); margin: 16px 0 4px;">Stats</h2>
+        <dl class="stats" id="stats"></dl>
+
+        <div class="card" id="playtest" hidden>
+          <h3>Playtest tools</h3>
+          <p class="note">Only shows when the link ends in #playtest. Players on the normal link won’t see it.</p>
+          <div class="pt-grid">
+            <button class="btn" data-pt="tap">Fidget tap</button>
+            <button class="btn" data-pt="sync">Sync 50 saved taps</button>
+            <button class="btn" data-pt="hour">Skip 1 hour</button>
+            <button class="btn" data-pt="million">+1M taters</button>
+            <button class="btn" data-pt="golden">Golden tater now</button>
+            <button class="btn" data-pt="fryer">Fill the fryer</button>
+            <button class="btn go" data-pt="reset">Reset all progress</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="lucky" id="lucky" hidden aria-label="Golden tater, tap it">
+  <svg viewBox="0 0 120 90" aria-hidden="true">
+    <defs><radialGradient id="gold" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#fff4c2"/><stop offset=".5" stop-color="#f4c542"/><stop offset="1" stop-color="#b8861c"/></radialGradient></defs>
+    <path d="M14 46 C9 28 26 12 50 12 C62 11 70 17 82 14 C102 10 116 26 112 48 C108 70 92 80 68 79 C56 79 50 84 40 81 C24 77 17 62 14 46Z" fill="url(#gold)" stroke="#2f2117" stroke-width="4"/>
+    <g fill="#7a5512"><ellipse cx="40" cy="38" rx="4" ry="2.5"/><ellipse cx="84" cy="34" rx="4" ry="2.5"/><ellipse cx="64" cy="62" rx="3.5" ry="2.2"/></g>
+    <path d="M100 6 l3 7 7 3 -7 3 -3 7 -3-7 -7-3 7-3z M14 70 l2 4 4 2 -4 2 -2 4 -2-4 -4-2 4-2z" fill="#fff"/>
+  </svg>
+</button>
+<div class="toasts" id="toasts" role="status"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   0) FIREBASE SETTINGS — paste your web app config here to turn on
+      Google sign-in, cloud save and the leaderboard. Leave blank to play offline.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: '',
+  authDomain: '',
+  projectId: '',
+  appId: '',
+};
+
+/* =====================================================================
+   1) TaterFidget — Web Bluetooth module (same protocol as the firmware)
+   ===================================================================== */
+class TaterFidget {
+  static SVC    = 'c0c0a000-1a2b-4c3d-8e9f-c00c1e000000';
+  static TOTAL  = 'c0c0a001-1a2b-4c3d-8e9f-c00c1e000000';
+  static SYNCED = 'c0c0a002-1a2b-4c3d-8e9f-c00c1e000000';
+
+  constructor({ onClicks, onStatus, getCredited, setCredited }) {
+    Object.assign(this, { onClicks, onStatus, getCredited, setCredited });
+    this.queue = Promise.resolve();
+    this.onValue = e => this.handleTotal(e.target.value.getUint32(0, true), false);
+  }
+  static get supported() { return !!(navigator.bluetooth && window.isSecureContext); }
+  get connected() { return !!this.device?.gatt?.connected; }
+
+  async connect() {
+    this.userDisconnected = false;
+    this.device = await navigator.bluetooth.requestDevice({ filters: [{ services: [TaterFidget.SVC] }] });
+    this.device.addEventListener('gattserverdisconnected', () => this.onDisconnect());
+    await this.attach();
+  }
+  disconnect() { this.userDisconnected = true; if (this.connected) this.device.gatt.disconnect(); }
+
+  async attach() {
+    this.onStatus('connecting');
+    const server = await this.device.gatt.connect();
+    const svc = await server.getPrimaryService(TaterFidget.SVC);
+    this.totalChr  = await svc.getCharacteristic(TaterFidget.TOTAL);
+    this.syncedChr = await svc.getCharacteristic(TaterFidget.SYNCED);
+    const total     = (await this.totalChr.readValue()).getUint32(0, true);
+    const devSynced = (await this.syncedChr.readValue()).getUint32(0, true);
+    let credited = Math.max(devSynced, this.getCredited(this.device.id) || 0);
+    if (credited > total) credited = Math.min(devSynced, total);     // device was reset
+    this.credited = credited;
+    this.setCredited(this.device.id, credited);
+    this.totalChr.addEventListener('characteristicvaluechanged', this.onValue);
+    await this.totalChr.startNotifications();
+    this.handleTotal(total, true);
+    if (credited !== devSynced) this.scheduleAck();
+    this.onStatus('connected', this.device.name);
+  }
+
+  handleTotal(t, fromSync) {
+    if (t > this.credited) {
+      const n = t - this.credited;
+      this.credited = t;
+      this.setCredited(this.device.id, t);
+      this.onClicks(n, { fromSync });
+      this.scheduleAck();
+    } else if (t < this.credited) {
+      this.credited = t;
+      this.setCredited(this.device.id, t);
+    }
+  }
+
+  scheduleAck() {
+    clearTimeout(this.ackTimer);
+    this.ackTimer = setTimeout(() => {
+      const buf = new DataView(new ArrayBuffer(4));
+      buf.setUint32(0, this.credited, true);
+      this.queue = this.queue
+        .then(() => this.connected && this.syncedChr.writeValueWithResponse(buf.buffer))
+        .catch(err => console.warn('Sync write failed, will retry on reconnect', err));
+    }, 1000);
+  }
+
+  async onDisconnect() {
+    this.onStatus('disconnected');
+    if (this.userDisconnected || this.reconnecting) return;
+    this.reconnecting = true;
+    try {
+      for (let wait = 1000; !this.userDisconnected && !this.connected; wait = Math.min(wait * 2, 15000)) {
+        this.onStatus('reconnecting');
+        await new Promise(r => setTimeout(r, wait));
+        try { await this.attach(); } catch { /* out of range; keep trying */ }
+      }
+    } finally {
+      this.reconnecting = false;
+      if (!this.connected) this.onStatus('disconnected');
+    }
+  }
+}
+
+/* =====================================================================
+   2) Game data — tweak numbers and names freely
+   ===================================================================== */
+const BUILDINGS = [
+  { id: 'hoe',       name: 'Garden Hoe',        desc: 'Digs up a spud now and then.',      base: 15,    cps: 0.1 },
+  { id: 'patch',     name: 'Backyard Patch',    desc: 'A few rows along the fence.',       base: 100,   cps: 1 },
+  { id: 'stand',     name: 'Farm Stand',        desc: 'Sells by the sack on the roadside.', base: 1100, cps: 8 },
+  { id: 'tractor',   name: 'Tractor',           desc: 'Plows a whole field before lunch.', base: 12e3,  cps: 47 },
+  { id: 'farm',      name: 'Potato Farm',       desc: 'Acres of hills and furrows.',       base: 13e4,  cps: 260 },
+  { id: 'harvester', name: 'Potato Harvester',  desc: 'Lifts, shakes and loads the crop.', base: 1.4e6, cps: 1400 },
+  { id: 'fryline',   name: 'Fry Factory',       desc: 'Peeled, cut and fried by the ton.', base: 2e7,   cps: 7800 },
+  { id: 'mars',      name: 'Mars Greenhouse',   desc: 'Grows spuds in red planet dirt.',   base: 3.3e8, cps: 44e3 },
+];
+const TIERS = [
+  { own: 1,  cost: 10,   label: 'Tune-up' },
+  { own: 10, cost: 50,   label: 'Overhaul' },
+  { own: 25, cost: 500,  label: 'Turbo' },
+  { own: 50, cost: 5000, label: 'Masterwork' },
+];
+
+const UPGRADES = [
+  { id: 'tool1', icon: 'tool', name: 'Digging Fork',        desc: 'Taps are twice as strong.',                          cost: 100,   unlock: () => totalTaps() >= 10 },
+  { id: 'tool2', icon: 'tool', name: 'Steel Spade',         desc: 'Taps are twice as strong.',                          cost: 1000,  unlock: () => totalTaps() >= 100 },
+  { id: 'tool3', icon: 'tool', name: 'Carbide Tines',       desc: 'Taps are twice as strong.',                          cost: 5e4,   unlock: () => totalTaps() >= 1000 },
+  { id: 'tool4', icon: 'tool', name: 'Hydraulic Lift',      desc: 'Taps are twice as strong.',                          cost: 5e6,   unlock: () => totalTaps() >= 5000 },
+  { id: 'grip1', icon: 'grip', name: 'Work Gloves',         desc: 'Each tap adds 1% of your taters per second.',        cost: 5e4,   unlock: () => baseCps() >= 50 },
+  { id: 'grip2', icon: 'grip', name: 'Knurled Handle',      desc: 'Each tap adds another 2% of your taters per second.', cost: 5e6,  unlock: () => baseCps() >= 5000 },
+  { id: 'heat1', icon: 'heat', name: 'Insulated Fryer',     desc: 'Hot Fryer lasts twice as long.',                     cost: 2e4,   unlock: () => state.hotFryers >= 1 },
+  { id: 'heat2', icon: 'heat', name: 'Pressure Fryer',      desc: 'Hot Fryer makes taps 5× stronger instead of 3×.',    cost: 2e6,   unlock: () => state.hotFryers >= 5 },
+  { id: 'luck1', icon: 'luck', name: 'Lucky Horseshoe',     desc: 'Golden taters show up more often.',                  cost: 7.7e4, unlock: () => state.goldenTaters >= 3 },
+  { id: 'bt1', icon: 'bt',   name: 'Signal Booster',      desc: 'Fidget taps are worth 3× instead of 2×.',            cost: 1e4,   unlock: () => state.fidgetClicks >= 100 },
+];
+BUILDINGS.forEach(b => TIERS.forEach((t, i) => UPGRADES.push({
+  id: `${b.id}_${i}`, icon: b.id, name: `${b.name} ${t.label}`, desc: `Doubles what each ${b.name} makes.`,
+  cost: b.base * t.cost, unlock: () => owned(b.id) >= t.own,
+})));
+
+const ACH = [];
+const addAch = (id, name, desc, test) => ACH.push({ id, name, desc, test });
+[[100, 'First harvest'], [1e3, 'Bushel'], [1e4, 'Truckload'], [1e5, 'Root cellar'], [1e6, 'Millionaire farmer'], [1e8, 'Spud mogul'], [1e10, 'Tater empire']]
+  .forEach(([n, name]) => addAch('grow' + n, name, `Grow ${fmt(n)} taters all-time.`, () => state.allTime >= n));
+[[100, 'Warm-up'], [1000, 'Tap machine'], [1e4, 'Iron finger']]
+  .forEach(([n, name]) => addAch('tap' + n, name, `Tap the potato ${fmt(n)} times on screen.`, () => state.clicks >= n));
+[[1, 'It’s alive'], [100, 'Pocket spud'], [1000, 'Fidget fiend'], [1e4, 'Tactile legend']]
+  .forEach(([n, name]) => addAch('fidget' + n, name, `Tap your fidget ${fmt(n)} time${n > 1 ? 's' : ''}.`, () => state.fidgetClicks >= n));
+addAch('sync50', 'Away mission', 'Collect 50 or more saved taps from your fidget at once.', () => state.bigSyncs >= 1);
+[[10, 'Small farm'], [50, 'Co-op'], [100, 'Agribusiness']]
+  .forEach(([n, name]) => addAch('own' + n, name, `Own ${n} buildings.`, () => totalOwned() >= n));
+addAch('lineup', 'Full lineup', 'Own at least one of every building.', () => BUILDINGS.every(b => owned(b.id) > 0));
+[[10, 'Steady crop'], [1000, 'Mass production'], [1e5, 'Assembly line']]
+  .forEach(([n, name]) => addAch('cps' + n, name, `Grow ${fmt(n)} taters per second.`, () => baseCps() >= n));
+addAch('hot1', 'Hot oil', 'Fill the fryer heat meter.', () => state.hotFryers >= 1);
+addAch('hot25', 'Fry master', 'Fill the fryer heat meter 25 times.', () => state.hotFryers >= 25);
+addAch('gold1', 'Golden find', 'Catch a golden tater.', () => state.goldenTaters >= 1);
+addAch('gold10', 'Golden harvest', 'Catch 10 golden taters.', () => state.goldenTaters >= 10);
+addAch('up10', 'Tinkerer', 'Buy 10 upgrades.', () => state.upgrades.length >= 10);
+addAch('replant1', 'New season', 'Replant once.', () => state.replants >= 1);
+addAch('replant5', 'Crop rotation', 'Replant 5 times.', () => state.replants >= 5);
+addAch('signin', 'Name on the board', 'Sign in and join the leaderboard.', () => state.signedIn);
+addAch('podium', 'Podium', 'Reach the top 3 on a leaderboard.', () => state.bestRank > 0 && state.bestRank <= 3);
+
+/* =====================================================================
+   Icons (24×24 line drawings) and ribbons
+   ===================================================================== */
+const ICON = {
+  hoe:       '<path d="M5 19L15 9"/><path d="M13 7h7v3.5c-2.5 0-4.5-1-7-3.5z"/>',
+  patch:     '<path d="M3 20h18"/><path d="M6 20v-5c-2 0-3-1.5-3-3.5 2 0 3 1.5 3 3.5 0-2 1-3.5 3-3.5 0 2-1 3.5-3 3.5"/><path d="M15 20v-6c-2 0-3-1.5-3-3.5 2 0 3 1.5 3 3.5 0-2 1-3.5 3-3.5 0 2-1 3.5-3 3.5"/>',
+  stand:     '<path d="M3 10h18l-2-5H5z"/><path d="M3 10c0 1.5 1.5 2.5 3 2.5S9 11.5 9 10c0 1.5 1.5 2.5 3 2.5s3-1 3-2.5c0 1.5 1.5 2.5 3 2.5s3-1 3-2.5"/><path d="M5 12.5V20M19 12.5V20M4 20h16M8 20v-4h8v4"/>',
+  tractor:   '<circle cx="7" cy="16" r="4"/><circle cx="7" cy="16" r="1.2"/><circle cx="18.5" cy="17.5" r="2.5"/><path d="M4 12.5V6h6l2 6.5h7v3"/><path d="M11 16h5"/><path d="M15 12.5V8"/>',
+  farm:      '<path d="M3 11l9-6 9 6v9H3z"/><path d="M9 20v-6h6v6M9 14l6 6M15 14l-6 6"/><path d="M10 9.5h4"/>',
+  harvester: '<circle cx="9" cy="17" r="3"/><circle cx="19" cy="18" r="2"/><path d="M6 14V9h8l2 5h5v2.5"/><path d="M2 7h7M5.5 7v3M3 10h5"/><path d="M14 9V5h3"/>',
+  fryline:   '<path d="M6 10h12l-1.5 10h-9z"/><path d="M8.5 10V4M11 10V3M13.5 10V4.5M16 10V6"/><path d="M9.5 14.5a2.5 2 0 0 0 5 0"/>',
+  mars:      '<path d="M2 20h20"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/><path d="M12 20v-5"/><path d="M12 15c-2 0-3-1.3-3-3 2 0 3 1.3 3 3 0-1.7 1-3 3-3 0 1.7-1 3-3 3"/><circle cx="19" cy="5" r="2"/>',
+  tool:      '<path d="M12 3v10"/><path d="M8 13h8v3.5a4 4 0 0 1-8 0z"/><path d="M9.5 3h5"/>',
+  grip:      '<path d="M8 21v-5.5L5.2 11a1.5 1.5 0 0 1 2.5-1.6L9 11.2V6a1.5 1.5 0 0 1 3 0v4-5a1.5 1.5 0 0 1 3 0v5-3.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-2 6z"/>',
+  heat:      '<path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/>',
+  luck:      '<path d="M7 20H5l-.6-7.5a7.6 7.6 0 1 1 15.2 0L19 20h-2l.5-7.5a5.5 5.5 0 1 0-11 0z"/>',
+  bt:        '<path d="M12 13v8"/><circle cx="12" cy="11" r="1.6"/><path d="M8.2 7.5a5.5 5.5 0 0 1 7.6 0M5.3 4.6a9.6 9.6 0 0 1 13.4 0"/>',
+  wrench:    '<path d="M14.5 5.5a4 4 0 0 0 4.9 4.9l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8a4 4 0 0 0-1.9-1.9z"/>',
+};
+const icon = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.wrench}</svg>`;
+const SPUD = '<svg viewBox="0 0 16 12" aria-hidden="true"><path d="M2 6C1 3 4 1 8 1s7 2 7 5-3 5-7 5-5.5-1-6-5z" fill="#c99258" stroke="currentColor" stroke-width="1.5"/></svg>';
+const RIBBON_COLORS = { grow: '#e0a52a', tap: '#c8372d', fidget: '#2b5ea8', farm: '#3f6b2a', fun: '#7b4bb3' };
+function ribbon(color) {
+  const petals = Array.from({ length: 12 }, (_, i) => {
+    const a = i * Math.PI / 6, x = 20 + Math.cos(a) * 12.5, y = 16 + Math.sin(a) * 12.5;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.6"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 40 52" aria-hidden="true">
+    <path d="M12 24 L6 50 L13 45 L18 51 L20 27Z M28 24 L34 50 L27 45 L22 51 L20 27Z" fill="${color}" stroke="#2f2117" stroke-width="2" stroke-linejoin="round"/>
+    <g fill="${color}" stroke="#2f2117" stroke-width="2">${petals}</g>
+    <circle cx="20" cy="16" r="11.5" fill="${color}"/>
+    <circle cx="20" cy="16" r="8" fill="#fff6e2" stroke="#2f2117" stroke-width="2"/>
+    <path d="M15 16.5c0-2.6 2.4-4.2 5-4.2s5 1.6 5 4.2-2.3 3.8-5 3.8-5-1.2-5-3.8z" fill="#c99258" stroke="#2f2117" stroke-width="1.4"/>
+  </svg>`;
+}
+const achColor = id => RIBBON_COLORS[
+  /^grow|^cps/.test(id) ? 'grow' : /^tap|^hot/.test(id) ? 'tap' : /^fidget|^sync/.test(id) ? 'fidget' : /^own|^lineup|^up/.test(id) ? 'farm' : 'fun'];
+
+/* =====================================================================
+   Farm landscape: what you buy shows up in the field
+   Coordinates are in the 400×200 viewBox of the #land drawing.
+   ===================================================================== */
+const SPROUT_SLOTS = (() => {
+  const all = [];
+  [152, 170, 188].forEach((y, row) => { for (let i = 0; i < 15; i++) all.push([14 + i * 26 + (row % 2) * 12, y - 17]); });
+  return all.map((_, i) => all[(i * 7) % all.length]);     // fill the rows in a scattered order
+})();
+const LAND = {
+  factory:   { layer: 'landBack', sym: 'factory',   slots: [[2, 44, 60, 52], [56, 60, 44, 38]] },
+  farm:      { layer: 'landBack', sym: 'barn',      slots: [[330, 38, 66, 53], [288, 56, 48, 39], [250, 68, 36, 29]] },
+  harvester: { layer: 'landBack', sym: 'harvester', slots: [[150, 92, 70, 40], [228, 98, 58, 33]] },
+  stand:     { layer: 'landFront', sym: 'stand',    slots: [[4, 116, 62, 54], [334, 116, 62, 54], [70, 126, 44, 38]] },
+  hoe:       { layer: 'landFront', sym: 'hoe',      slots: [[100, 118, 14, 36], [288, 116, 14, 36], [128, 128, 12, 31], [262, 126, 12, 31], [178, 122, 12, 30], [212, 124, 12, 30]] },
+  patch:     { layer: 'landFront', sym: 'sprout',   slots: SPROUT_SLOTS.map(([x, y]) => [x, y, 20, 20]) },
+};
+const BUILD_TO_LAND = { hoe: 'hoe', patch: 'patch', stand: 'stand', farm: 'farm', harvester: 'harvester', fryline: 'factory' };
+const landSeen = {};
+let landKey = '', landReady = false;
+
+function renderLand() {
+  const key = BUILDINGS.map(b => owned(b.id)).join();
+  if (key === landKey) return;
+  landKey = key;
+  const layers = { landBack: [], landMid: [], landFront: [] };
+
+  for (const [bid, lid] of Object.entries(BUILD_TO_LAND)) {
+    const def = LAND[lid], count = Math.min(owned(bid), def.slots.length), before = Math.min(landSeen[bid] ?? count, def.slots.length);
+    let fresh = 0;
+    for (let i = 0; i < count; i++) {
+      const [x, y, w, h] = def.slots[i], isNew = landReady && i >= before;
+      let extra = '';
+      if (lid === 'factory') {                                  // smoke from the chimney
+        const cx = x + 57.5 * w / 70, cy = y + 5 * h / 60;
+        extra = [0, 1.1, 2.2].map(d => `<circle class="smoke" cx="${cx}" cy="${cy}" r="${w / 16}" fill="#e9e4da" style="animation-delay:${d + i * .5}s"/>`).join('');
+      }
+      layers[def.layer].push(`<g class="item${isNew ? ' new' : ''}" style="--d:${isNew ? Math.min(fresh++, 10) * 0.05 : 0}s"><use href="#s-${def.sym}" x="${x}" y="${y}" width="${w}" height="${h}"/></g>${extra}`);
+    }
+  }
+
+  // Tractors drive along the middle hill; harvesters already sit on it
+  const tractors = Math.min(owned('tractor'), 3);
+  for (let i = 0; i < tractors; i++) {
+    const isNew = landReady && i >= Math.min(landSeen.tractor ?? tractors, 3);
+    layers.landMid.push(`<g class="drive" style="animation-delay:${-i * 8.7}s"><g class="item${isNew ? ' new' : ''}"><use href="#s-tractor" x="0" y="${102 + (i % 2) * 6}" width="44" height="31"/></g></g>`);
+  }
+  for (const [id, parts] of Object.entries(layers)) $(id).innerHTML = parts.join('');
+
+  const mars = owned('mars');
+  $('mars').toggleAttribute('hidden', mars < 1);
+  $('marsCount').textContent = mars > 1 ? '×' + mars : '';
+
+  BUILDINGS.forEach(b => { landSeen[b.id] = owned(b.id); });
+  landReady = true;
+}
+
+/* =====================================================================
+   3) State and math
+   ===================================================================== */
+const SAVE_KEY = 'taterTapper.v1';
+function freshState() {
+  return { v: 2, taters: 0, run: 0, allTime: 0, clicks: 0, fidgetClicks: 0, buildings: {}, upgrades: [],
+    achievements: [], seeds: 0, replants: 0, hotFryers: 0, goldenTaters: 0, bigSyncs: 0, bestRank: 0,
+    signedIn: false, name: '', lastSeen: Date.now(), fidgets: {} };
+}
+function loadState() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch {}
+  return Object.assign(freshState(), s || {});
+}
+let state = loadState();
+state.achievements = state.achievements.filter(id => ACH.some(a => a.id === id));   // drop retired ribbons
+delete state.team;
+const live = { heat: 0, hotUntil: 0, frenzyUntil: 0, nextLucky: 0, luckyUntil: 0, buyQty: 1 };
+
+function save() { state.lastSeen = Date.now(); try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch {} }
+const has = id => state.upgrades.includes(id);
+const owned = id => state.buildings[id] || 0;
+const totalOwned = () => BUILDINGS.reduce((a, b) => a + owned(b.id), 0);
+const totalTaps = () => state.clicks + state.fidgetClicks;
+const isHot = () => Date.now() < live.hotUntil;
+const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds);
+const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1);
+const baseCps = () => BUILDINGS.reduce((a, b) => a + b.cps * owned(b.id) * buildingMult(b), 0) * globalMult();
+const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1);
+const fidgetMult = () => has('bt1') ? 3 : 2;
+function clickValue(allowHot = true) {
+  let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult();
+  v += cps() * ((has('grip1') ? 0.01 : 0) + (has('grip2') ? 0.02 : 0));
+  if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
+  return v;
+}
+function costOf(b, n = 1) { const r = 1.15; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1); }
+function grow(n) { state.taters += n; state.run += n; state.allTime += n; }
+const seedGain = () => Math.floor(Math.cbrt(state.run / 1e6));
+
+function fmt(n) {
+  if (n < 1000) return (n < 10 && n % 1) ? n.toFixed(1) : Math.floor(n).toLocaleString();
+  const units = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp'];
+  let i = -1;
+  while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
+  return (n >= 100 ? n.toFixed(0) : n.toFixed(n >= 10 ? 1 : 2)).replace(/\.0+$|(\.\d*?[1-9])0+$/, '$1') + units[i];
+}
+const $ = id => document.getElementById(id);
+
+/* =====================================================================
+   4) Actions
+   ===================================================================== */
+function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
+  const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count;
+  grow(gain);
+  if (fidget) state.fidgetClicks += count; else state.clicks += count;
+  if (isLive) addHeat(3 * Math.min(count, 10));
+  popText('+' + fmt(gain), x, y, fidget);
+  kickDirt(Math.min(3 + count, 9));
+  squish();
+  renderLive();
+}
+
+function addHeat(amount) {
+  if (isHot()) return;
+  live.heat = Math.min(100, live.heat + amount);
+  if (live.heat >= 100) {
+    live.heat = 0;
+    live.hotUntil = Date.now() + (has('heat1') ? 20000 : 10000);
+    state.hotFryers++;
+    toast(`Hot Fryer! Taps are ${has('heat2') ? 5 : 3}× stronger`);
+  }
+}
+
+function buy(b) {
+  const c = costOf(b, live.buyQty);
+  if (state.taters < c) return false;
+  state.taters -= c;
+  state.buildings[b.id] = owned(b.id) + live.buyQty;
+  save(); renderLive(); renderLists();
+  return true;
+}
+
+function buyUpgrade(u) {
+  if (has(u.id) || state.taters < u.cost) return;
+  state.taters -= u.cost;
+  state.upgrades.push(u.id);
+  save(); renderLive(); renderLists(true);
+}
+
+function replant() {
+  const gain = seedGain();
+  if (gain < 1) return;
+  if (!confirm(`Replant? You’ll start a new season with ${gain} more seed potato${gain > 1 ? 'es' : ''}. Achievements and all-time stats stay.`)) return;
+  Object.assign(state, { taters: 0, run: 0, buildings: {}, upgrades: [], seeds: state.seeds + gain, replants: state.replants + 1 });
+  save(); renderLive(); renderLists(true); renderMe();
+  toast(`Replanted! +${gain} seed potato${gain > 1 ? 'es' : ''}`);
+}
+
+function scheduleLucky() { live.nextLucky = Date.now() + (60 + Math.random() * 120) * 1000 / (has('luck1') ? 1.6 : 1); }
+function luckyTick() {
+  const now = Date.now(), el = $('lucky');
+  if (el.hidden && now >= live.nextLucky) {
+    el.style.left = (12 + Math.random() * 76) + 'vw';
+    el.style.top = (18 + Math.random() * 64) + 'vh';
+    el.hidden = false;
+    live.luckyUntil = now + 12000;
+  } else if (!el.hidden && now >= live.luckyUntil) {
+    el.hidden = true; scheduleLucky();
+  }
+}
+$('lucky').addEventListener('click', () => {
+  $('lucky').hidden = true;
+  state.goldenTaters++;
+  scheduleLucky();
+  if (baseCps() > 0 && Math.random() < 0.5) {
+    live.frenzyUntil = Date.now() + 30000;
+    toast('Bumper crop! Production ×7 for 30 seconds');
+  } else {
+    const g = Math.max(13, Math.min(state.taters * 0.15, baseCps() * 900) + 13);
+    grow(g);
+    toast(`Golden tater! +${fmt(g)} taters`);
+  }
+  save();
+});
+
+/* =====================================================================
+   5) Rendering
+   ===================================================================== */
+function popText(text, x, y, fidget) {
+  const field = $('field'), r = field.getBoundingClientRect(), el = document.createElement('div');
+  el.className = 'pop' + (fidget ? ' fidget' : '');
+  el.textContent = text;
+  el.style.left = (x ?? r.width / 2 - 30 + (Math.random() * 140 - 70)) + 'px';
+  el.style.top = (y ?? $('tater').offsetTop + 30) + 'px';
+  field.appendChild(el);
+  setTimeout(() => el.remove(), 950);
+}
+function kickDirt(n) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const field = $('field'), r = field.getBoundingClientRect(), t = $('tater').getBoundingClientRect();
+  const baseY = t.bottom - r.top - t.height * 0.18;
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('i');
+    c.className = 'clod' + (Math.random() < 0.3 ? ' spud' : '');
+    const s = 6 + Math.random() * 9, ang = Math.PI * (1.05 + Math.random() * 0.9), dist = 70 + Math.random() * 90;
+    c.style.cssText = `--s:${s}px;--dx:${Math.cos(ang) * dist}px;--dy:${Math.sin(ang) * dist * 0.8}px;--r:${Math.random() * 360}deg;left:${r.width / 2 + (Math.random() * 120 - 60)}px;top:${baseY}px`;
+    field.appendChild(c);
+    setTimeout(() => c.remove(), 650);
+  }
+}
+function squish() { const c = $('tater'); c.classList.remove('tap'); void c.offsetWidth; c.classList.add('tap'); }
+function toast(msg, kind = '') {
+  const box = $('toasts'), t = document.createElement('div');
+  t.className = 'toast ' + kind;
+  if (kind === 'award') t.innerHTML = ribbon(toast.color || RIBBON_COLORS.grow);
+  t.append(document.createTextNode(msg));
+  box.appendChild(t);
+  while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(() => t.remove(), 3600);
+}
+
+// Farm rows are built once, then updated every tick
+BUILDINGS.forEach(b => {
+  const btn = document.createElement('button');
+  btn.className = 'row';
+  btn.innerHTML = `<span class="tile">${icon(b.id)}</span>
+    <span><strong></strong><small class="desc"></small><small class="rate"></small><span class="herd"></span></span>
+    <span class="side"><b class="owned"></b><span class="price">${SPUD}<span class="cost"></span></span></span>`;
+  btn.querySelector('strong').textContent = b.name;
+  btn.querySelector('.desc').textContent = b.desc;
+  btn.addEventListener('click', () => { if (buy(b)) flash(btn); });
+  b.el = btn;
+  $('shopList').appendChild(btn);
+});
+function flash(el) { el.classList.remove('bought'); void el.offsetWidth; el.classList.add('bought'); }
+document.querySelectorAll('[data-qty]').forEach(q => q.addEventListener('click', () => {
+  live.buyQty = +q.dataset.qty;
+  document.querySelectorAll('[data-qty]').forEach(o => o.setAttribute('aria-pressed', o === q));
+  renderLive();
+}));
+
+function renderLive() {
+  const now = Date.now();
+  $('taters').textContent = fmt(state.taters);
+  $('cpsText').textContent = `${fmt(cps())} taters per second`;
+  const heatPct = isHot() ? 100 : live.heat;
+  $('heatFill').style.width = heatPct + '%';
+  $('fryer').setAttribute('aria-valuenow', Math.round(heatPct));
+  $('fryer').classList.toggle('hot', isHot());
+  $('heatText').textContent = isHot()
+    ? `375°F, ${Math.ceil((live.hotUntil - now) / 1000)}s`
+    : `Fryer ${Math.round(250 + live.heat * 1.25)}°F`;
+  $('tater').classList.toggle('hot', isHot());
+
+  const buffs = [];
+  if (isHot()) buffs.push(`Hot Fryer: taps ×${has('heat2') ? 5 : 3}`);
+  if (now < live.frenzyUntil) buffs.push(`Bumper crop ×7, ${Math.ceil((live.frenzyUntil - now) / 1000)}s`);
+  if (fidget.connected) buffs.push(`Fidget taps ×${fidgetMult()}`);
+  const key = buffs.join('|');
+  if ($('buffs').dataset.key !== key) {
+    $('buffs').dataset.key = key;
+    $('buffs').replaceChildren(...buffs.map(t => Object.assign(document.createElement('span'), { className: 'buff', textContent: t })));
+  }
+
+  const isSeen = (b, i) => i === 0 || owned(b.id) > 0 || owned(BUILDINGS[i - 1].id) > 0 || state.allTime >= b.base * 0.5;
+  const nextLocked = BUILDINGS.findIndex((b, i) => !isSeen(b, i));     // show one mystery row as a goal
+  BUILDINGS.forEach((b, i) => {
+    const seen = isSeen(b, i);
+    b.el.hidden = !seen && i !== nextLocked;
+    b.el.classList.toggle('locked', !seen);
+    const c = costOf(b, live.buyQty);
+    b.el.querySelector('strong').textContent = seen ? b.name : 'Something new';
+    b.el.querySelector('.desc').textContent = seen ? b.desc : `Grow ${fmt(b.base * 0.5)} taters to find out.`;
+    b.el.querySelector('.owned').textContent = seen ? owned(b.id) : '';
+    b.el.querySelector('.cost').textContent = fmt(c);
+    b.el.querySelector('.rate').textContent = seen ? `+${fmt(b.cps * buildingMult(b) * globalMult())} per second each` : '';
+    b.el.disabled = !seen || state.taters < c;
+    const tier = TIERS.filter((_, t) => has(`${b.id}_${t}`)).length;
+    b.el.querySelector('.tile').dataset.tier = tier;
+    const herd = b.el.querySelector('.herd'), n = owned(b.id), first = herd.dataset.n === undefined, had = +(herd.dataset.n || 0);
+    herd.dataset.tier = tier;
+    if (n !== had || herd.dataset.t !== String(tier)) {
+      const shown = Math.min(n, 24);
+      herd.innerHTML = Array.from({ length: shown }, (_, k) => icon(b.id, !first && k >= Math.min(had, 24) ? 'i new' : 'i')).join('')
+        + (n > 24 ? `<span class="more">+${fmt(n - 24)}</span>` : '');
+      herd.dataset.n = n;
+      herd.dataset.t = tier;
+    }
+  });
+  renderLand();
+  document.querySelectorAll('#upgradeList .row').forEach(el => { el.disabled = state.taters < +el.dataset.cost; });
+}
+
+let upgradeKey = '';
+function renderLists(force) {
+  const avail = UPGRADES.filter(u => !has(u.id) && u.unlock()).sort((a, b) => a.cost - b.cost);
+  const key = avail.map(u => u.id).join();
+  const affordable = avail.filter(u => state.taters >= u.cost).length;
+  $('upBadge').hidden = !affordable;
+  $('upBadge').textContent = affordable;
+  if (!force && key === upgradeKey) return;
+  upgradeKey = key;
+  $('upgradeList').replaceChildren(...avail.map(u => {
+    const btn = document.createElement('button');
+    btn.className = 'row';
+    btn.dataset.cost = u.cost;
+    btn.innerHTML = `<span class="tile">${icon(u.icon)}</span><span><strong></strong><small></small></span>
+      <span class="side"><span class="price">${SPUD}<span class="cost"></span></span></span>`;
+    btn.querySelector('strong').textContent = u.name;
+    btn.querySelector('small').textContent = u.desc;
+    btn.querySelector('.cost').textContent = fmt(u.cost);
+    btn.disabled = state.taters < u.cost;
+    btn.addEventListener('click', () => buyUpgrade(u));
+    return btn;
+  }));
+  $('upgradeEmpty').hidden = avail.length > 0;
+}
+
+function renderAwards() {
+  const n = state.achievements.length;
+  $('achCount').textContent = `${n} of ${ACH.length}`;
+  $('achBar').style.width = (n / ACH.length * 100) + '%';
+  $('achSummary').textContent = `Each ribbon adds 1% to everything you grow. You’re at +${n}%.`;
+  $('achGrid').replaceChildren(...ACH.map(a => {
+    const d = document.createElement('div');
+    d.className = 'ach' + (state.achievements.includes(a.id) ? ' got' : '');
+    d.innerHTML = ribbon(achColor(a.id)) + '<span><strong></strong><small></small></span>';
+    d.querySelector('strong').textContent = a.name;
+    d.querySelector('small').textContent = a.desc;
+    return d;
+  }));
+}
+
+function checkAchievements() {
+  const gained = ACH.filter(a => !state.achievements.includes(a.id) && a.test());
+  if (!gained.length) return;
+  gained.forEach(a => { state.achievements.push(a.id); toast.color = achColor(a.id); toast(`Ribbon: ${a.name}`, 'award'); });
+  save(); renderAwards();
+}
+
+function renderMe() {
+  const gain = seedGain();
+  $('replantText').textContent = gain >= 1
+    ? `Start a new season and earn ${gain} seed potato${gain > 1 ? 'es' : ''}. Each one adds 2% to everything you grow, forever. You have ${state.seeds}.`
+    : `Grow 1M taters this season to earn seed potatoes. Each adds 2% to everything you grow, forever. You have ${state.seeds}.`;
+  $('replantBtn').disabled = gain < 1;
+  const rows = [
+    ['All-time taters', fmt(state.allTime)], ['This season', fmt(state.run)],
+    ['Screen taps', fmt(state.clicks)], ['Fidget taps', fmt(state.fidgetClicks)],
+    ['Taters per tap', fmt(clickValue(false))], ['Buildings', fmt(totalOwned())],
+    ['Hot Fryers', fmt(state.hotFryers)], ['Golden taters', fmt(state.goldenTaters)],
+    ['Replants', fmt(state.replants)], ['Seed potatoes', fmt(state.seeds)],
+  ];
+  $('stats').replaceChildren(...rows.flatMap(([k, v]) => [
+    Object.assign(document.createElement('dt'), { textContent: k }),
+    Object.assign(document.createElement('dd'), { textContent: v }),
+  ]));
+}
+
+// Tabs
+const tabs = [...document.querySelectorAll('[data-tab]')];
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(o => o.setAttribute('aria-selected', o === t));
+  document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
+  if (t.dataset.tab === 'me') renderMe();
+}));
+const showTab = name => tabs.find(t => t.dataset.tab === name).click();
+
+/* =====================================================================
+   6) Input: screen potato + fidget
+   ===================================================================== */
+$('tater').addEventListener('click', e => {
+  const r = $('field').getBoundingClientRect(), kb = e.detail === 0;
+  doClick(1, { x: kb ? null : e.clientX - r.left - 15, y: kb ? null : e.clientY - r.top - 30 });
+});
+
+const fidget = new TaterFidget({
+  onClicks: (n, { fromSync }) => {
+    if (fromSync) {
+      toast(`Collected ${fmt(n)} tap${n > 1 ? 's' : ''} from your fidget`);
+      if (n >= 50) state.bigSyncs++;
+    }
+    doClick(n, { fidget: true, isLive: !fromSync });
+    save();                                   // saves the taters and the credited count together
+  },
+  getCredited: id => state.fidgets[id] || 0,
+  setCredited: (id, n) => { state.fidgets[id] = n; },
+  onStatus: (s, name) => {
+    $('dot').className = 'dot' + (s === 'connected' ? ' on' : s === 'disconnected' ? '' : ' wait');
+    $('fidgetText').textContent = { connecting: 'Connecting…', connected: `${name || 'Fidget'} connected`,
+      reconnecting: 'Looking for fidget…', disconnected: 'Connect fidget' }[s];
+  },
+});
+$('fidgetBtn').addEventListener('click', async () => {
+  if (!TaterFidget.supported) {
+    toast(window.isSecureContext ? 'Bluetooth needs Chrome or Edge, or Bluefy on iPhone.' : 'Bluetooth needs an https:// page.');
+    return;
+  }
+  if (fidget.connected || fidget.reconnecting) { fidget.disconnect(); return; }
+  try { await fidget.connect(); }
+  catch (err) {
+    if (err.name !== 'NotFoundError') toast('Couldn’t connect. Make sure the fidget is on and nearby.');
+    fidget.onStatus('disconnected');
+  }
+});
+
+/* =====================================================================
+   7) Cloud: Google sign-in, cloud save, leaderboard (Firebase)
+   ===================================================================== */
+const cloud = { on: !!FIREBASE_CONFIG.apiKey, user: null, pending: false, lastPush: 0, sort: 'allTime' };
+
+async function initCloud() {
+  renderAccount();
+  if (!cloud.on) return;
+  try {
+    const base = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    const [appMod, A, F] = await Promise.all([import(base + 'firebase-app.js'), import(base + 'firebase-auth.js'), import(base + 'firebase-firestore.js')]);
+    const app = appMod.initializeApp(FIREBASE_CONFIG);
+    Object.assign(cloud, { A, F, auth: A.getAuth(app), db: F.getFirestore(app) });
+    A.getRedirectResult(cloud.auth).catch(() => {});
+    A.onAuthStateChanged(cloud.auth, async user => {
+      cloud.user = user;
+      if (user) await onSignedIn(user);
+      renderAccount();
+      subscribeBoard();
+    });
+  } catch (e) {
+    console.warn('Firebase failed to load', e);
+    cloud.on = false;
+    renderAccount();
+  }
+}
+
+async function signIn() {
+  const { A } = cloud, provider = new A.GoogleAuthProvider();
+  try { await A.signInWithPopup(cloud.auth, provider); }
+  catch (e) {
+    if (['auth/popup-blocked', 'auth/operation-not-supported-in-this-environment'].includes(e.code)) await A.signInWithRedirect(cloud.auth, provider);
+    else if (!['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(e.code)) toast('Sign-in didn’t work: ' + e.code);
+  }
+}
+
+async function onSignedIn(user) {
+  const { doc, getDoc } = cloud.F;
+  try {
+    const snap = await getDoc(doc(cloud.db, 'users', user.uid));
+    if (snap.exists()) {
+      const remote = Object.assign(freshState(), JSON.parse(snap.data().save));
+      if (remote.allTime > state.allTime) {            // keep whichever farm has gone further
+        for (const [id, n] of Object.entries(state.fidgets)) remote.fidgets[id] = Math.max(n, remote.fidgets[id] || 0);
+        state = remote;
+        toast('Loaded your farm from the cloud');
+        renderLists(true); renderAwards();
+      }
+    }
+  } catch (e) { console.warn('Cloud load failed', e); }
+  if (!state.name) {                                    // default: first name + last initial
+    const parts = (user.displayName || 'Farmer').trim().split(/\s+/);
+    state.name = (parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '')).slice(0, 20);
+  }
+  state.signedIn = true;
+  save();
+  cloud.pending = true;
+  fillProfile();
+}
+
+async function pushCloud() {
+  if (!cloud.user || !cloud.pending || Date.now() - cloud.lastPush < 11000) return;
+  cloud.pending = false;
+  cloud.lastPush = Date.now();
+  const { doc, setDoc, serverTimestamp } = cloud.F, uid = cloud.user.uid;
+  try {
+    await setDoc(doc(cloud.db, 'users', uid), { save: JSON.stringify(state), updatedAt: serverTimestamp() });
+    await setDoc(doc(cloud.db, 'leaderboard', uid), {
+      name: state.name || 'Farmer', allTime: Math.floor(state.allTime),
+      clicks: totalTaps(), fidgetClicks: state.fidgetClicks, achievements: state.achievements.length,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (e) { console.warn('Cloud save failed', e); cloud.pending = true; }
+}
+
+function subscribeBoard() {
+  cloud.unsub?.();
+  cloud.unsub = null;
+  if (!cloud.user) { renderBoard(null); return; }
+  const { collection, query, orderBy, limit, onSnapshot } = cloud.F;
+  const q = query(collection(cloud.db, 'leaderboard'), orderBy(cloud.sort, 'desc'), limit(25));
+  cloud.unsub = onSnapshot(q,
+    snap => renderBoard(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+    err => {
+      console.warn(err);
+      $('board').replaceChildren();
+      $('boardNote').textContent = 'Couldn’t load the leaderboard. Check your connection and try again.';
+    });
+}
+
+function renderBoard(rows) {
+  if (!cloud.on) { $('boardNote').textContent = 'The leaderboard isn’t set up yet. Add your Firebase settings at the top of index.html.'; $('board').replaceChildren(); return; }
+  if (!rows) { $('boardNote').textContent = 'Sign in with Google to see the leaderboard and add your farm to it.'; $('board').replaceChildren(); return; }
+  $('boardNote').textContent = rows.length
+    ? (cloud.sort === 'fidgetClicks' ? 'Top 25 by presses on a real fidget' : 'Top 25 by all-time taters grown')
+    : 'No farmers here yet. Yours will show up within a minute.';
+  const me = cloud.user?.uid;
+  $('board').replaceChildren(...rows.map((r, i) => {
+    const li = document.createElement('li');
+    if (r.id === me) {
+      li.className = 'me';
+      if (!state.bestRank || i + 1 < state.bestRank) { state.bestRank = i + 1; save(); }
+    }
+    li.innerHTML = '<span class="place"></span><span class="who"><span class="nm"></span><small></small></span><span class="score"></span>';
+    const place = li.querySelector('.place');
+    if (i < 3) place.innerHTML = ribbon(['#2b5ea8', '#c8372d', '#f3eee2'][i]); else place.textContent = i + 1;
+    li.querySelector('.nm').textContent = r.name;           // textContent keeps typed names from injecting HTML
+    li.querySelector('small').textContent = cloud.sort === 'fidgetClicks'
+      ? `${fmt(r.allTime || 0)} taters, ${r.achievements || 0} ribbons`
+      : `${fmt(r.fidgetClicks || 0)} fidget taps, ${r.achievements || 0} ribbons`;
+    li.querySelector('.score').textContent = fmt((cloud.sort === 'fidgetClicks' ? r.fidgetClicks : r.allTime) || 0);
+    return li;
+  }));
+}
+document.querySelectorAll('[data-sort]').forEach(b => b.addEventListener('click', () => {
+  cloud.sort = b.dataset.sort;
+  document.querySelectorAll('[data-sort]').forEach(o => o.setAttribute('aria-pressed', o === b));
+  subscribeBoard();
+}));
+
+function renderAccount() {
+  const box = $('accountBox');
+  box.replaceChildren();
+  const note = Object.assign(document.createElement('p'), { className: 'note' });
+  if (!cloud.on) {
+    $('accountText').textContent = 'Playing offline';
+    note.textContent = 'Sign-in and the leaderboard turn on once Firebase is set up. Your progress saves on this device.';
+    box.append(note);
+  } else if (!cloud.user) {
+    $('accountText').textContent = 'Sign in';
+    note.textContent = 'Sign in to save your farm online and join the leaderboard. Only your leaderboard name is shown to others.';
+    const btn = Object.assign(document.createElement('button'), { className: 'btn go', textContent: 'Sign in with Google' });
+    btn.addEventListener('click', signIn);
+    box.append(note, btn);
+  } else {
+    $('accountText').textContent = state.name || 'Signed in';
+    note.textContent = `Signed in as ${cloud.user.displayName || cloud.user.email}. Your farm saves online.`;
+    const btn = Object.assign(document.createElement('button'), { className: 'btn', textContent: 'Sign out' });
+    btn.addEventListener('click', () => cloud.A.signOut(cloud.auth));
+    box.append(note, btn);
+  }
+  fillProfile();
+}
+function fillProfile() { $('nameInput').value = state.name || ''; }
+$('accountBtn').addEventListener('click', () => showTab('me'));
+$('profileSave').addEventListener('click', () => {
+  state.name = $('nameInput').value.trim().replace(/\s+/g, ' ').slice(0, 20);
+  fillProfile();
+  save();
+  cloud.pending = true;
+  subscribeBoard();
+  renderAccount();
+  toast('Profile saved');
+});
+$('replantBtn').addEventListener('click', replant);
+
+/* Playtest tools: open the page with #playtest at the end of the link */
+function showPlaytest() { $('playtest').hidden = location.hash !== '#playtest'; }
+window.addEventListener('hashchange', showPlaytest);
+showPlaytest();
+document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', () => {
+  const act = b.dataset.pt;
+  if (act === 'tap') fidget.onClicks(1, { fromSync: false });          // same path as a real fidget press
+  if (act === 'sync') fidget.onClicks(50, { fromSync: true });         // same path as reconnecting after time away
+  if (act === 'hour') { const g = baseCps() * 3600; grow(g); toast(`Skipped an hour: +${fmt(g)} taters`); }
+  if (act === 'million') { grow(1e6); toast('+1M taters'); }
+  if (act === 'golden') { live.nextLucky = 0; live.luckyUntil = 0; $('lucky').hidden = true; }
+  if (act === 'fryer') addHeat(100);
+  if (act === 'reset') {
+    if (!confirm('Reset all progress on this device? This can’t be undone.')) return;
+    try { localStorage.removeItem(SAVE_KEY); } catch {}
+    state = freshState();
+    save(); renderLive(); renderLists(true); renderAwards(); renderMe();
+    toast('Progress reset');
+    return;
+  }
+  save(); renderLive(); renderMe();
+}));
+
+/* =====================================================================
+   8) Game loop and startup
+   ===================================================================== */
+(function offlineEarnings() {
+  const away = Math.min(Date.now() - state.lastSeen, 8 * 3600e3) / 1000;
+  const g = baseCps() * away * 0.5;
+  if (away > 60 && g >= 1) { grow(g); setTimeout(() => toast(`While you were away, your farm grew ${fmt(g)} taters`), 600); }
+})();
+
+let last = performance.now();
+setInterval(() => {
+  const now = performance.now(), dt = Math.min((now - last) / 1000, 60);
+  last = now;
+  grow(cps() * dt);
+  live.heat = Math.max(0, live.heat - 15 * dt);
+  luckyTick();
+  renderLive();
+}, 100);
+setInterval(() => {
+  checkAchievements();
+  renderLists();
+  if (!$('tab-me').hidden) renderMe();
+  pushCloud();
+}, 1000);
+setInterval(() => { save(); cloud.pending = true; }, 30000);
+document.addEventListener('visibilitychange', () => { if (document.hidden) { save(); cloud.pending = true; pushCloud(); } });
+
+scheduleLucky();
+renderLive(); renderLists(true); renderAwards(); renderMe(); renderBoard(null);
+/* =====================================================================
+   9) Home screen app: offline support and the install button
+   ===================================================================== */
+const topLevel = (() => { try { return window.top === window; } catch { return false; } })();
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+if ('serviceWorker' in navigator && location.protocol === 'https:' && topLevel) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installEvent = e;
+  $('installCard').hidden = false;
+  $('installBtn').hidden = false;
+});
+$('installBtn').addEventListener('click', async () => {
+  if (!installEvent) return;
+  installEvent.prompt();
+  const { outcome } = await installEvent.userChoice;
+  installEvent = null;
+  if (outcome === 'accepted') { $('installCard').hidden = true; toast('Tater Tapper is on your home screen'); }
+});
+window.addEventListener('appinstalled', () => { $('installCard').hidden = true; });
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (isIOS && !standalone && topLevel && location.protocol === 'https:') {
+  $('installCard').hidden = false;
+  $('installText').textContent = 'In Safari, tap the Share button, then Add to Home Screen. The home screen app can’t connect to the fidget on iPhone, so use the Bluefy browser for fidget play.';
+}
+
+initCloud();
+</script>
+</body>
+</html>
