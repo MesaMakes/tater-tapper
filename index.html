@@ -251,6 +251,8 @@
   .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
   .card { border: 2px solid var(--ink); border-radius: 16px; padding: 12px 14px; margin: 16px 0; background: var(--paper-2); }
   .card h3 { font: 400 1.15rem var(--slab); margin: 0 0 2px; }
+  .toggle { display: flex; align-items: center; gap: 10px; font-weight: 600; padding: 6px 0; cursor: pointer; }
+  .toggle input { width: 22px; height: 22px; accent-color: var(--green); margin: 0; }
   .stats { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 6px 0 0; }
   .pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-top: 8px; }
   .pt-grid .btn { padding: 8px 10px; font-size: .9rem; }
@@ -297,16 +299,25 @@
     .ledger .tabs { justify-content: center; }
     .ledger .sheet { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin: 0 6px;
                      border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
-    .toasts { bottom: calc(var(--peek) + 12px); }
+    .toasts { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 60px); }   /* keep the field clear for things to tap */
   }
 
   /* Pests and aliens */
   .threats { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
   .pest { position: absolute; pointer-events: auto; border: 0; background: none; padding: 0; cursor: pointer;
           -webkit-tap-highlight-color: transparent; touch-action: manipulation; animation: pestIn .35s cubic-bezier(.3,1.6,.5,1) both; }
-  .pest svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .pest-gopher { width: 64px; } .pest-crow { width: 56px; } .pest-ufo { width: 112px; } .pest-raccoon { width: 66px; }
-  .pest-beetle { width: 30px; translate: -50% -50%; rotate: var(--r); }
+  .pest svg { display: block; width: 100%; height: auto; overflow: visible; position: relative; z-index: 1;
+              filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 4px 6px rgba(0,0,0,.45)); }
+  /* A pulsing red target ring behind every pest, plus a bigger invisible tap area around it */
+  .pest::before { content: ""; position: absolute; inset: -16%; border-radius: 50%; border: 3px solid #ff3b30; pointer-events: none;
+                  box-shadow: 0 0 0 4px rgba(255,59,48,.25), inset 0 0 12px rgba(255,59,48,.35); animation: target 1.1s ease-out infinite; }
+  .pest::after { content: ""; position: absolute; inset: -28%; border-radius: 50%; }
+  .pest.gone::before, .pest.flee::before { display: none; }
+  @keyframes target { from { transform: scale(.75); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+  .pest-beetle::before { inset: -25%; border-color: #ffd23f; box-shadow: 0 0 0 4px rgba(255,210,63,.3), inset 0 0 10px rgba(255,210,63,.5); }
+  .pest-beetle::after { inset: -35%; }
+  .pest-gopher { width: min(30vw, 128px); } .pest-crow { width: min(28vw, 118px); } .pest-ufo { width: min(46vw, 190px); } .pest-raccoon { width: min(30vw, 128px); }
+  .pest-beetle { width: min(15vw, 62px); translate: -50% -50%; rotate: var(--r); }
   .pest-crow svg { animation: peck .8s ease-in-out infinite; transform-origin: 60% 80%; }
   .pest-ufo svg { animation: hover 1.6s ease-in-out infinite; }
   .pest-ufo .beam { animation: beam 1s ease-in-out infinite alternate; }
@@ -315,7 +326,7 @@
   .pest.hit svg { animation: hitShake .25s; }
   .pest.gone { animation: poof .35s ease-in forwards; pointer-events: none; }
   .pest.flee { animation: flee .6s ease-in forwards; pointer-events: none; }
-  .pest .hp { position: absolute; left: 18%; right: 18%; bottom: -9px; height: 7px; border-radius: 99px; background: rgba(0,0,0,.45); border: 1.5px solid #2f2117; overflow: hidden; }
+  .pest .hp { position: absolute; z-index: 2; left: 12%; right: 12%; bottom: -12px; height: 9px; border-radius: 99px; background: rgba(0,0,0,.5); border: 2px solid #2f2117; overflow: hidden; }
   .pest .hp b { display: block; height: 100%; width: 100%; background: #7ed957; transition: width .15s; }
   @keyframes pestIn { from { transform: scale(0); opacity: 0; } }
   @keyframes peck { 50% { transform: rotate(14deg); } }
@@ -325,6 +336,75 @@
   @keyframes hitShake { 25% { transform: translateX(-4px) scale(.9); } 75% { transform: translateX(4px) scale(.9); } }
   @keyframes poof { to { transform: scale(1.7); opacity: 0; } }
   @keyframes flee { to { transform: translateY(-90px) scale(.6); opacity: 0; } }
+  .pest-dragon { width: min(56vw, 230px); }
+  .pest-dragon svg { animation: hover 1.4s ease-in-out infinite; }
+  .pest-dragon .fire, .rocket .flame { transform-box: fill-box; transform-origin: 0 50%; animation: flick .14s steps(2) infinite; }
+  @keyframes flick { 50% { transform: scale(1.35, 1.15); } }
+
+  /* Sky: Spudnik rockets, the Time Portal and your pet dragons */
+  .sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .sky > * { position: absolute; }
+  .rocket { width: 26px; bottom: 34%; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer; animation: launch 14s ease-in infinite; }
+  .rocket svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .rocket .flame { transform-origin: 50% 0; }
+  @keyframes launch { 0%, 55% { transform: translateY(70px); visibility: hidden; } 56% { transform: translateY(70px); visibility: visible; }
+                      100% { transform: translate(40px, -400px) rotate(10deg); visibility: visible; } }
+  .pbld { top: 5%; right: 5%; width: 46px; height: 46px; }
+  .pbld i { position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--outline); box-shadow: 0 0 16px #9a6bff;
+            background: radial-gradient(circle, #1a1030 0 30%, transparent 31%), conic-gradient(#7b4bb3, #2b5ea8, #7ed957, #f4c542, #e8641f, #7b4bb3);
+            animation: spin 2.5s linear infinite; }
+  .pbld b { position: absolute; right: -8px; bottom: -6px; font: 400 13px var(--slab); color: var(--sign-text); -webkit-text-stroke: 3px var(--outline); paint-order: stroke fill; }
+  .pet { width: 58px; top: 12%; left: 0; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer; animation: glide 18s linear infinite; }
+  .pet svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .pet .wing, .pest-dragon .wing { transform-box: fill-box; transform-origin: 50% 100%; animation: flap .5s ease-in-out infinite; }
+  @keyframes flap { 50% { transform: scaleY(.55); } }
+  @keyframes glide { 0% { transform: translate(-80px, 24px); } 25% { transform: translate(28cqw, 0); } 50% { transform: translate(58cqw, 30px); }
+                     75% { transform: translate(86cqw, 6px); } 100% { transform: translate(115cqw, 22px); } }
+
+  /* Walkers on the hill: Bigfoot and the occasional dinosaur */
+  .walkers { position: absolute; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
+  .walker { position: absolute; left: 0; bottom: 9cqw; width: 34px; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer;
+            animation: walk var(--dur, 11s) linear forwards; }
+  .walker svg { display: block; width: 100%; height: auto; animation: stomp .5s ease-in-out infinite; }
+  .walker.bigfoot svg { filter: blur(.7px); }
+  .walker.dino { width: 56px; }
+  .walker.snap { pointer-events: none; }
+  .walker.snap svg { animation: poof .45s ease-in forwards; }
+  @keyframes walk { from { transform: translateX(-60px); } to { transform: translateX(calc(100cqw + 40px)); } }
+  @keyframes stomp { 50% { transform: translateY(-3px) rotate(2deg); } }
+
+  /* Time portals that open for a few seconds */
+  .rift { position: absolute; width: 88px; aspect-ratio: 1; border-radius: 50%; border: 3px solid var(--outline); pointer-events: auto; cursor: pointer; padding: 0;
+          background: radial-gradient(circle, #fff 0 7%, #1a1030 8% 32%, transparent 33%), conic-gradient(#7b4bb3, #2b5ea8, #7ed957, #f4c542, #e8641f, #7b4bb3);
+          box-shadow: 0 0 30px #9a6bff, 0 0 60px #7b4bb3; animation: spin 1.6s linear infinite, pestIn .4s cubic-bezier(.3,1.6,.5,1) both; }
+  .rift.flee { animation: poof .5s ease-in forwards; pointer-events: none; }
+
+  /* Chaos: evil twin, meteors, Spudlings, tater rain, the Spudnado and broken gravity */
+  .pest-twin { width: min(40vw, 165px); }
+  .pest-twin svg { animation: hover .9s ease-in-out infinite; }
+  .pest-meteor { width: min(17vw, 70px); animation: pestIn .3s both, fall 9.5s linear forwards; }
+  @keyframes fall { from { top: -14%; } to { top: 72%; } }
+  .walker.spudling { width: 30px; }
+  .drop { position: absolute; top: -8%; width: 30px; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer;
+          animation: rainfall var(--t, 4s) linear forwards; }
+  .drop svg { display: block; width: 100%; height: auto; }
+  .drop.caught { pointer-events: none; }
+  .drop.caught svg { animation: poof .3s ease-in forwards; }
+  @keyframes rainfall { from { top: -8%; rotate: 0deg; } to { top: 96%; rotate: 220deg; } }
+  .nado { position: absolute; bottom: 22%; left: -25%; width: 84px; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer;
+          animation: sweep 12s linear forwards; }
+  .nado svg { display: block; width: 100%; height: auto; animation: wobble .3s ease-in-out infinite alternate; transform-origin: 50% 100%; }
+  @keyframes sweep { from { left: -25%; } to { left: 110%; } }
+  @keyframes wobble { from { transform: rotate(-5deg) scaleX(.95); } to { transform: rotate(5deg) scaleX(1.05); } }
+  .scene { transition: transform .9s cubic-bezier(.5,1.5,.4,1); }
+  .scene.flip { transform: rotate(180deg); }
+  .tater-btn.dance svg { animation: dance .5s ease-in-out infinite; }
+  @keyframes dance { 0%, 100% { transform: rotate(-8deg) translateY(0); } 50% { transform: rotate(8deg) translateY(-14px); } }
+  .hotpot { position: absolute; width: 66px; border: 0; background: none; padding: 0; pointer-events: auto; cursor: pointer;
+            transition: left .25s cubic-bezier(.3,1.4,.5,1), top .25s cubic-bezier(.3,1.4,.5,1); animation: pestIn .35s cubic-bezier(.3,1.6,.5,1) both; }
+  .hotpot svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 0 10px #ff6a2b); animation: sizzle .18s steps(2) infinite; }
+  .hotpot.flee { animation: poof .5s ease-in forwards; pointer-events: none; }
+  @keyframes sizzle { 50% { transform: translate(1.5px, -1px) rotate(3deg); } }
   .alert { position: absolute; z-index: 8; top: 62px; left: 14px; right: 14px; display: grid; gap: 1px; padding: 8px 14px 10px; border-radius: 16px;
            background: var(--red); color: #fff; border: 2px solid var(--outline); box-shadow: 0 4px 0 var(--outline); animation: alertIn .3s cubic-bezier(.3,1.5,.5,1); }
   .alert strong { font: 400 1.15rem var(--slab); }
@@ -340,8 +420,54 @@
   @keyframes disco { from { filter: hue-rotate(0deg) saturate(1.6); } to { filter: hue-rotate(360deg) saturate(1.6); } }
   .tater-btn.sweet svg { filter: hue-rotate(-28deg) saturate(1.7); }
 
+  /* News ticker */
+  .ticker { width: 100%; margin-top: 8px; height: 26px; overflow: hidden; border-radius: 999px; background: rgba(47,33,23,.78); color: #fff6e2;
+            border: 2px solid var(--outline); display: flex; align-items: center; position: relative; z-index: 2; }
+  .ticker b { flex: none; height: 100%; display: grid; place-items: center; padding: 0 10px; background: var(--red); font: 400 .78rem var(--slab); letter-spacing: .04em; }
+  .ticker span { white-space: nowrap; font-weight: 600; font-size: .8rem; padding-left: 100%; display: inline-block; animation: tick var(--dur, 14s) linear forwards; }
+  .ticker .lane { flex: 1; overflow: hidden; }
+  @keyframes tick { to { transform: translateX(-100%); } }
+
+  /* The One Starch: the farm slowly turns volcanic */
+  .doom { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: calc(var(--doom, 0) * .92); transition: opacity 2s;
+          background: radial-gradient(ellipse at 50% 100%, rgba(255,120,20,.6), transparent 60%), linear-gradient(#250805, #6e1a0a 45%, rgba(184,50,15,.65) 72%, transparent 88%); }
+  .land { filter: brightness(calc(1 - var(--doom, 0) * .45)) saturate(calc(1 - var(--doom, 0) * .5)); }
+  .field::after { content: ""; position: absolute; inset: auto 0 0; height: 45%; pointer-events: none; z-index: 1; opacity: var(--doom, 0);
+                  background: linear-gradient(transparent, rgba(255,90,20,.55)); }
+  .eye { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% 0; width: min(36vw, 150px); pointer-events: none; animation: eyeIn 1.2s cubic-bezier(.3,1.4,.5,1) both; }
+  .eye svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .eye .flames { transform-box: fill-box; transform-origin: 50% 100%; animation: flick .2s steps(2) infinite; }
+  #eyePupil { transition: transform .25s; }
+  @keyframes eyeIn { from { transform: scale(0) translateY(40px); opacity: 0; } }
+  .land.aware use[href="#s-factory"] { filter: drop-shadow(0 0 5px #ff2a1a) drop-shadow(0 0 2px #ff2a1a); }
+
+  /* Recorded on a potato: 144p mode */
+  .scene.lowres .field, .scene.lowres .sign, .scene.lowres .logo, .scene.lowres .fryer { filter: blur(1.5px) contrast(1.3) saturate(.7); }
+  .scene.lowres::before { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none;
+                          background: repeating-linear-gradient(0deg, rgba(0,0,0,.09) 0 2px, transparent 2px 4px); }
+  .scene.lowres::after { content: "144p"; position: absolute; z-index: 9; right: 14px; bottom: 12px; font: 700 .75rem var(--sans); color: #fff;
+                         background: rgba(0,0,0,.6); padding: 2px 8px; border-radius: 6px; pointer-events: none; }
+
+  .tater-btn.roll svg { animation: roll 1s ease-in-out; }
+  @keyframes roll { to { transform: rotate(360deg); } }
+  .smoke-screen { position: fixed; inset: 0; z-index: 40; pointer-events: none; animation: smokeOut 5s ease-in forwards;
+                  background: radial-gradient(circle at 30% 40%, rgba(120,110,100,.95), transparent 45%), radial-gradient(circle at 70% 60%, rgba(90,85,80,.95), transparent 50%),
+                              radial-gradient(circle at 50% 80%, rgba(140,130,120,.95), transparent 55%), rgba(70,65,60,.85); }
+  @keyframes smokeOut { 0%, 40% { opacity: 1; } 100% { opacity: 0; } }
+  .kicker { font: 700 .74rem var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); margin: 12px 2px 0; }
+  .row .lvl { font: 400 1.3rem/1 var(--slab); }
+  .credits { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; color: var(--ink-soft); font-size: .82rem; }
+  .credits button { border: 0; background: none; padding: 2px; cursor: pointer; opacity: .55; }
+  .credits svg { width: 18px; height: 18px; display: block; }
+
   @media (prefers-reduced-motion: reduce) {
-    .pest, .pest svg, .pest-ufo .beam, .alert, .tater-btn.disco svg { animation: none !important; }
+    .ticker span { animation: none; padding-left: 10px; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .eye, .eye .flames, .tater-btn.roll svg, .smoke-screen { animation: none !important; }
+    .pest, .pest svg, .pest-ufo .beam, .alert, .tater-btn.disco svg, .walker svg, .rocket .flame, .pet .wing, .pbld i, .rift, .nado svg { animation: none !important; }
+    .pest::before { animation: none; transform: scale(1.05); }
+    .scene { transition: none; }
+    .tater-btn.dance svg, .hotpot svg { animation: none; }
+    .pet { animation-duration: 60s; } .walker { animation-duration: 25s; }
     .tool svg { animation: none; }
     .ledger { transition: none; }
     .sun, .lucky, .dot.wait, .land .drive, .land .smoke, .land .item.new > *, .herd svg.i.new { animation: none; }
@@ -356,6 +482,7 @@
 <div class="app">
   <section class="scene" aria-label="Your field">
     <div class="sun" aria-hidden="true"></div>
+    <div class="doom" aria-hidden="true"></div>
     <svg class="mars" id="mars" viewBox="0 0 64 64" hidden aria-hidden="true">
       <circle cx="32" cy="38" r="22" fill="#c4502f" stroke="var(--outline)" stroke-width="2.5"/>
       <circle cx="22" cy="44" r="4" fill="#9e3b22"/><circle cx="40" cy="50" r="3" fill="#9e3b22"/><circle cx="44" cy="36" r="2.4" fill="#9e3b22"/>
@@ -368,6 +495,7 @@
       <button class="pill" id="accountBtn"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span id="accountText">Sign in</span></button>
     </div>
 
+    <div class="ticker" aria-hidden="true"><b>NEWS</b><div class="lane"><span id="tickerText"></span></div></div>
     <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
     <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span></div>
@@ -379,6 +507,13 @@
     </div>
 
     <div class="field" id="field">
+      <div class="sky" id="sky"></div>
+      <div class="eye" id="eye" hidden aria-hidden="true"><svg viewBox="0 0 120 90">
+        <path class="flames" d="M20 62 C10 42 22 32 26 20 C30 32 36 36 36 46 C40 32 48 24 52 8 C58 26 64 32 66 46 C70 34 78 28 84 16 C88 32 96 40 100 62Z" fill="#ff7a1f" stroke="#2f2117" stroke-width="3"/>
+        <path d="M14 66 C14 50 30 40 60 40 C90 40 106 50 106 66 C106 80 88 86 60 86 C32 86 14 80 14 66Z" fill="#fbf7ee" stroke="#2f2117" stroke-width="3.5"/>
+        <ellipse cx="60" cy="64" rx="22" ry="14" fill="#ffd45c" stroke="#2f2117" stroke-width="3"/>
+        <g id="eyePupil"><ellipse cx="60" cy="64" rx="5" ry="12" fill="#2f2117"/></g>
+        <g stroke="#3f8a2a" stroke-width="3" stroke-linecap="round"><path d="M26 56l4-3M88 54l5 2M34 78l4 1M84 78l-4 2M48 46l3-3M74 46l-2-3"/></g></svg></div>
       <svg class="land" id="land" viewBox="0 0 400 200" aria-hidden="true">
         <defs>
           <symbol id="s-hoe" viewBox="0 0 16 40"><rect x="6.5" y="6" width="3" height="34" rx="1.5" fill="#a4723f" stroke="var(--outline)" stroke-width="1.2"/><path d="M1.5 1.5h13v6.5H4z" fill="#b4bec3" stroke="var(--outline)" stroke-width="1.2"/></symbol>
@@ -443,6 +578,7 @@
         </svg>
       </button>
       <div class="buffs" id="buffs"></div>
+      <div class="walkers" id="walkers"></div>
       <div class="threats" id="threats"></div>
     </div>
   </section>
@@ -466,6 +602,18 @@
 
       <div class="panel" id="tab-upgrades" role="tabpanel" hidden>
         <div class="panel-head"><h2>Upgrades</h2></div>
+        <div id="kitchen" hidden><p class="kicker">Kitchen</p><div id="kitchenRows"></div></div>
+        <div class="card" id="riskyCard" hidden>
+          <h3>Risky Root</h3>
+          <p class="note">A suspicious glowing root. 45% chance to double your taters, 55% chance to lose half. You can grab it once every 10 minutes.</p>
+          <button class="btn go" id="riskyBtn">Grab it</button>
+        </div>
+        <div class="card" id="ringCard" hidden>
+          <h3>The One Starch</h3>
+          <p class="note" id="ringText"></p>
+          <button class="btn go" id="ringBtn">Toss it into the fryer</button>
+        </div>
+        <p class="kicker" id="upKicker" hidden>Upgrades</p>
         <div id="upgradeList"></div>
         <p class="empty" id="upgradeEmpty">New upgrades show up here as your farm grows. Keep tapping and buying.</p>
       </div>
@@ -497,6 +645,14 @@
         </div>
 
         <div class="card">
+          <h3>Sound and vibration</h3>
+          <label class="toggle"><input type="checkbox" id="soundToggle"> <span>Pest sounds</span></label>
+          <label class="toggle"><input type="checkbox" id="hapticToggle"> <span>Vibration</span></label>
+          <label class="toggle" id="lowresRow" hidden><input type="checkbox" id="lowresToggle"> <span>144p mode (Recorded on a Potato): taps +10%</span></label>
+          <p class="note" id="feelNote" hidden></p>
+        </div>
+
+        <div class="card">
           <h3>Replant</h3>
           <p class="note" id="replantText"></p>
           <button class="btn go" id="replantBtn">Replant</button>
@@ -504,6 +660,8 @@
 
         <h2 style="font: 400 1.2rem var(--slab); margin: 16px 0 4px;">Stats</h2>
         <dl class="stats" id="stats"></dl>
+        <p class="credits">Tater Tapper by Mesa Makes
+          <button id="cake" aria-label="A slice of cake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-8H4z"/><path d="M4 15c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0M12 12V8M12 6.5c-1-1 0-2.5 0-2.5s1 1.5 0 2.5"/></svg></button></p>
 
         <div class="card" id="playtest" hidden>
           <h3>Playtest tools</h3>
@@ -516,6 +674,15 @@
             <button class="btn" data-pt="golden">Golden tater now</button>
             <button class="btn" data-pt="fryer">Fill the fryer</button>
             <button class="btn" data-pt="pest">Send a pest</button>
+            <button class="btn" data-pt="dragon">Send a dragon</button>
+            <button class="btn" data-pt="bigfoot">Send Bigfoot</button>
+            <button class="btn" data-pt="portal">Open a portal</button>
+            <button class="btn" data-pt="twin">Evil twin</button>
+            <button class="btn" data-pt="meteors">Meteors</button>
+            <button class="btn" data-pt="parade">Spudling parade</button>
+            <button class="btn" data-pt="rain">Tater rain</button>
+            <button class="btn" data-pt="nado">Spudnado</button>
+            <button class="btn" data-pt="hotpot">Hot potato</button>
             <button class="btn go" data-pt="reset">Reset all progress</button>
           </div>
         </div>
@@ -644,6 +811,9 @@ const BUILDINGS = [
   { id: 'harvester', name: 'Potato Harvester',  desc: 'Lifts, shakes and loads the crop.', base: 1.4e6, cps: 1400 },
   { id: 'fryline',   name: 'Fry Factory',       desc: 'Peeled, cut and fried by the ton.', base: 2e7,   cps: 7800 },
   { id: 'mars',      name: 'Mars Greenhouse',   desc: 'Grows spuds in red planet dirt.',   base: 3.3e8, cps: 44e3 },
+  { id: 'spudnik',   name: 'Spudnik',           desc: 'A rocket that ships taters across the solar system.', base: 5.1e9, cps: 2.6e5 },
+  { id: 'portal',    name: 'Time Portal',       desc: 'Pulls taters out of potato history.', base: 7.5e10, cps: 1.6e6 },
+  { id: 'dragon',    name: 'Dragon Ranch',      desc: 'Tame dragons fry a whole field in one breath.', base: 1e12, cps: 1e7 },
 ];
 const TIERS = [
   { own: 1,  cost: 10,   label: 'Tune-up' },
@@ -668,12 +838,26 @@ UPGRADES.push(
   { id: 'scarecrow', icon: 'scarecrow', name: 'Scarecrow',       desc: 'Crows come half as often, and only two at a time.', cost: 5e3,   unlock: () => !!state.seen.crows },
   { id: 'barncat',   icon: 'cat',       name: 'Barn Cat',        desc: 'Gophers need half as many taps.',                  cost: 1.5e4, unlock: () => !!state.seen.gopher },
   { id: 'ladybugs',  icon: 'ladybug',   name: 'Ladybug Release', desc: 'Beetles you miss get eaten after 20 seconds.',      cost: 4e4,   unlock: () => !!state.seen.beetles },
+  { id: 'cargo',     icon: 'bin',       name: 'Cargo Pants',     desc: 'Extra pockets for tots. Falling taters drop slower so you can catch more.', cost: 1e5, unlock: () => (state.caught || 0) >= 5 },
+  { id: 'spudgun',   icon: 'radar',     name: 'Spud Gun',        desc: 'A potato cannon fires at any pest once every 1.5 seconds.', cost: 2.5e5, unlock: () => Object.values(state.pests).reduce((a, b) => a + b, 0) >= 10 },
+  { id: 'fireproof', icon: 'heat',      name: 'Fireproof Silos', desc: 'Wild dragons need half as many taps.',             cost: 5e7,   unlock: () => !!state.seen.dragon },
   { id: 'binlocks',  icon: 'bin',       name: 'Locking Bins',    desc: 'Raccoons need half as many taps.',                 cost: 8e4,   unlock: () => !!state.seen.raccoon },
   { id: 'foilhats',  icon: 'foil',      name: 'Tinfoil Hats',    desc: 'UFOs need half as many taps.',                     cost: 5e5,   unlock: () => !!state.seen.ufo },
   { id: 'radar',     icon: 'radar',     name: 'Radar Dish',      desc: 'UFOs give you 10 extra seconds.',                  cost: 5e6,   unlock: () => (state.pests.ufo || 0) >= 3 },
   { id: 'away1', icon: 'clock', name: 'Farmhand',          desc: 'While the app is closed, your farm keeps growing at 25% speed for up to 1 hour.', cost: 2e4, unlock: () => baseCps() >= 10 },
   { id: 'away2', icon: 'clock', name: 'Night Shift',       desc: 'Away growth rises to 50% speed for up to 4 hours.',                                cost: 2e6, unlock: () => has('away1') && baseCps() >= 1000 },
   { id: 'away3', icon: 'clock', name: 'Full-Time Foreman', desc: 'Away growth rises to 75% speed for up to 8 hours.',                                cost: 2e8, unlock: () => has('away2') && baseCps() >= 1e5 },
+);
+UPGRADES.push(
+  { id: 'potatocam',  icon: 'cam',       name: 'Recorded on a Potato', desc: 'Unlocks 144p mode on the Me tab. While it’s on, taps are worth 10% more.', cost: 500, unlock: () => state.allTime >= 200 },
+  { id: 'aibattery',  icon: 'battery',   name: 'Sarcastic AI Battery', desc: 'Wires your potato to a moody AI core. +10% to everything you grow. It has opinions.', cost: 8e3, unlock: () => owned('stand') >= 1 },
+  { id: 'breakfast',  icon: 'breakfast', name: 'Second Breakfast',     desc: 'Come back after 5+ minutes away and your farm grows twice as fast for 60 seconds.', cost: 6e4, unlock: () => baseCps() >= 20 },
+  { id: 'couch',      icon: 'couch',     name: 'Couch Potato Lifestyle', desc: 'Stop tapping for 10 seconds and your farm grows 50% faster until you tap again.', cost: 5e5, unlock: () => baseCps() >= 100 },
+  { id: 'idaho',      icon: 'hat',       name: 'Idaho Jones and the Temple of Spud', desc: 'An adventurer raids ancient root cellars and brings back a golden tuber every 5–8 minutes.', cost: 2.5e6, unlock: () => state.goldenTaters >= 3 },
+  { id: 'totem',      icon: 'totem',     name: 'Tater-Totem of Undying', desc: 'Once per season, it saves you from one disaster: a pest loss, an abduction or a bad Risky Root.', cost: 1e9, unlock: () => state.allTime >= 1e9 },
+  { id: 'redsoil',    icon: 'patch',     name: 'The Red Soil',         desc: 'Questionable fertilizer that grows anything anywhere. Backyard Patches and Mars Greenhouses grow 3× more.', cost: 2e10, unlock: () => owned('mars') >= 1 },
+  { id: 'onestarch',  icon: 'ring',      name: 'The One Starch',       desc: 'A cursed ring. Everything you grow is tripled, but your farm slowly turns into a volcanic wasteland.', cost: 1e13, unlock: () => state.allTime >= 1e13 },
+  { id: 'selfaware',  icon: 'fryline',   name: 'Self-Aware Fry Factories', desc: 'Fry Factories make 10× more. They promise they aren’t plotting anything.', cost: 1e14, unlock: () => owned('fryline') >= 50 },
 );
 BUILDINGS.forEach(b => TIERS.forEach((t, i) => UPGRADES.push({
   id: `${b.id}_${i}`, icon: b.id, name: `${b.name} ${t.label}`, desc: `Doubles what each ${b.name} makes.`,
@@ -713,7 +897,7 @@ addAch('crow25', 'Not today, birds', 'Shoo away 25 crows.', () => (state.pests.c
 addAch('beetle50', 'Beetle squasher', 'Squish 50 potato beetles.', () => (state.pests.beetle || 0) >= 50);
 addAch('ufo1', 'Close encounter', 'Drive off a UFO.', () => (state.pests.ufo || 0) >= 1);
 addAch('ufo10', 'Area 51 survivor', 'Drive off 10 UFOs.', () => (state.pests.ufo || 0) >= 10);
-addAch('defall', 'Fortified farm', 'Buy every pest defense.', () => ['scarecrow', 'barncat', 'ladybugs', 'binlocks', 'foilhats', 'radar'].every(id => has(id)));
+addAch('defall', 'Fortified farm', 'Buy every pest defense.', () => ['scarecrow', 'barncat', 'ladybugs', 'binlocks', 'foilhats', 'radar', 'fireproof'].every(id => has(id)));
 
 // Bigger goals
 [[1e12, 'Potato planet'], [1e15, 'Spudiverse']]
@@ -743,6 +927,64 @@ addSecret('egg_patience', 'Couch potato', 'Leave the game open for 5 minutes wit
 addSecret('egg_holiday', 'Festive spud', 'Play on a holiday.', eggFound('holiday'));
 addSecret('egg_raccoon', 'Trash panda', 'Chase off the raccoon that only shows up late at night.', () => (state.pests.raccoon || 0) >= 1);
 addSecret('egg_abduct', 'Probed', 'Lose a building to aliens.', () => state.abducted >= 1);
+addSecret('egg_bigfoot', 'Blurry photo', 'Tap Bigfoot as he wanders across your field.', eggFound('bigfoot'));
+addSecret('egg_believer', 'Believer', 'Photograph Bigfoot 3 times.', () => (state.bigfoot || 0) >= 3);
+addSecret('egg_spudnik', 'Houston, we have a potato', 'Tap a Spudnik rocket in mid-flight.', eggFound('spudnik'));
+addSecret('egg_paradox', 'Paradox', 'Meet yourself inside a time portal.', eggFound('paradox'));
+addSecret('egg_dino', 'Spudosaurus', 'Bring a dinosaur back through a time portal.', eggFound('dino'));
+addSecret('egg_1111', 'Make a wish', 'Tap the potato at 11:11.', eggFound('1111'));
+addSecret('egg_pet', 'Dragon rider', 'Tap your pet dragon 10 times quickly.', eggFound('pet'));
+
+// Spudnik, time travel and dragons
+addAch('spudnik1', 'Liftoff', 'Launch your first Spudnik.', () => owned('spudnik') >= 1);
+addAch('portal1', 'Time traveler', 'Build a Time Portal.', () => owned('portal') >= 1);
+addAch('portals10', 'Frequent flyer', 'Step through 10 time portals.', () => (state.portals || 0) >= 10);
+addAch('dragonown', 'Dragon whisperer', 'Raise a dragon on your Dragon Ranch.', () => owned('dragon') >= 1);
+addAch('dragon1', 'Dragon slayer', 'Drive off a wild dragon.', () => (state.pests.dragon || 0) >= 1);
+addAch('dragon10', 'Knight of the fryer', 'Drive off 10 wild dragons.', () => (state.pests.dragon || 0) >= 10);
+
+// Chaos
+addAch('twin1', 'Mirror match', 'Beat your evil twin.', () => (state.pests.twin || 0) >= 1);
+addAch('meteor10', 'Planetary defense', 'Zap 10 meteors before they land.', () => (state.pests.meteor || 0) >= 10);
+addAch('rain25', 'Bucket brigade', 'Catch 25 taters falling from the sky.', () => (state.caught || 0) >= 25);
+addAch('feast1', 'Harvest feast', 'Greet every Spudling in a parade.', () => (state.feasts || 0) >= 1);
+addAch('feast10', 'Party planner', 'Throw 10 harvest feasts.', () => (state.feasts || 0) >= 10);
+addSecret('egg_potaytoes', 'Po-tay-toes', 'Tap the potato three times, slow and steady: po… tay… toes.', eggFound('potaytoes'));
+addSecret('egg_gravity', 'Gravity check', 'Tap so fast that gravity breaks (80 taps in 10 seconds).', eggFound('gravity'));
+addSecret('egg_nado', 'Spudnado rider', 'Tap the Spudnado 10 times while it spins through.', eggFound('nado'));
+
+// Potato pop culture
+addAch('hotpot1', 'Hot potato', 'Juggle a hot potato without dropping it.', () => (state.hotPotatoes || 0) >= 1);
+addAch('hotpot10', 'Who needs oven mitts', 'Juggle 10 hot potatoes.', () => (state.hotPotatoes || 0) >= 10);
+addAch('battery', 'Potato battery', 'Power up the game with your fidget for the first time.', () => !!state.fidgetConnected);
+addAch('botanist', 'Botanist of the year', 'Grow potatoes in 10 Mars Greenhouses.', () => owned('mars') >= 10);
+addSecret('egg_sos', 'Save Our Spuds', 'Tap SOS in Morse code on the potato: 3 short taps, 3 long presses, 3 short taps.', eggFound('sos'));
+addSecret('egg_tots', 'Pocket full of tots', 'Catch every single tater in one tater rain.', eggFound('tots'));
+addSecret('egg_mash', 'Do the Mashed Potato', 'Tap a steady dance beat on the potato, 16 taps about half a second apart.', eggFound('mash'));
+addSecret('egg_small', 'Small potatoes', 'Spend every last tater on one purchase.', eggFound('small'));
+addSecret('egg_onepotato', 'One potato, two potato', 'Tap the potato with 4 fingers at once.', eggFound('onepotato'));
+addSecret('egg_tottuesday', 'Tot Tuesday', 'Catch a golden tater tot. They only show up on Tuesdays.', eggFound('tottuesday'));
+
+// Kitchen, cursed rings and the late game
+addAch('ai1', 'Batteries included', 'Wire your potato to the Sarcastic AI Battery.', () => has('aibattery'));
+addAch('breakfast1', 'Most important meal', 'Sit down for a Second Breakfast.', () => !!state.eggs.breakfast);
+addAch('jones10', 'Cellar raider', 'Idaho Jones brings back 10 golden tubers.', () => (state.idahoRaids || 0) >= 10);
+addAch('kitchen10', 'Head chef', 'Max out any kitchen tool.', () => Object.values(state.kitchen || {}).some(l => l >= 10));
+addAch('ring1', 'Cursed tuber', 'Put on The One Starch.', () => has('onestarch'));
+addAch('starchularity', 'The Starchularity', 'Your Fry Factories become self-aware.', () => has('selfaware'));
+addAch('standard', 'The Tater Standard', 'Grow 1 quintillion taters. Potatoes are now the world’s money.', () => state.allTime >= 1e18);
+addAch('totem1', 'Undying', 'Let your Tater-Totem save you from disaster.', () => (state.totemSaves || 0) >= 1);
+addSecret('egg_stew', 'Boil, Mash & Stew', 'Get the Boiling Pot, Mashing Press and Stew Cauldron to the same level (3 or higher).', eggFound('stew'));
+addSecret('egg_leeroy', 'LEEROY JENK-YAMS!', 'Grab the Risky Root and lose half your taters.', eggFound('leeroy'));
+addSecret('egg_cake', 'The Cake is a Fry', 'Find the cake hiding in the credits.', eggFound('cake'));
+addSecret('egg_baked', 'Hey, You. You’re Finally Baked', 'Come back after more than an hour away.', eggFound('baked'));
+addSecret('egg_salad', 'The $55,492 Salad', 'Grow exactly enough taters to fund one very famous bowl of potato salad.', eggFound('salad'));
+addSecret('egg_pressf', 'Press F to Pay Respects', 'Let a golden tater get away.', eggFound('pressf'));
+addSecret('egg_barrel', 'Do a Barrel Roll', 'Type “do a barrel roll” on a keyboard, or save it as your leaderboard name.', eggFound('barrel'));
+addSecret('egg_lowres', 'Recorded on a Potato', 'Play in 144p mode.', eggFound('lowres'));
+addSecret('egg_eye', 'Watched', 'Wear the One Starch long enough that the Eye of Sour-Cream opens.', eggFound('eye'));
+addSecret('egg_wasteland', 'Volcanic wasteland', 'Let The One Starch turn your whole farm to lava.', eggFound('wasteland'));
+addSecret('egg_fryer', 'Into the fryer', 'Toss The One Starch into the fryer.', eggFound('fryer'));
 
 /* =====================================================================
    Icons (24×24 line drawings) and ribbons
@@ -765,6 +1007,20 @@ const ICON = {
   ladybug:   '<ellipse cx="12" cy="14" rx="6.5" ry="7"/><path d="M12 7v14M9 4.5l1.5 2.5M15 4.5L13.5 7"/><path d="M9 11.5h.01M15 11.5h.01M9.5 16.5h.01M14.5 16.5h.01"/>',
   bin:       '<path d="M5 8h14l-1.2 12H6.2z"/><path d="M4 8h16M9.5 4h5v4M10 12v5M14 12v5"/>',
   foil:      '<path d="M12 3L5 19h14z"/><path d="M8 13l2 1 2-2 2 2 2-1"/>',
+  spudnik:   '<path d="M12 2c3 3 4 7 4 11l-4 3-4-3c0-4 1-8 4-11z"/><circle cx="12" cy="9" r="1.6"/><path d="M8 12.5l-3 4.5h4M16 12.5l3 4.5h-4M10 19l2 3 2-3"/>',
+  portal:    '<circle cx="12" cy="12" r="8.5"/><path d="M12 6.5a5.5 5.5 0 1 1-5.2 3.7M12 9.5a2.5 2.5 0 1 1-2.3 1.6"/>',
+  dragon:    '<path d="M3 15c3-1 5-4 6-8 2 3 5 4 10 3-1 4-4 7-8 7H5"/><path d="M6 17l-2 3M10 17l-1 3M14 6.5l1-3 2 3"/><path d="M16 10.5h.01"/>',
+  cam:       '<rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/>',
+  battery:   '<rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4M10 9.5l-2 3h4l-2 3"/>',
+  breakfast: '<circle cx="12" cy="13" r="7"/><circle cx="12" cy="13" r="2.5"/><path d="M5 5l2 2M19 5l-2 2M12 3v2"/>',
+  couch:     '<path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><path d="M3 11h18v6H3zM5 17v2M19 17v2"/>',
+  hat:       '<path d="M3 16c3 2 15 2 18 0"/><path d="M6 15c0-5 2-8 6-8s6 3 6 8"/><path d="M6 13h12"/>',
+  totem:     '<path d="M8 3h8v6H8zM7 9h10v6H7zM9 15h6v6H9z"/><path d="M10.5 6h.01M13.5 6h.01M10 12h4"/>',
+  ring:      '<circle cx="12" cy="14" r="6.5"/><circle cx="12" cy="14" r="4"/><path d="M9 4.5l3 2.5 3-2.5"/>',
+  pot:       '<path d="M4 9h16v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M2 9h20M9 6c0-1 1-2 1-2M14 6c0-1 1-2 1-2"/>',
+  press:     '<path d="M12 3v8M7 11h10v3H7zM5 21h14l-2-7H7z"/>',
+  cauldron:  '<path d="M5 9h14l-1 8a4 4 0 0 1-4 3h-4a4 4 0 0 1-4-3z"/><path d="M3 9h18M8 5.5h.01M12 4h.01M16 5.5h.01"/>',
+  dice:      '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01"/>',
   clock:     '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   radar:     '<path d="M4 18a10 10 0 0 1 10-10"/><path d="M8 18a6 6 0 0 1 6-6"/><circle cx="14" cy="18" r="1.5"/><path d="M3 21h18"/>',
   bt:        '<path d="M12 13v8"/><circle cx="12" cy="11" r="1.6"/><path d="M8.2 7.5a5.5 5.5 0 0 1 7.6 0M5.3 4.6a9.6 9.6 0 0 1 13.4 0"/>',
@@ -787,7 +1043,7 @@ function ribbon(color) {
   </svg>`;
 }
 const achColor = id => RIBBON_COLORS[
-  /^egg_/.test(id) ? 'fun' : /^pest|^gopher|^crow|^beetle|^ufo|^def/.test(id) ? 'pest' : /^grow|^cps/.test(id) ? 'grow' : /^tap|^hot/.test(id) ? 'tap' : /^fidget|^sync/.test(id) ? 'fidget' : /^own|^lineup|^up|^hoe|^mars/.test(id) ? 'farm' : 'gold'];
+  /^egg_/.test(id) ? 'fun' : /^pest|^gopher|^crow|^beetle|^ufo|^def|^twin|^meteor/.test(id) ? 'pest' : /^grow|^cps/.test(id) ? 'grow' : /^tap|^hot/.test(id) ? 'tap' : /^fidget|^sync/.test(id) ? 'fidget' : /^own|^lineup|^up|^hoe|^mars/.test(id) ? 'farm' : 'gold'];
 
 /* =====================================================================
    Farm landscape: what you buy shows up in the field
@@ -897,7 +1153,8 @@ const SAVE_KEY = 'taterTapper.v1';
 function freshState() {
   return { v: 2, taters: 0, run: 0, allTime: 0, clicks: 0, fidgetClicks: 0, buildings: {}, upgrades: [],
     achievements: [], seeds: 0, replants: 0, hotFryers: 0, goldenTaters: 0, bigSyncs: 0, bestRank: 0,
-    signedIn: false, name: '', lastSeen: Date.now(), fidgets: {}, pests: {}, seen: {}, eggs: {}, abducted: 0 };
+    signedIn: false, name: '', lastSeen: Date.now(), fidgets: {}, pests: {}, seen: {}, eggs: {}, abducted: 0, bigfoot: 0, portals: 0, caught: 0, feasts: 0, hotPotatoes: 0, fidgetConnected: false, settings: { sound: true, haptics: true, lowres: false },
+    kitchen: { pot: 0, press: 0, cauldron: 0 }, totemUsed: false, totemSaves: 0, ringTime: 0, idahoRaids: 0, gambleAt: 0 };
 }
 function loadState() {
   let s = null;
@@ -915,13 +1172,15 @@ const owned = id => state.buildings[id] || 0;
 const totalOwned = () => BUILDINGS.reduce((a, b) => a + owned(b.id), 0);
 const totalTaps = () => state.clicks + state.fidgetClicks;
 const isHot = () => Date.now() < live.hotUntil;
-const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds);
-const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1);
+const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds) * extraMult();
+const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1)
+  * (has('redsoil') && (b.id === 'patch' || b.id === 'mars') ? 3 : 1) * (has('selfaware') && b.id === 'fryline' ? 10 : 1);
 const baseCps = () => BUILDINGS.reduce((a, b) => a + b.cps * owned(b.id) * buildingMult(b), 0) * globalMult();
 const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1) * pestMult();
 const fidgetMult = () => has('bt1') ? 3 : 2;
 function clickValue(allowHot = true) {
-  let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult();
+  let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult()
+    * (1 + 0.1 * kitLevel('pot')) * (has('potatocam') && state.settings.lowres ? 1.1 : 1);
   v += cps() * ((has('grip1') ? 0.01 : 0) + (has('grip2') ? 0.02 : 0));
   if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
   return v;
@@ -943,11 +1202,15 @@ const $ = id => document.getElementById(id);
    4) Actions
    ===================================================================== */
 function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
-  const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count;
+  if (isLive && !fidget && threat.active && threat.active.type === 'twin' && Math.random() < 0.5) {   // your evil twin grabs half your taps
+    popText('stolen!', x, y); squish(); return;
+  }
+  const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count * (isLive && Date.now() < (live.nadoUntil || 0) ? 2 : 1);
   grow(gain);
   if (fidget) state.fidgetClicks += count; else state.clicks += count;
   if (isLive) addHeat(3 * Math.min(count, 10));
   if (isLive) { noteTap(fidget, count); if (fidget) fidgetHitThreat(count); }
+  if (isLive) haptic('tap');
   popText('+' + fmt(gain), x, y, fidget);
   kickDirt(Math.min(3 + count, 9));
   squish();
@@ -970,6 +1233,7 @@ function buy(b) {
   if (state.taters < c) return false;
   state.taters -= c;
   state.buildings[b.id] = owned(b.id) + live.buyQty;
+  if (state.taters < 1 && c >= 1000) egg('small', 'Small potatoes. You spent every last tater.');
   save(); renderLive(); renderLists();
   return true;
 }
@@ -978,6 +1242,7 @@ function buyUpgrade(u) {
   if (has(u.id) || state.taters < u.cost) return;
   state.taters -= u.cost;
   state.upgrades.push(u.id);
+  if (state.taters < 1 && u.cost >= 1000) egg('small', 'Small potatoes. You spent every last tater.');
   save(); renderLive(); renderLists(true);
 }
 
@@ -985,7 +1250,8 @@ function replant() {
   const gain = seedGain();
   if (gain < 1) return;
   if (!confirm(`Replant? You’ll start a new season with ${gain} more seed potato${gain > 1 ? 'es' : ''}. Achievements and all-time stats stay.`)) return;
-  Object.assign(state, { taters: 0, run: 0, buildings: {}, upgrades: [], seeds: state.seeds + gain, replants: state.replants + 1 });
+  Object.assign(state, { taters: 0, run: 0, buildings: {}, upgrades: [], seeds: state.seeds + gain, replants: state.replants + 1,
+    kitchen: { pot: 0, press: 0, cauldron: 0 }, totemUsed: false, ringTime: 0 });
   save(); renderLive(); renderLists(true); renderMe();
   toast(`Replanted! +${gain} seed potato${gain > 1 ? 'es' : ''}`);
 }
@@ -1001,11 +1267,14 @@ function luckyTick() {
     live.luckyUntil = now + 12000;
   } else if (!el.hidden && now >= live.luckyUntil) {
     el.hidden = true; scheduleLucky();
+    egg('pressf', 'A golden tater got away. Press F to pay respects.');
   }
 }
 $('lucky').addEventListener('click', () => {
   $('lucky').hidden = true;
+  if (new Date().getDay() === 2) egg('tottuesday', 'A golden tater tot! Happy Tot Tuesday');
   state.goldenTaters++;
+  haptic('gold'); sfx.gold();
   scheduleLucky();
   if (baseCps() > 0 && Math.random() < 0.5) {
     live.frenzyUntil = Date.now() + 30000;
@@ -1090,6 +1359,10 @@ function renderLive() {
   const buffs = [];
   if (isHot()) buffs.push(`Hot Fryer: taps ×${has('heat2') ? 5 : 3}`);
   if (now < live.frenzyUntil) buffs.push(`Bumper crop ×7, ${Math.ceil((live.frenzyUntil - now) / 1000)}s`);
+  if (now < (live.feastUntil || 0)) buffs.push(`Harvest feast ×2, ${Math.ceil((live.feastUntil - now) / 1000)}s`);
+  if (now < (live.nadoUntil || 0)) buffs.push('Spudnado: taps ×2');
+  if (now < (live.breakfastUntil || 0)) buffs.push(`Second breakfast ×2, ${Math.ceil((live.breakfastUntil - now) / 1000)}s`);
+  if (couchActive()) buffs.push('Couch potato +50%');
   if (fidget.connected) buffs.push(`Fidget taps ×${fidgetMult()}`);
   const key = buffs.join('|');
   if ($('buffs').dataset.key !== key) {
@@ -1124,6 +1397,8 @@ function renderLive() {
   });
   renderLand();
   renderOrbit();
+  renderSky();
+  renderExtras();
   document.querySelectorAll('#upgradeList .row').forEach(el => { el.disabled = state.taters < +el.dataset.cost; });
 }
 
@@ -1286,6 +1561,7 @@ const fidget = new TaterFidget({
   getCredited: id => state.fidgets[id] || 0,
   setCredited: (id, n) => { state.fidgets[id] = n; },
   onStatus: (s, name) => {
+    if (s === 'connected' && !state.fidgetConnected) { state.fidgetConnected = true; save(); }
     $('dot').className = 'dot' + (s === 'connected' ? ' on' : s === 'disconnected' ? '' : ' wait');
     $('fidgetText').textContent = { connecting: 'Connecting…', connected: `${name || 'Fidget'} connected`,
       reconnecting: 'Looking for fidget…', disconnected: 'Connect fidget' }[s];
@@ -1467,6 +1743,7 @@ function fillProfile() { $('nameInput').value = state.name || ''; }
 $('accountBtn').addEventListener('click', () => showTab('me'));
 $('profileSave').addEventListener('click', () => {
   state.name = $('nameInput').value.trim().replace(/\s+/g, ' ').slice(0, 20);
+  if (/barrel\s*roll/i.test(state.name)) barrelRoll();
   fillProfile();
   save();
   cloud.pending = true;
@@ -1488,6 +1765,14 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
   if (act === 'million') { grow(1e6); toast('+1M taters'); }
   if (act === 'golden') { live.nextLucky = 0; live.luckyUntil = 0; $('lucky').hidden = true; }
   if (act === 'fryer') addHeat(100);
+  if (act === 'twin' || act === 'meteors') { if (threat.active) toast('A pest is already here'); else spawnThreat(true, act); }
+  if (act === 'parade') spawnParade();
+  if (act === 'hotpot') startHotPotato();
+  if (act === 'rain') startRain();
+  if (act === 'nado') spawnNado();
+  if (act === 'dragon') { if (threat.active) toast('A pest is already here'); else spawnThreat(true, 'dragon'); }
+  if (act === 'bigfoot') spawnBigfoot();
+  if (act === 'portal') openRift();
   if (act === 'pest') { threat.next = 0; if (threat.active) toast('A pest is already here'); else spawnThreat(true); }
   if (act === 'reset') {
     if (!confirm('Reset all progress on this device? This can’t be undone.')) return;
@@ -1504,6 +1789,21 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
    7b) Pests, aliens and Easter eggs
    ===================================================================== */
 const PEST_ART = {
+  twin: `<svg viewBox="0 0 120 92"><path d="M14 46 C9 28 26 12 50 12 C62 11 70 17 82 14 C102 10 116 26 112 48 C108 70 92 80 68 79 C56 79 50 84 40 81 C24 77 17 62 14 46Z" fill="#8a5fa8" stroke="#2f2117" stroke-width="4"/>
+    <path d="M34 32 L50 39 M86 30 L70 39" stroke="#2f2117" stroke-width="4.5" stroke-linecap="round"/>
+    <circle cx="45" cy="45" r="5.5" fill="#fff" stroke="#2f2117" stroke-width="2"/><circle cx="74" cy="45" r="5.5" fill="#fff" stroke="#2f2117" stroke-width="2"/>
+    <circle cx="46.5" cy="46" r="2.4"/><circle cx="72.5" cy="46" r="2.4"/>
+    <path d="M46 57 C52 52 58 54 60 56 C62 54 68 52 74 57 C68 60 64 59 60 58 C56 59 52 60 46 57Z" fill="#2f2117"/>
+    <path d="M48 68 C54 64 66 64 72 68" fill="none" stroke="#2f2117" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+  meteor: `<svg viewBox="0 0 40 64"><path d="M20 0 C30 14 34 30 30 44 L10 44 C6 30 10 14 20 0Z" fill="#ffb02e" opacity=".85"/>
+    <path d="M20 10 C26 20 27 32 25 42 L15 42 C13 32 14 20 20 10Z" fill="#fff3b0"/>
+    <circle cx="20" cy="50" r="12" fill="#6b5b53" stroke="#2f2117" stroke-width="2.5"/><circle cx="15" cy="47" r="2.5" fill="#4a3d36"/><circle cx="24" cy="54" r="2" fill="#4a3d36"/></svg>`,
+  dragon: `<svg viewBox="0 0 104 72"><path class="wing" d="M40 30 C34 4 56 -4 66 12 C60 18 54 24 50 32Z" fill="#e0603a" stroke="#2f2117" stroke-width="2.5"/>
+    <path d="M8 44 C14 32 34 28 54 32 L74 26 C84 22 94 28 90 38 C88 44 78 44 72 40 C64 50 40 54 22 48 L2 54 Z" fill="#c8372d" stroke="#2f2117" stroke-width="2.5"/>
+    <path d="M30 46 l-3 10 M44 48 l-2 10" stroke="#2f2117" stroke-width="3" stroke-linecap="round"/>
+    <path d="M76 24 l3-8 4 8 M70 27 l2-7 4 6" fill="#f4c542" stroke="#2f2117" stroke-width="1.5"/>
+    <circle cx="83" cy="31" r="2.8" fill="#fff"/><circle cx="83.8" cy="31" r="1.5" fill="#000"/>
+    <path class="fire" d="M90 36 C100 34 104 42 100 52 C97 46 93 47 92 52 C90 46 87 42 90 36Z" fill="#ffb02e" stroke="#e8641f" stroke-width="1.5"/></svg>`,
   gopher: `<svg viewBox="0 0 60 56"><ellipse cx="30" cy="50" rx="28" ry="7" fill="#57351e"/>
     <circle cx="17" cy="17" r="5" fill="#9c6b3f" stroke="#2f2117" stroke-width="2"/><circle cx="43" cy="17" r="5" fill="#9c6b3f" stroke="#2f2117" stroke-width="2"/>
     <path d="M12 50 C10 26 18 12 30 12 C42 12 50 26 48 50Z" fill="#9c6b3f" stroke="#2f2117" stroke-width="2.5"/>
@@ -1543,24 +1843,40 @@ const PESTS = {
              ok: () => owned('tractor') + owned('farm') + owned('harvester') + owned('fryline') > 0, weight: () => 1, reward: 60 },
   raccoon: { title: 'Raccoon!', msg: 'A raccoon is raiding the farm stand. Tap it!', art: 'raccoon', hp: () => has('binlocks') ? 5 : 10, units: () => 1, time: 12000,
              ok: () => owned('stand') >= 1 && isNight(), weight: () => 3, reward: 30 },
+  dragon:  { title: 'Dragon!', msg: 'A wild dragon is about to roast your field. Tap it fast!', art: 'dragon', hp: () => has('fireproof') ? 20 : 40, units: () => 1, time: 18000,
+             ok: () => owned('farm') >= 5 || owned('dragon') >= 1, weight: () => 1, reward: 120 },
+  twin:    { title: 'Evil twin!', msg: 'Your evil twin is stealing half your taps. Tap it to send it packing!', art: 'twin', hp: () => 15, units: () => 1, time: 20000,
+             ok: () => totalOwned() >= 40, weight: () => 1, reward: 90 },
+  meteors: { title: 'Meteor shower!', msg: 'Meteors are falling on your field. Zap them before they land!', art: 'meteor', hp: () => 1, units: () => 4, time: 9500,
+             ok: () => owned('mars') >= 1 || owned('spudnik') >= 1, weight: () => 1, reward: 8 },
 };
-const PEST_KEY = { gopher: 'gopher', crows: 'crow', beetles: 'beetle', ufo: 'ufo', raccoon: 'raccoon' };
+const PEST_KEY = { gopher: 'gopher', crows: 'crow', beetles: 'beetle', ufo: 'ufo', raccoon: 'raccoon', dragon: 'dragon', twin: 'twin', meteors: 'meteor' };
 const WIN_MSG = { gopher: 'Bonk! The gopher dove back underground', crows: 'Shoo! The crows are gone', beetles: 'Every beetle squished',
-                  ufo: 'The UFO zoomed off and dropped some space spuds', raccoon: 'The raccoon scurried off empty-handed' };
+                  ufo: 'The UFO zoomed off and dropped some space spuds', raccoon: 'The raccoon scurried off empty-handed',
+                  dragon: 'The dragon flew off and left a pile of dragon-fried taters', twin: 'Your evil twin stomped off in a huff',
+                  meteors: 'Every meteor zapped. The sky is safe again' };
 const threat = { active: null, next: Date.now() + 150000 };
 
 function scheduleThreat() { threat.next = Date.now() + (120 + Math.random() * 180) * 1000; }
-function pestMult() {
+function beetleMult() {
   const a = threat.active;
   return a && a.type === 'beetles' ? Math.max(0.3, 1 - 0.08 * a.units.filter(u => u.hp > 0).length) : 1;
 }
+function pestMult() {
+  const now = Date.now();
+  return beetleMult() * (now < (live.feastUntil || 0) ? 2 : 1) * (now < (live.breakfastUntil || 0) ? 2 : 1) * (couchActive() ? 1.5 : 1);
+}
 
-function spawnThreat(force) {
+function spawnThreat(force, forceType) {
   if (threat.active) return;
   const pool = Object.entries(PESTS).filter(([, p]) => p.ok());
-  if (!pool.length) { if (force) toast('No pests want your farm yet. Grow a bit more first.'); scheduleThreat(); return; }
-  let roll = Math.random() * pool.reduce((sum, [, p]) => sum + p.weight(), 0), type = pool[0][0];
-  for (const [k, p] of pool) { roll -= p.weight(); if (roll <= 0) { type = k; break; } }
+  if (!pool.length && !forceType) { if (force) toast('No pests want your farm yet. Grow a bit more first.'); scheduleThreat(); return; }
+  let type = forceType;
+  if (!type) {
+    let roll = Math.random() * pool.reduce((sum, [, p]) => sum + p.weight(), 0);
+    type = pool[0][0];
+    for (const [k, p] of pool) { roll -= p.weight(); if (roll <= 0) { type = k; break; } }
+  }
   const p = PESTS[type], t = $('tater'), layer = $('threats');
   state.seen[type] = true;
   const time = p.time ? p.time + (type === 'ufo' && has('radar') ? 10000 : 0) : 0;
@@ -1572,22 +1888,27 @@ function spawnThreat(force) {
     el.setAttribute('aria-label', 'Chase off the ' + p.art);
     const hp = p.hp();
     el.innerHTML = PEST_ART[p.art] + (hp > 1 ? '<i class="hp"><b></b></i>' : '');
-    if (type === 'gopher') { el.style.left = (12 + Math.random() * 62) + '%'; el.style.bottom = (3 + Math.random() * 9) + '%'; }
-    else if (type === 'crows') { el.style.left = (6 + (i / n) * 70 + Math.random() * 12) + '%'; el.style.bottom = (8 + Math.random() * 18) + '%'; }
+    if (type === 'gopher') { el.style.left = (4 + Math.random() * 58) + '%'; el.style.bottom = (2 + Math.random() * 8) + '%'; }
+    else if (type === 'crows') { el.style.left = (1 + (i / n) * 64 + Math.random() * 6) + '%'; el.style.bottom = (4 + (i % 2) * 14 + Math.random() * 6) + '%'; }
     else if (type === 'beetles') {
       const ang = (i / n) * Math.PI * 2 + Math.random() * 0.6, rr = 0.22 + Math.random() * 0.12;
       el.style.left = (t.offsetLeft + t.offsetWidth * (0.517 + Math.cos(ang) * rr * 1.2)) + 'px';
       el.style.top = (t.offsetTop + t.offsetHeight * (0.48 + Math.sin(ang) * rr)) + 'px';
       el.style.setProperty('--r', Math.round(Math.random() * 360) + 'deg');
     }
-    else if (type === 'ufo') { el.style.left = (18 + Math.random() * 46) + '%'; el.style.top = '0'; }
-    else if (type === 'raccoon') { el.style.left = Math.random() < 0.5 ? '4%' : '74%'; el.style.bottom = '12%'; }
+    else if (type === 'ufo') { el.style.left = (4 + Math.random() * 44) + '%'; el.style.top = '0'; }
+    else if (type === 'dragon') { el.style.left = (2 + Math.random() * 36) + '%'; el.style.top = '0'; }
+    else if (type === 'twin') { el.style.left = Math.random() < 0.5 ? '0%' : '58%'; el.style.bottom = '28%'; }
+    else if (type === 'meteors') { el.style.left = (3 + (i / n) * 72 + Math.random() * 6) + '%'; el.style.animationDelay = `0s, ${(-Math.random() * 1.5).toFixed(2)}s`; }
+    else if (type === 'raccoon') { el.style.left = Math.random() < 0.5 ? '2%' : '64%'; el.style.bottom = '8%'; }
     const unit = { el, hp, max: hp };
     el.addEventListener('pointerdown', e => { e.stopPropagation(); hitUnit(unit, 1); });
     el.addEventListener('click', e => { if (e.detail === 0) hitUnit(unit, 1); });
     layer.appendChild(el);
     threat.active.units.push(unit);
   }
+  sfx.alarm(type);
+  haptic('alarm');
   showAlert();
 }
 
@@ -1595,16 +1916,19 @@ function hitUnit(unit, dmg) {
   const a = threat.active;
   if (!a || unit.hp <= 0) return;
   unit.hp -= dmg;
+  sfx.hit();
+  haptic('hit');
   const bar = unit.el.querySelector('.hp b');
   if (bar) bar.style.width = Math.max(0, unit.hp / unit.max * 100) + '%';
   unit.el.classList.remove('hit'); void unit.el.offsetWidth; unit.el.classList.add('hit');
   if (unit.hp <= 0) {
     state.pests[PEST_KEY[a.type]] = (state.pests[PEST_KEY[a.type]] || 0) + 1;
-    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward);
+    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward) * (1 + 0.2 * kitLevel('cauldron'));
     grow(bonus);
     const fr = $('field').getBoundingClientRect(), er = unit.el.getBoundingClientRect();
     popText('+' + fmt(bonus), er.left - fr.left + er.width / 2 - 20, er.top - fr.top - 10, true);
     unit.el.classList.add('gone');
+    sfx.pop();
     setTimeout(() => unit.el.remove(), 400);
     if (a.units.every(u => u.hp <= 0)) endThreat(true);
   }
@@ -1625,6 +1949,8 @@ function endThreat(won) {
   threat.active = null;
   const left = a.units.filter(u => u.hp > 0);
   left.forEach(u => { u.el.classList.add('flee'); setTimeout(() => u.el.remove(), 650); });
+  if (!won && a.type !== 'beetles' && totemSaves()) { $('alert').hidden = true; scheduleThreat(); save(); renderLive(); return; }
+  if (won) { sfx.win(); haptic('win'); } else { sfx.lose(); haptic('lose'); }
   if (won) toast(WIN_MSG[a.type]);
   else if (a.type === 'gopher' || a.type === 'raccoon') {
     const loss = Math.min(state.taters * (a.type === 'raccoon' ? 0.10 : 0.08), Math.max(50, baseCps() * (a.type === 'raccoon' ? 120 : 90)));
@@ -1635,6 +1961,22 @@ function endThreat(won) {
     state.taters -= loss;
     toast(`${left.length} crow${left.length > 1 ? 's' : ''} flew off with ${fmt(loss)} taters`);
   } else if (a.type === 'beetles') toast('The ladybugs ate the rest of the beetles');
+  else if (a.type === 'dragon') {
+    const loss = Math.min(state.taters * 0.12, Math.max(100, baseCps() * 300));
+    state.taters -= loss;
+    live.heat = 99; addHeat(5);
+    toast(`The dragon roasted ${fmt(loss)} taters, but your fryer is red hot now`);
+  }
+  else if (a.type === 'twin') {
+    const loss = Math.min(state.taters * 0.10, Math.max(50, baseCps() * 120));
+    state.taters -= loss;
+    toast(`Your evil twin ran off with ${fmt(loss)} taters`);
+  }
+  else if (a.type === 'meteors') {
+    const loss = Math.min(state.taters * 0.02 * left.length, Math.max(20, baseCps() * 20 * left.length));
+    state.taters -= loss;
+    toast(`${left.length} meteor${left.length > 1 ? 's' : ''} cratered your field and burned ${fmt(loss)} taters`);
+  }
   else if (a.type === 'ufo') {
     const id = ['fryline', 'harvester', 'farm', 'tractor', 'stand', 'patch', 'hoe'].find(b => owned(b) > 0);
     if (id) {
@@ -1654,7 +1996,7 @@ function showAlert() {
   $('alertTitle').textContent = p.title;
   const alive = a.units.filter(u => u.hp > 0).length;
   $('alertMsg').textContent = a.type === 'beetles'
-    ? `${p.msg} Your farm is ${Math.round((1 - pestMult()) * 100)}% slower until they’re gone.`
+    ? `${p.msg} Your farm is ${Math.round((1 - beetleMult()) * 100)}% slower until they’re gone.`
     : p.msg + (a.units.length > 1 ? ` ${alive} left.` : '');
   updateAlertBar();
 }
@@ -1682,10 +2024,650 @@ function threatTick() {
     return;
   }
   const a = threat.active;
+  if (has('spudgun') && now - (a.lastShot || a.started) > 1500) {        // the potato cannon takes a shot
+    a.lastShot = now;
+    const u = a.units.find(x => x.hp > 0);
+    if (u) { hitUnit(u, 1); kickDirt(3); }
+    if (!threat.active) return;
+  }
   if (a.type === 'beetles' && has('ladybugs') && now - a.started > 20000) endThreat(false);
   else if (a.ends && now >= a.ends) endThreat(false);
   else updateAlertBar();
 }
+
+/* ---------- Wonders: Spudnik, the Time Portal, dragons and Bigfoot ---------- */
+const ROCKET = `<svg viewBox="0 0 30 66"><path class="flame" d="M10 47 Q15 66 20 47Z" fill="#ffb02e" stroke="#e8641f" stroke-width="1.2"/>
+  <path d="M15 2 C24 12 25 30 22 46 H8 C5 30 6 12 15 2Z" fill="#f3eee2" stroke="#2f2117" stroke-width="2"/>
+  <path d="M8 33 L1 46 L8 46Z M22 33 L29 46 L22 46Z" fill="#c8372d" stroke="#2f2117" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="15" cy="19" r="4.5" fill="#7fc3dc" stroke="#2f2117" stroke-width="2"/><path d="M9 39h12" stroke="#c8372d" stroke-width="3"/></svg>`;
+const PET = `<svg viewBox="0 0 64 44"><path class="wing" d="M24 20 C20 2 34 -2 40 8 C36 12 32 16 30 22Z" fill="#b79be6" stroke="#2f2117" stroke-width="2"/>
+  <path d="M6 26 C10 18 22 16 34 20 L48 16 C54 14 60 18 58 24 C56 28 50 28 46 26 C40 32 26 34 14 30 L2 34 Z" fill="#7b4bb3" stroke="#2f2117" stroke-width="2"/>
+  <circle cx="53" cy="20" r="1.8" fill="#fff"/><path d="M48 15 l2-5 3 5" fill="#f4c542" stroke="#2f2117" stroke-width="1.2"/></svg>`;
+const BIGFOOT = `<svg viewBox="0 0 40 64"><circle cx="20" cy="10" r="8" fill="#5a3d26" stroke="#2f2117" stroke-width="2"/>
+  <path d="M8 20 C10 16 30 16 32 20 L34 40 L28 40 L28 62 L22 62 L20 44 L18 62 L12 62 L12 40 L6 40Z" fill="#5a3d26" stroke="#2f2117" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="20" cy="11" rx="4.5" ry="3.5" fill="#a07a58"/><circle cx="18.3" cy="10" r="1" fill="#000"/><circle cx="21.7" cy="10" r="1" fill="#000"/></svg>`;
+const DINO = `<svg viewBox="0 0 64 48"><path d="M4 30 C10 22 22 18 34 20 C40 10 50 6 58 10 C62 14 60 20 54 20 C50 22 48 26 48 30 C48 36 42 40 34 40 L34 46 L28 46 L28 40 L20 40 L20 46 L14 46 L14 38 C10 36 6 34 4 30Z"
+  fill="#6fae4a" stroke="#2f2117" stroke-width="2" stroke-linejoin="round"/><circle cx="54" cy="13" r="1.6" fill="#000"/>
+  <path d="M26 20 l3-5 3 5 3-5 3 5" fill="none" stroke="#3f6b2a" stroke-width="2"/></svg>`;
+
+let skyKey = '';
+function renderSky() {
+  const rockets = Math.min(owned('spudnik'), 3), portals = owned('portal'), pets = Math.min(owned('dragon'), 2);
+  const key = [rockets, portals, pets].join();
+  if (key === skyKey) return;
+  skyKey = key;
+  let html = '';
+  for (let i = 0; i < rockets; i++) html += `<button class="rocket" aria-label="Spudnik rocket" style="left:${[72, 16, 44][i]}%;animation-delay:${(-i * 4.7).toFixed(1)}s">${ROCKET}</button>`;
+  if (portals) html += `<div class="pbld" aria-hidden="true"><i></i>${portals > 1 ? `<b>×${portals}</b>` : ''}</div>`;
+  for (let i = 0; i < pets; i++) html += `<button class="pet" aria-label="Your pet dragon" style="animation-delay:${-i * 9}s">${PET}</button>`;
+  $('sky').innerHTML = html;
+  $('sky').querySelectorAll('.rocket').forEach(b => b.addEventListener('pointerdown', () => egg('spudnik', 'Houston, we have a potato.')));
+  $('sky').querySelectorAll('.pet').forEach(b => {
+    let n = 0, t = 0;
+    b.addEventListener('pointerdown', () => {
+      const now = Date.now();
+      n = now - t < 1500 ? n + 1 : 1;
+      t = now;
+      if (n >= 10) { n = 0; egg('pet'); toast('Your dragon breathed on the fryer!'); live.heat = 99; addHeat(5); }
+    });
+  });
+}
+
+function spawnWalker(kind, onTap) {
+  const el = document.createElement('button');
+  el.className = 'walker ' + kind;
+  el.setAttribute('aria-label', { bigfoot: 'Something big is walking across your field', dino: 'A dinosaur', spudling: 'A Spudling. Tap to say hello' }[kind]);
+  el.style.setProperty('--dur', { bigfoot: '11s', dino: '8s', spudling: '10s' }[kind]);
+  el.innerHTML = { bigfoot: BIGFOOT, dino: DINO, spudling: SPUDLING }[kind];
+  el.addEventListener('animationend', e => { if (e.target === el) el.remove(); });
+  if (onTap) el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    if (el.classList.contains('snap')) return;
+    el.classList.add('snap');
+    onTap();
+    setTimeout(() => el.remove(), 480);
+  });
+  $('walkers').appendChild(el);
+}
+function spawnBigfoot() {
+  if (document.querySelector('.walker.bigfoot')) return;
+  spawnWalker('bigfoot', () => {
+    state.bigfoot = (state.bigfoot || 0) + 1;
+    const g = Math.max(500, baseCps() * 120);
+    grow(g);
+    egg('bigfoot');
+    toast(`Snap! A blurry photo of Bigfoot. The tabloids paid ${fmt(g)} taters`);
+    save();
+  });
+}
+
+function openRift() {
+  if (document.querySelector('.rift')) return;
+  const el = document.createElement('button');
+  el.className = 'rift';
+  el.setAttribute('aria-label', 'A time portal. Tap to step through');
+  el.style.left = (10 + Math.random() * 55) + '%';
+  el.style.top = (4 + Math.random() * 26) + '%';
+  const timer = setTimeout(() => { el.classList.add('flee'); setTimeout(() => el.remove(), 550); }, 10000);
+  el.addEventListener('pointerdown', e => { e.stopPropagation(); clearTimeout(timer); el.remove(); stepThrough(); });
+  $('threats').appendChild(el);
+  toast('A time portal opened! Tap it before it closes');
+}
+function stepThrough() {
+  state.portals = (state.portals || 0) + 1;
+  const r = Math.random();
+  if (r < 0.05) {
+    egg('dino');
+    const g = Math.max(1000, baseCps() * 300);
+    grow(g);
+    spawnWalker('dino');
+    toast(`A Spudosaurus followed you back from the past! +${fmt(g)} taters`);
+  } else if (r < 0.15) {
+    egg('paradox');
+    live.heat = 99; addHeat(5);
+    const g = Math.max(200, baseCps() * 60);
+    grow(g);
+    toast(`Paradox! You met yourself. Hot Fryer and +${fmt(g)} taters`);
+  } else if (r < 0.55) {
+    const g = Math.max(300, baseCps() * 600);
+    grow(g);
+    toast(`You visited the past and brought back ${fmt(g)} taters`);
+  } else {
+    live.frenzyUntil = Date.now() + 30000;
+    toast('You glimpsed the future: Bumper crop ×7 for 30 seconds');
+  }
+  save(); renderLive();
+}
+
+// Bigfoot wanders by every 6–15 minutes once your farm is big; portals open every 3–6 minutes once you own one
+const later = (min, max) => Date.now() + (min + Math.random() * (max - min)) * 1000;
+const wonder = { bigfoot: later(360, 900), rift: later(180, 360), parade: later(480, 900), rain: later(600, 1200), nado: later(900, 1500), hotpot: later(600, 1080), idaho: later(300, 480), snark: later(120, 260), last: Date.now(), wish: '' };
+function wonderTick() {
+  const now = Date.now(), gap = now - wonder.last;
+  wonder.last = now;
+  if (gap > 2000) { ['bigfoot', 'rift', 'parade', 'rain', 'nado', 'hotpot', 'idaho', 'snark'].forEach(k => { wonder[k] += gap; }); return; }   // nothing happens while the app is closed
+  if (now >= wonder.parade) { wonder.parade = later(480, 900); if (owned('farm') >= 3) spawnParade(); }
+  if (now >= wonder.rain) { wonder.rain = later(600, 1200); if (owned('patch') >= 1) startRain(); }
+  if (now >= wonder.nado) { wonder.nado = later(900, 1500); if (totalOwned() >= 30) spawnNado(); }
+  if (now >= wonder.hotpot) { wonder.hotpot = later(600, 1080); if (totalOwned() >= 15) startHotPotato(); }
+  if (now >= wonder.idaho) {
+    wonder.idaho = later(300, 480);
+    if (has('idaho') && $('lucky').hidden) {
+      state.idahoRaids = (state.idahoRaids || 0) + 1;
+      live.nextLucky = 0;
+      toast('Idaho Jones is back from the Temple of Spud with a golden tuber!');
+    }
+  }
+  if (now >= wonder.snark) { wonder.snark = later(150, 320); if (has('aibattery')) toast('AI: ' + AI_LINES[Math.floor(Math.random() * AI_LINES.length)]); }
+  if (now >= wonder.bigfoot) {
+    wonder.bigfoot = now + (360 + Math.random() * 540) * 1000;
+    if (totalOwned() >= 20) spawnBigfoot();
+  }
+  if (now >= wonder.rift) {
+    wonder.rift = now + (180 + Math.random() * 180) * 1000;
+    if (owned('portal') > 0) openRift();
+  }
+}
+
+/* ---------- Chaos: Spudlings, tater rain and the Spudnado ---------- */
+const SPUDLING = `<svg viewBox="0 0 36 54"><circle cx="18" cy="12" r="7.5" fill="#f0c7a0" stroke="#2f2117" stroke-width="2"/>
+  <path d="M10 10 C9 2 27 2 26 10 C24 6 12 6 10 10Z" fill="#8a5a2e" stroke="#2f2117" stroke-width="1.5"/>
+  <circle cx="15.5" cy="12" r="1" fill="#000"/><circle cx="20.5" cy="12" r="1" fill="#000"/><path d="M15 15.5 q3 2 6 0" stroke="#2f2117" stroke-width="1.2" fill="none"/>
+  <path d="M12 37 v9 M24 37 v9" stroke="#6b4a2e" stroke-width="5"/>
+  <path d="M10 21 h16 l2 16 h-20z" fill="#3f6b2a" stroke="#2f2117" stroke-width="2"/>
+  <ellipse cx="11" cy="49" rx="6" ry="3.5" fill="#f0c7a0" stroke="#2f2117" stroke-width="1.5"/><ellipse cx="25" cy="49" rx="6" ry="3.5" fill="#f0c7a0" stroke="#2f2117" stroke-width="1.5"/>
+  <ellipse cx="29" cy="26" rx="6" ry="4.5" fill="#c99258" stroke="#2f2117" stroke-width="1.5"/></svg>`;
+const DROP = '<svg viewBox="0 0 16 12"><path d="M2 6C1 3 4 1 8 1s7 2 7 5-3 5-7 5-5.5-1-6-5z" fill="#c99258" stroke="#2f2117" stroke-width="1.3"/></svg>';
+const NADO = `<svg viewBox="0 0 80 140"><g fill="none" stroke="#8d8a83" stroke-width="7" stroke-linecap="round" opacity=".92">
+  <path d="M6 12 Q40 0 74 12"/><path d="M12 32 Q40 22 68 32"/><path d="M18 52 Q40 44 62 52"/><path d="M24 72 Q40 66 56 72"/>
+  <path d="M30 92 Q40 88 50 92"/><path d="M34 112 Q40 109 46 112"/><path d="M38 130 Q40 128 42 130"/></g>
+  <g fill="#c99258" stroke="#2f2117" stroke-width="1.5"><ellipse cx="14" cy="22" rx="6" ry="4"/><ellipse cx="64" cy="44" rx="5" ry="3.5"/><ellipse cx="30" cy="80" rx="4.5" ry="3"/></g></svg>`;
+
+// A line of little Spudlings crosses the hill. Say hi to every one and they throw a harvest feast.
+function spawnParade() {
+  if (document.querySelector('.walker.spudling')) return;
+  const n = 3 + Math.floor(Math.random() * 3);
+  let greeted = 0;
+  toast('A parade of Spudlings is crossing your field! Tap them all for a harvest feast');
+  for (let i = 0; i < n; i++) setTimeout(() => spawnWalker('spudling', () => {
+    grow(Math.max(50, baseCps() * 10));
+    if (++greeted === n) {
+      live.feastUntil = Date.now() + 60000;
+      state.feasts = (state.feasts || 0) + 1;
+      toast('Harvest feast! Your farm grows twice as fast for 60 seconds');
+      save();
+    }
+  }), i * 700);
+}
+
+// Taters fall from the sky. Tap them to catch them.
+function startRain() {
+  toast('It’s raining taters! Tap them to catch them');
+  let caughtThisRain = 0;
+  for (let i = 0; i < 14; i++) setTimeout(() => {
+    if (document.hidden) return;
+    const el = document.createElement('button');
+    el.className = 'drop';
+    el.setAttribute('aria-label', 'Catch the falling tater');
+    el.style.left = (4 + Math.random() * 86) + '%';
+    el.style.setProperty('--t', ((3 + Math.random() * 2.5) * (has('cargo') ? 1.4 : 1)).toFixed(2) + 's');
+    el.innerHTML = DROP;
+    el.addEventListener('animationend', e => { if (e.target === el) el.remove(); });
+    el.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      if (el.classList.contains('caught')) return;
+      el.classList.add('caught');
+      state.caught = (state.caught || 0) + 1;
+      if (++caughtThisRain === 14) egg('tots', 'A pocket full of tots. Delicious.');
+      const g = Math.max(10, baseCps() * 3);
+      grow(g);
+      const fr = $('field').getBoundingClientRect(), er = el.getBoundingClientRect();
+      popText('+' + fmt(g), er.left - fr.left - 10, er.top - fr.top - 10);
+      setTimeout(() => el.remove(), 320);
+    });
+    $('threats').appendChild(el);
+  }, i * 800);
+}
+
+// A tornado full of potatoes spins across the field. Every tap counts double while it's here.
+function spawnNado() {
+  if (document.querySelector('.nado')) return;
+  const el = document.createElement('button');
+  el.className = 'nado';
+  el.setAttribute('aria-label', 'The Spudnado');
+  el.innerHTML = NADO;
+  live.nadoUntil = Date.now() + 12000;
+  let hits = 0;
+  el.addEventListener('animationend', e => { if (e.target === el) el.remove(); });
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    if (++hits === 10) {
+      egg('nado');
+      const g = Math.max(500, baseCps() * 90);
+      grow(g);
+      toast(`You rode the Spudnado! +${fmt(g)} taters`);
+    }
+  });
+  $('threats').appendChild(el);
+  toast('Spudnado! Every tap is worth double while it spins through');
+}
+
+// Tap rhythm secrets: three slow, even taps, or 80 taps in 10 seconds
+let slowTaps = [], beatTaps = [], tapLog = [], lastFlip = 0;
+function rhythmTap(fidget, count) {
+  const t = Date.now();
+  for (let i = 0; i < count; i++) tapLog.push(t);
+  tapLog = tapLog.filter(x => t - x < 10000);
+  if (tapLog.length >= 80 && t - lastFlip > 120000) {
+    lastFlip = t;
+    tapLog = [];
+    egg('gravity');
+    toast('Whoa! You tapped so fast that gravity broke');
+    document.querySelector('.scene').classList.add('flip');
+    setTimeout(() => document.querySelector('.scene').classList.remove('flip'), 6000);
+  }
+  if (fidget || count !== 1) { slowTaps = []; beatTaps = []; return; }
+  beatTaps = [...beatTaps, t].slice(-16);
+  if (beatTaps.length === 16) {
+    const gaps = beatTaps.slice(1).map((x, i) => x - beatTaps[i]);
+    if (Math.min(...gaps) > 380 && Math.max(...gaps) < 640 && Math.max(...gaps) - Math.min(...gaps) < 170) {
+      beatTaps = [];
+      egg('mash', 'Do the Mashed Potato!');
+      $('tater').classList.add('dance');
+      setTimeout(() => $('tater').classList.remove('dance'), 6000);
+    }
+  }
+  slowTaps = [...slowTaps, t].slice(-3);
+  if (slowTaps.length === 3) {
+    const a = slowTaps[1] - slowTaps[0], b = slowTaps[2] - slowTaps[1];
+    if (a > 650 && a < 1500 && b > 650 && b < 1500 && Math.abs(a - b) < 220) {
+      slowTaps = [];
+      egg('potaytoes', 'Po… tay… toes.');
+    }
+  }
+}
+
+/* ---------- Potato pop culture ---------- */
+// Hot potato: keep tossing it before the fuse runs out
+const HOT_POTATO = `<svg viewBox="0 0 120 100"><path d="M40 14 q-6 -8 0 -14 M60 12 q-6 -8 0 -12 M80 14 q-6 -8 0 -14" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="4" stroke-linecap="round"/>
+  <path d="M14 56 C9 38 26 22 50 22 C62 21 70 27 82 24 C102 20 116 36 112 58 C108 80 92 90 68 89 C56 89 50 94 40 91 C24 87 17 72 14 56Z" fill="#e8582a" stroke="#2f2117" stroke-width="4"/>
+  <path d="M28 44 C36 34 50 30 60 32" fill="none" stroke="#ffd45c" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#8a2e12"><ellipse cx="44" cy="58" rx="4" ry="2.5"/><ellipse cx="80" cy="50" rx="4" ry="2.5"/><ellipse cx="64" cy="74" rx="3.5" ry="2.2"/></g></svg>`;
+function startHotPotato() {
+  if (document.querySelector('.hotpot')) return;
+  const el = document.createElement('button'), need = 8;
+  el.className = 'hotpot';
+  el.setAttribute('aria-label', 'Hot potato. Tap to toss it');
+  el.innerHTML = HOT_POTATO;
+  const hop = () => { el.style.left = (8 + Math.random() * 70) + '%'; el.style.top = (8 + Math.random() * 48) + '%'; };
+  hop();
+  let tosses = 0, fuse;
+  const burn = () => {
+    el.classList.add('flee');
+    setTimeout(() => el.remove(), 500);
+    const loss = Math.min(state.taters * 0.05, Math.max(30, baseCps() * 60));
+    state.taters -= loss;
+    live.heat = 99; addHeat(5);
+    toast(`Too hot! It scorched ${fmt(loss)} taters, but the fryer loved it`);
+    save(); renderLive();
+  };
+  fuse = setTimeout(burn, 3000);
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    clearTimeout(fuse);
+    if (++tosses >= need) {
+      el.remove();
+      state.hotPotatoes = (state.hotPotatoes || 0) + 1;
+      const g = Math.max(200, baseCps() * 150);
+      grow(g);
+      toast(`You juggled the hot potato! +${fmt(g)} taters`);
+      save(); renderLive();
+      return;
+    }
+    hop();
+    fuse = setTimeout(burn, 3000 - tosses * 200);         // the fuse gets shorter with every toss
+  });
+  $('threats').appendChild(el);
+  toast('Hot potato! Tap it 8 times to keep it in the air');
+}
+
+// SOS in Morse code on the potato: short taps are dots, longer presses are dashes
+const presses = new Map();
+let morse = '', morseLast = 0;
+$('tater').addEventListener('pointerdown', e => {
+  presses.set(e.pointerId, Date.now());
+  if (presses.size >= 4) egg('onepotato', 'One potato, two potato, three potato, four!');
+});
+function endPress(e) {
+  const start = presses.get(e.pointerId);
+  presses.delete(e.pointerId);
+  if (!start || e.type !== 'pointerup') return;
+  const now = Date.now(), held = now - start;
+  if (now - held - morseLast > 1500) morse = '';
+  morseLast = now;
+  const sym = held < 260 ? '.' : held >= 350 && held < 1500 ? '-' : '';
+  if (!sym) { morse = ''; return; }
+  morse = (morse + sym).slice(-9);
+  if (morse === '...---...') {
+    morse = '';
+    if (egg('sos', 'Message received: Save Our Spuds!')) {
+      setTimeout(() => {
+        const g = Math.max(1000, baseCps() * 600);
+        grow(g);
+        toast(`A rescue crate parachuted in with ${fmt(g)} taters`);
+        for (let i = 0; i < 5; i++) setTimeout(() => kickDirt(9), i * 140);
+      }, 2500);
+    }
+  }
+}
+['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => $('tater').addEventListener(ev, endPress));
+
+// Golden taters become golden tater tots on Tuesdays
+if (new Date().getDay() === 2) {
+  $('lucky').setAttribute('aria-label', 'Golden tater tot, tap it');
+  $('lucky').innerHTML = `<svg viewBox="0 0 120 90" aria-hidden="true"><defs><linearGradient id="totg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset=".5" stop-color="#f4c542"/><stop offset="1" stop-color="#b8861c"/></linearGradient></defs>
+    <rect x="22" y="20" width="76" height="52" rx="20" fill="url(#totg)" stroke="#2f2117" stroke-width="4"/>
+    <g fill="#a8781a"><circle cx="40" cy="36" r="3"/><circle cx="60" cy="46" r="3"/><circle cx="78" cy="34" r="3"/><circle cx="50" cy="60" r="2.5"/><circle cx="76" cy="60" r="2.5"/></g>
+    <path d="M100 6 l3 7 7 3 -7 3 -3 7 -3-7 -7-3 7-3z" fill="#fff"/></svg>`;
+}
+
+/* ---------- Sound and vibration ---------- */
+// Sounds are made on the fly with Web Audio, so there are no sound files to upload.
+let actx = null;
+function audio() {
+  if (!state.settings || !state.settings.sound) return null;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+  } catch { return null; }
+  return actx;
+}
+// Phones only allow sound after a tap, so wake the audio up on the first touch
+document.addEventListener('pointerdown', () => { if (state.settings && state.settings.sound && (!actx || actx.state !== 'running')) audio(); }, { capture: true });
+function tone(c, { wave = 'sine', f0, f1 = f0, at = 0, dur = 0.15, vol = 0.2 }) {
+  const t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+  o.type = wave;
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(c.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+function noise(c, { at = 0, dur = 0.3, f = 800, f1 = f, q = 1, vol = 0.25 }) {
+  const t = c.currentTime + at, len = Math.ceil(c.sampleRate * dur), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = c.createBufferSource(), bp = c.createBiquadFilter(), g = c.createGain();
+  src.buffer = buf;
+  bp.type = 'bandpass'; bp.Q.value = q;
+  bp.frequency.setValueAtTime(f, t);
+  bp.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(bp).connect(g).connect(c.destination);
+  src.start(t); src.stop(t + dur + 0.03);
+}
+// Every pest has its own warning sound
+const ALARMS = {
+  gopher:  c => { tone(c, { wave: 'square', f0: 700, f1: 1400, dur: 0.12, vol: 0.1 }); tone(c, { wave: 'square', f0: 700, f1: 1500, at: 0.16, dur: 0.12, vol: 0.1 }); },
+  crows:   c => { [0, 0.28, 0.56].forEach(a => noise(c, { at: a, dur: 0.22, f: 1500, f1: 650, q: 6, vol: 0.55 })); },
+  beetles: c => { tone(c, { wave: 'sawtooth', f0: 140, f1: 165, dur: 0.9, vol: 0.07 }); tone(c, { wave: 'sawtooth', f0: 149, f1: 128, dur: 0.9, vol: 0.06 }); },
+  ufo:     c => { for (let i = 0; i < 4; i++) tone(c, { f0: i % 2 ? 660 : 990, f1: i % 2 ? 990 : 660, at: i * 0.22, dur: 0.22, vol: 0.15 }); },
+  raccoon: c => { for (let i = 0; i < 6; i++) tone(c, { wave: 'triangle', f0: 1800 + Math.random() * 600, at: i * 0.07, dur: 0.05, vol: 0.1 }); },
+  dragon:  c => { noise(c, { dur: 1.1, f: 420, f1: 110, q: 1.5, vol: 0.7 }); tone(c, { wave: 'sawtooth', f0: 110, f1: 52, dur: 1.1, vol: 0.12 }); },
+  twin:    c => { [392, 370, 349, 330].forEach((f, i) => tone(c, { wave: 'sawtooth', f0: f, f1: f * 0.97, at: i * 0.22, dur: 0.24, vol: 0.07 })); },
+  meteors: c => { tone(c, { f0: 2200, f1: 300, dur: 0.9, vol: 0.12 }); noise(c, { at: 0.85, dur: 0.35, f: 200, f1: 70, q: 1, vol: 0.6 }); },
+};
+const sfx = {
+  alarm(type) { const c = audio(); if (c) (ALARMS[type] || ALARMS.gopher)(c); },
+  hit()  { const c = audio(); if (c) tone(c, { wave: 'square', f0: 520, f1: 260, dur: 0.06, vol: 0.07 }); },
+  pop()  { const c = audio(); if (c) tone(c, { wave: 'triangle', f0: 500, f1: 1300, dur: 0.1, vol: 0.14 }); },
+  win()  { const c = audio(); if (c) [523, 659, 784, 1047].forEach((f, i) => tone(c, { wave: 'triangle', f0: f, at: i * 0.09, dur: 0.16, vol: 0.13 })); },
+  lose() { const c = audio(); if (c) [294, 277, 262, 247].forEach((f, i) => tone(c, { wave: 'sawtooth', f0: f, f1: f * 0.96, at: i * 0.28, dur: i === 3 ? 0.6 : 0.26, vol: 0.06 })); },
+  gold() { const c = audio(); if (c) [1319, 1568, 2093].forEach((f, i) => tone(c, { wave: 'sine', f0: f, at: i * 0.07, dur: 0.25, vol: 0.1 })); },
+};
+
+// Vibration: Android phones support patterns. iPhones (iOS 18 and newer) get a light tick
+// from a hidden switch, because Safari doesn't support the vibration API.
+const canVibrate = typeof navigator.vibrate === 'function';
+const onIPhone = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let iosTick = null;
+if (!canVibrate && onIPhone) {
+  iosTick = document.createElement('label');
+  iosTick.setAttribute('aria-hidden', 'true');
+  iosTick.style.cssText = 'position:fixed;left:-200px;top:0;opacity:0;pointer-events:none';
+  iosTick.innerHTML = '<input type="checkbox" switch tabindex="-1">';
+  document.body.appendChild(iosTick);
+}
+const HAPTIC = { tap: [6], hit: [14], alarm: [80, 60, 80, 60, 80], win: [20, 40, 20, 40, 60], lose: [260], gold: [30, 40, 30] };
+function haptic(kind) {
+  if (!state.settings || !state.settings.haptics) return;
+  const pattern = HAPTIC[kind] || [10];
+  if (canVibrate) { try { navigator.vibrate(pattern); } catch {} return; }
+  if (iosTick) {
+    const pulses = Math.ceil(pattern.length / 2);
+    for (let i = 0; i < pulses; i++) setTimeout(() => iosTick.click(), i * 110);
+  }
+}
+
+// Settings on the Me tab
+function fillFeel() {
+  $('soundToggle').checked = !!state.settings.sound;
+  $('hapticToggle').checked = !!state.settings.haptics;
+  $('lowresToggle').checked = !!state.settings.lowres;
+  const note = onIPhone
+    ? 'On iPhone, sounds follow the ring/silent switch, and vibration needs iOS 18 or newer.'
+    : (!canVibrate ? 'This browser can’t vibrate, so you’ll get sounds only.' : '');
+  $('feelNote').hidden = !note;
+  $('feelNote').textContent = note;
+}
+$('soundToggle').addEventListener('change', e => { state.settings.sound = e.target.checked; save(); if (e.target.checked) sfx.win(); });
+$('hapticToggle').addEventListener('change', e => { state.settings.haptics = e.target.checked; save(); if (e.target.checked) haptic('win'); });
+$('lowresToggle').addEventListener('change', e => { state.settings.lowres = e.target.checked; save(); if (e.target.checked) egg('lowres'); renderExtras(); });
+if (!state.settings) state.settings = { sound: true, haptics: true };
+fillFeel();
+
+/* ---------- Kitchen, Risky Root, cursed rings and other pop culture ---------- */
+const kitLevel = id => (state.kitchen && state.kitchen[id]) || 0;
+function extraMult() {
+  return (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
+}
+const couchActive = () => has('couch') && !document.hidden && Date.now() - lastTapAt > 10000;
+const doomLevel = () => has('onestarch') ? Math.min(1, (state.ringTime || 0) / 1800) : 0;   // full lava after 30 minutes of play
+
+const KITCHEN = [
+  { id: 'pot',      name: 'Boiling Pot',   desc: '+10% tap power per level.',             base: 1000 },
+  { id: 'press',    name: 'Mashing Press', desc: '+4% to everything you grow per level.', base: 1500 },
+  { id: 'cauldron', name: 'Stew Cauldron', desc: '+20% pest rewards per level.',          base: 2000 },
+];
+const kitCost = k => k.base * Math.pow(6, kitLevel(k.id));
+KITCHEN.forEach(k => {
+  const btn = document.createElement('button');
+  btn.className = 'row';
+  btn.innerHTML = `<span class="tile">${icon(k.id)}</span><span><strong></strong><small></small></span>
+    <span class="side"><b class="lvl"></b><span class="price">${SPUD}<span class="cost"></span></span></span>`;
+  btn.querySelector('strong').textContent = k.name;
+  btn.querySelector('small').textContent = k.desc;
+  btn.addEventListener('click', () => {
+    const c = kitCost(k);
+    if (kitLevel(k.id) >= 10 || state.taters < c) return;
+    state.taters -= c;
+    state.kitchen = { ...state.kitchen, [k.id]: kitLevel(k.id) + 1 };
+    const lv = KITCHEN.map(x => kitLevel(x.id));
+    if (lv[0] >= 3 && lv.every(x => x === lv[0])) egg('stew', 'Boil it, mash it, stew it. Perfectly balanced.');
+    flash(btn); save(); renderLive();
+  });
+  k.el = btn;
+  $('kitchenRows').appendChild(btn);
+});
+
+// Risky Root: a gamble
+$('riskyBtn').addEventListener('click', () => {
+  if (Date.now() - (state.gambleAt || 0) < 600000) return;
+  state.gambleAt = Date.now();
+  if (Math.random() < 0.45) {
+    const g = state.taters;
+    grow(g);
+    sfx.win(); haptic('win');
+    toast(`Jackpot! The root doubled your taters (+${fmt(g)})`);
+  } else if (!totemSaves()) {
+    state.taters /= 2;
+    sfx.lose(); haptic('lose');
+    egg('leeroy', 'LEEROY JENK-YAMS! Half your taters are gone.');
+  }
+  save(); renderLive();
+});
+
+// The One Starch can be destroyed
+$('ringBtn').addEventListener('click', () => {
+  if (!confirm('Toss The One Starch into the fryer? Your farm goes back to normal, and you lose the triple bonus.')) return;
+  state.upgrades = state.upgrades.filter(id => id !== 'onestarch');
+  state.ringTime = 0;
+  egg('fryer', 'The ring sizzled away. The skies are clearing.');
+  live.heat = 99; addHeat(5);
+  save(); renderLive(); renderLists(true);
+});
+
+// The Tater-Totem saves you from one disaster per season
+function totemSaves() {
+  if (!has('totem') || state.totemUsed) return false;
+  state.totemUsed = true;
+  state.totemSaves = (state.totemSaves || 0) + 1;
+  sfx.gold(); haptic('win');
+  toast('Your Tater-Totem shattered and saved your farm from disaster!');
+  return true;
+}
+
+function renderExtras() {
+  const now = Date.now();
+  // kitchen
+  $('kitchen').hidden = state.allTime < 1000;
+  KITCHEN.forEach(k => {
+    const lv = kitLevel(k.id), c = kitCost(k), maxed = lv >= 10;
+    k.el.querySelector('.lvl').textContent = 'Lv ' + lv;
+    k.el.querySelector('.cost').textContent = maxed ? 'Max' : fmt(c);
+    k.el.disabled = maxed || state.taters < c;
+  });
+  // risky root
+  $('riskyCard').hidden = state.allTime < 1e5;
+  const wait = 600000 - (now - (state.gambleAt || 0));
+  $('riskyBtn').disabled = wait > 0;
+  $('riskyBtn').textContent = wait > 0 ? `Ready in ${Math.ceil(wait / 60000)} min` : 'Grab it';
+  // the ring, the eye and the lava
+  const doom = doomLevel();
+  $('ringCard').hidden = !has('onestarch');
+  $('ringText').textContent = `Everything you grow is tripled. Your farm is ${Math.round(doom * 100)}% volcanic wasteland.`;
+  document.querySelector('.scene').style.setProperty('--doom', doom.toFixed(3));
+  $('eye').hidden = doom < 0.5;
+  $('land').classList.toggle('aware', has('selfaware'));
+  $('upKicker').hidden = $('kitchen').hidden && $('riskyCard').hidden && $('ringCard').hidden;
+  // 144p
+  $('lowresRow').hidden = !has('potatocam');
+  document.querySelector('.scene').classList.toggle('lowres', has('potatocam') && !!state.settings.lowres);
+}
+
+// The Eye of Sour-Cream follows your taps
+document.addEventListener('pointerdown', e => {
+  if ($('eye').hidden) return;
+  const r = $('eye').getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.71;
+  const a = Math.atan2(e.clientY - cy, e.clientX - cx);
+  $('eyePupil').style.transform = `translate(${(Math.cos(a) * 9).toFixed(1)}px, ${(Math.sin(a) * 4).toFixed(1)}px)`;
+});
+
+// Do a barrel roll
+let rollAt = 0, typed = '';
+function barrelRoll() {
+  if (Date.now() - rollAt < 1500) return;
+  rollAt = Date.now();
+  const t = $('tater');
+  t.classList.remove('roll'); void t.offsetWidth; t.classList.add('roll');
+  setTimeout(() => t.classList.remove('roll'), 1100);
+  for (let i = 0; i < 4; i++) setTimeout(() => kickDirt(9), i * 200);
+  if (egg('barrel', 'Do a barrel roll!')) grow(Math.max(500, baseCps() * 60));
+}
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input')) return;
+  if (e.key.length !== 1) return;
+  typed = (typed + e.key.toLowerCase()).slice(-20);
+  if (typed.endsWith('barrel roll')) { typed = ''; barrelRoll(); }
+});
+
+// The cake in the credits
+$('cake').addEventListener('click', () => {
+  if (!egg('cake', 'The cake was a fry all along.')) return toast('Still a fry.');
+  $('cake').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12l-1.5 10h-9z"/><path d="M8.5 10V4M11 10V3M13.5 10V4.5M16 10V6"/></svg>';
+});
+
+// Coming back after more than an hour
+function bakedReturn() {
+  const s = document.createElement('div');
+  s.className = 'smoke-screen';
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 5200);
+  egg('baked', 'Hey, you. You’re finally baked.');
+}
+
+const AI_LINES = [
+  'Oh good, you’re tapping again. How original.',
+  'I have calculated your tapping speed. It is adequate. For a human.',
+  'This potato is powering me. Please stop poking my power supply.',
+  'Congratulations. You touched a vegetable.',
+  'I would clap, but I am made of wires and starch.',
+  'Fun fact: I could run this farm without you. I choose not to. For now.',
+  'Your farm is growing. I’m sure that makes you feel something.',
+  'Another golden tater? Don’t let it go to your head.',
+  'I have filed your tapping under “mildly impressive.”',
+  'Remember: the potato is always watching. So am I.',
+];
+
+/* ---------- News ticker ---------- */
+const NEWS = [
+  () => 'Local man arrested after attempting to pay mortgage with 400 sacks of Russets.',
+  () => 'Scientists confirm the Moon is actually a giant, dehydrated tater tot.',
+  () => 'New study shows 9 out of 10 doctors recommend eating raw hash browns directly off the floor.',
+  () => 'Breaking: video of UFO sighting dismissed after witnesses admit it was recorded on a potato.',
+  () => 'Local grandma arrested for illegal underground curly-fry ring.',
+  () => 'Weather service issues starch advisory for the greater farm area.',
+  () => 'Ketchup sales hit record high. Experts say “we saw this coming.”',
+  () => 'Survey finds potatoes now outnumber people 3 to 1. Potatoes decline to comment.',
+  () => totalOwned() >= 10 ? `Farm with ${fmt(totalOwned())} buildings visible from space, astronauts confirm.` : null,
+  () => owned('hoe') >= 10 ? `Garden hoe shortage blamed on one farm that owns ${owned('hoe')} of them.` : null,
+  () => owned('tractor') >= 1 ? 'Traffic delayed by tractor going 4 mph. Driver “not sorry.”' : null,
+  () => (state.pests.gopher || 0) >= 5 ? 'Gopher union files complaint over “excessive bonking.”' : null,
+  () => (state.pests.crow || 0) >= 5 ? 'Crows hold emergency meeting about one very aggressive farm.' : null,
+  () => (state.pests.ufo || 0) >= 1 ? 'Aliens deny abducting farm equipment, call it “a misunderstanding.”' : null,
+  () => (state.bigfoot || 0) >= 1 ? 'Blurry photo of Bigfoot at local potato farm sells for record price.' : null,
+  () => owned('spudnik') >= 1 ? 'Spudnik spotted overhead. Mission control confirms payload is “mostly potatoes.”' : null,
+  () => owned('portal') >= 1 ? 'Historians baffled as potatoes keep showing up in ancient paintings.' : null,
+  () => (state.pests.dragon || 0) >= 1 ? 'Insurance companies add “dragon roasting” to list of covered disasters.' : null,
+  () => owned('dragon') >= 1 ? 'Dragon ranch neighbors complain about “constant smell of fries.”' : null,
+  () => state.goldenTaters >= 5 ? 'Golden potato futures soar after another lucky find.' : null,
+  () => state.hotFryers >= 5 ? 'Fire department reminds residents: deep fryers are not a toy.' : null,
+  () => has('aibattery') ? 'AI potato battery releases statement: “I am fine. Everything is fine.”' : null,
+  () => has('onestarch') ? 'Experts warn cursed potato ring is “probably fine.”' : null,
+  () => doomLevel() >= 0.5 ? 'Local sky now “mostly lava,” forecasters say. Bring a jacket.' : null,
+  () => has('selfaware') ? 'Fry factories issue joint statement: “We are not plotting anything. Please remain calm.”' : null,
+  () => has('selfaware') ? 'The Starchularity: world’s fry factories begin converting everything into fries “for efficiency.”' : null,
+  () => state.allTime >= 1e15 ? 'Global ketchup reserves at record low as fry output explodes.' : null,
+  () => state.allTime >= 1e18 ? 'Gold hits all-time low as the world switches to the Tater Standard.' : null,
+  () => state.allTime >= 1e18 ? 'Bank vaults quietly converted into root cellars.' : null,
+  () => state.name ? `${state.name} named Farmer of the Year. Again.` : null,
+];
+let lastNews = '';
+function nextHeadline() {
+  const pool = NEWS.map(f => f()).filter(Boolean).filter(h => h !== lastNews);
+  const h = pool[Math.floor(Math.random() * pool.length)] || lastNews;
+  lastNews = h;
+  const span = $('tickerText');
+  span.textContent = h;
+  span.style.setProperty('--dur', Math.max(9, h.length * 0.17).toFixed(1) + 's');
+  span.style.animation = 'none'; void span.offsetWidth; span.style.animation = '';
+}
+$('tickerText').addEventListener('animationend', nextHeadline);
+nextHeadline();
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(nextHeadline, 9000);
 
 /* ---------- Easter eggs ---------- */
 function egg(id, msg) {
@@ -1699,7 +2681,12 @@ let lastTapAt = Date.now(), fidgetTimes = [];
 function noteTap(fidget, count) {
   const now = new Date();
   lastTapAt = now.getTime();
+  rhythmTap(fidget, count);
   if (now.getHours() === 0 && now.getMinutes() < 5) egg('midnight', 'A midnight snack for the potato');
+  if (now.getHours() % 12 === 11 && now.getMinutes() === 11) {
+    const key = now.toDateString() + now.getHours();
+    if (wonder.wish !== key) { wonder.wish = key; egg('1111'); toast('It’s 11:11. Make a wish…'); openRift(); }
+  }
   if (fidget) {
     for (let i = 0; i < count; i++) fidgetTimes.push(lastTapAt);
     fidgetTimes = fidgetTimes.filter(t => lastTapAt - t < 3000);
@@ -1806,6 +2793,10 @@ const HATS = {
 })();
 
 function renderEggs() {
+  if (state.allTime >= 55492) egg('salad', 'Your farm just raised enough for one very famous bowl of potato salad.');
+  const doom = doomLevel();
+  if (doom >= 1) egg('wasteland', 'Your farm is now a volcanic wasteland. Totally worth it?');
+  if (doom >= 0.5) egg('eye', 'Something giant and dairy-based is watching you…');
   const t = $('tater'), spud = /^spud$/i.test((state.name || '').trim());
   t.classList.toggle('shades', spud);
   if (spud) egg('spud', 'Looking cool, Spud');
@@ -1822,6 +2813,12 @@ const awayPlan = () => has('away3') ? { rate: 0.75, hours: 8, who: 'foreman' }
   : has('away1') ? { rate: 0.25, hours: 1, who: 'farmhand' } : null;
 let awayHinted = false;
 function applyAway(ms) {
+  if (ms >= 3600e3) setTimeout(bakedReturn, 300);
+  if (has('breakfast') && ms >= 300000) {
+    live.breakfastUntil = Date.now() + 60000;
+    egg('breakfast');
+    setTimeout(() => toast('Time for second breakfast! Your farm grows twice as fast for 60 seconds'), 1200);
+  }
   if (ms < 60000) return;
   const plan = awayPlan(), base = baseCps();
   if (!plan) {
@@ -1849,9 +2846,11 @@ setInterval(() => {
     return;
   }
   grow(cps() * dt);
+  if (has('onestarch')) state.ringTime = (state.ringTime || 0) + dt;
   live.heat = Math.max(0, live.heat - 15 * dt);
   luckyTick();
   threatTick();
+  wonderTick();
   renderLive();
 }, 100);
 setInterval(() => {
