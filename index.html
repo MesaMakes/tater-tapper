@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#7fc3dc">
 <title>Tater Tapper</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -53,7 +53,15 @@
   }
 
   :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+  button, input, .scene, .scene * { touch-action: manipulation; }
+  .scene, .sheet-top, .lucky { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .rotate-note { display: none; }
+  @media (orientation: landscape) and (max-height: 500px) {
+    .rotate-note { display: flex; position: fixed; inset: 0; z-index: 50; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+                   background: var(--kraft); color: var(--ink); font: 400 1.4rem var(--slab); text-align: center; padding: 20px; }
+    .rotate-note svg.i { width: 56px; height: 56px; stroke-width: 1.6; }
+  }
   *, *::before, *::after { box-sizing: inherit; }
   [hidden] { display: none !important; }
   html, body { margin: 0; }
@@ -236,7 +244,7 @@
   /* Me */
   .fieldset { display: grid; gap: 4px; margin: 10px 0; }
   .fieldset label { font-weight: 600; font-size: .9rem; }
-  .fieldset input { font: inherit; padding: 9px 12px; border-radius: 12px; border: 2px solid var(--ink); background: var(--kraft); color: var(--ink); }
+  .fieldset input { font: inherit; font-size: 16px; padding: 9px 12px; border-radius: 12px; border: 2px solid var(--ink); background: var(--kraft); color: var(--ink); }
   .btn { border: 2px solid var(--ink); border-radius: 999px; padding: 8px 18px; font-weight: 700; cursor: pointer; background: var(--paper); box-shadow: 0 3px 0 var(--ink); }
   .btn:active { translate: 0 2px; box-shadow: 0 1px 0 var(--ink); }
   .btn.go { background: var(--red); color: #fff; }
@@ -270,9 +278,10 @@
   .grabber { display: none; }
   @media (max-width: 879px) {
     :root { --peek: calc(62px + env(safe-area-inset-bottom, 0px)); }
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
     .app { padding-bottom: calc(var(--peek) + 10px); }
     .scene { display: flex; flex-direction: column; align-items: center;
-             min-height: calc(100dvh - var(--peek) - 34px - env(safe-area-inset-top, 0px)); }
+             height: calc(100dvh - var(--peek) - 34px - env(safe-area-inset-top, 0px)); }
     .field { margin-top: auto; }
     .tater-btn { width: min(76vw, 340px); }
     .ledger {
@@ -291,7 +300,48 @@
     .toasts { bottom: calc(var(--peek) + 12px); }
   }
 
+  /* Pests and aliens */
+  .threats { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+  .pest { position: absolute; pointer-events: auto; border: 0; background: none; padding: 0; cursor: pointer;
+          -webkit-tap-highlight-color: transparent; touch-action: manipulation; animation: pestIn .35s cubic-bezier(.3,1.6,.5,1) both; }
+  .pest svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .pest-gopher { width: 64px; } .pest-crow { width: 56px; } .pest-ufo { width: 112px; } .pest-raccoon { width: 66px; }
+  .pest-beetle { width: 30px; translate: -50% -50%; rotate: var(--r); }
+  .pest-crow svg { animation: peck .8s ease-in-out infinite; transform-origin: 60% 80%; }
+  .pest-ufo svg { animation: hover 1.6s ease-in-out infinite; }
+  .pest-ufo .beam { animation: beam 1s ease-in-out infinite alternate; }
+  .pest-beetle svg { animation: crawl .5s steps(2) infinite; }
+  .pest-gopher svg, .pest-raccoon svg { animation: hover 1.2s ease-in-out infinite; }
+  .pest.hit svg { animation: hitShake .25s; }
+  .pest.gone { animation: poof .35s ease-in forwards; pointer-events: none; }
+  .pest.flee { animation: flee .6s ease-in forwards; pointer-events: none; }
+  .pest .hp { position: absolute; left: 18%; right: 18%; bottom: -9px; height: 7px; border-radius: 99px; background: rgba(0,0,0,.45); border: 1.5px solid #2f2117; overflow: hidden; }
+  .pest .hp b { display: block; height: 100%; width: 100%; background: #7ed957; transition: width .15s; }
+  @keyframes pestIn { from { transform: scale(0); opacity: 0; } }
+  @keyframes peck { 50% { transform: rotate(14deg); } }
+  @keyframes hover { 50% { transform: translateY(-6px); } }
+  @keyframes beam { to { opacity: .35; } }
+  @keyframes crawl { 50% { transform: translateY(-1.5px) rotate(5deg); } }
+  @keyframes hitShake { 25% { transform: translateX(-4px) scale(.9); } 75% { transform: translateX(4px) scale(.9); } }
+  @keyframes poof { to { transform: scale(1.7); opacity: 0; } }
+  @keyframes flee { to { transform: translateY(-90px) scale(.6); opacity: 0; } }
+  .alert { position: absolute; z-index: 8; top: 62px; left: 14px; right: 14px; display: grid; gap: 1px; padding: 8px 14px 10px; border-radius: 16px;
+           background: var(--red); color: #fff; border: 2px solid var(--outline); box-shadow: 0 4px 0 var(--outline); animation: alertIn .3s cubic-bezier(.3,1.5,.5,1); }
+  .alert strong { font: 400 1.15rem var(--slab); }
+  .alert span { font-size: .85rem; font-weight: 600; line-height: 1.3; }
+  .alert i { height: 6px; border-radius: 99px; background: rgba(255,255,255,.3); overflow: hidden; margin-top: 5px; }
+  .alert i b { display: block; height: 100%; width: 100%; background: #fff; }
+  @keyframes alertIn { from { transform: translateY(-20px); opacity: 0; } }
+
+  /* Potato accessories from Easter eggs and holidays */
+  .acc { display: none; }
+  .tater-btn.blush #potBlush, .tater-btn.shades #potShades, .tater-btn.flower #potFlower, .tater-btn.hat #potHat { display: inline; }
+  .tater-btn.disco svg { animation: disco .7s linear infinite; }
+  @keyframes disco { from { filter: hue-rotate(0deg) saturate(1.6); } to { filter: hue-rotate(360deg) saturate(1.6); } }
+  .tater-btn.sweet svg { filter: hue-rotate(-28deg) saturate(1.7); }
+
   @media (prefers-reduced-motion: reduce) {
+    .pest, .pest svg, .pest-ufo .beam, .alert, .tater-btn.disco svg { animation: none !important; }
     .tool svg { animation: none; }
     .ledger { transition: none; }
     .sun, .lucky, .dot.wait, .land .drive, .land .smoke, .land .item.new > *, .herd svg.i.new { animation: none; }
@@ -318,6 +368,7 @@
       <button class="pill" id="accountBtn"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span id="accountText">Sign in</span></button>
     </div>
 
+    <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
     <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span></div>
 
@@ -376,9 +427,23 @@
             <path d="M222 38 C236 28 252 32 256 40 C244 48 230 46 222 38Z" fill="var(--green)"/>
             <path d="M216 52 C206 40 192 40 188 46 C196 56 208 56 216 52Z" fill="var(--green)"/>
           </g>
+          <g id="potFlower" class="acc" stroke="var(--outline)" stroke-width="2.5">
+            <g fill="#fff6e2"><circle cx="230" cy="16" r="8"/><circle cx="246" cy="20" r="8"/><circle cx="248" cy="36" r="8"/><circle cx="234" cy="42" r="8"/><circle cx="222" cy="30" r="8"/></g>
+            <circle cx="236" cy="29" r="7" fill="#f4c542"/>
+          </g>
+          <g id="potBlush" class="acc">
+            <ellipse cx="92" cy="116" rx="17" ry="9" fill="#ff7a9a" opacity=".6"/><ellipse cx="206" cy="110" rx="17" ry="9" fill="#ff7a9a" opacity=".6"/>
+            <path d="M132 124 q18 16 36 0" fill="none" stroke="var(--outline)" stroke-width="5" stroke-linecap="round"/>
+          </g>
+          <g id="potShades" class="acc" stroke="var(--outline)" stroke-width="3">
+            <rect x="72" y="70" width="56" height="28" rx="11" fill="#141414"/><rect x="142" y="66" width="56" height="28" rx="11" fill="#141414"/>
+            <path d="M128 82 L142 80" stroke="#141414" stroke-width="6"/><path d="M84 77 h18 M154 73 h18" stroke="#fff" stroke-opacity=".5" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <g id="potHat" class="acc"></g>
         </svg>
       </button>
       <div class="buffs" id="buffs"></div>
+      <div class="threats" id="threats"></div>
     </div>
   </section>
 
@@ -421,6 +486,7 @@
       <div class="panel" id="tab-me" role="tabpanel" hidden>
         <div class="panel-head"><h2>Farmer</h2></div>
         <div id="accountBox"></div>
+        <p class="note" id="cloudStatus"></p>
         <div class="fieldset"><label for="nameInput">Leaderboard name</label><input id="nameInput" maxlength="20" autocomplete="nickname"></div>
         <button class="btn" id="profileSave">Save profile</button>
 
@@ -449,6 +515,7 @@
             <button class="btn" data-pt="million">+1M taters</button>
             <button class="btn" data-pt="golden">Golden tater now</button>
             <button class="btn" data-pt="fryer">Fill the fryer</button>
+            <button class="btn" data-pt="pest">Send a pest</button>
             <button class="btn go" data-pt="reset">Reset all progress</button>
           </div>
         </div>
@@ -466,6 +533,10 @@
   </svg>
 </button>
 <div class="toasts" id="toasts" role="status"></div>
+<div class="rotate-note" aria-live="polite">
+  <svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>
+  Turn your phone upright to keep tapping
+</div>
 
 <script src="config.js"></script>
 <script>
@@ -593,6 +664,17 @@ const UPGRADES = [
   { id: 'luck1', icon: 'luck', name: 'Lucky Horseshoe',     desc: 'Golden taters show up more often.',                  cost: 7.7e4, unlock: () => state.goldenTaters >= 3 },
   { id: 'bt1', icon: 'bt',   name: 'Signal Booster',      desc: 'Fidget taps are worth 3× instead of 2×.',            cost: 1e4,   unlock: () => state.fidgetClicks >= 100 },
 ];
+UPGRADES.push(
+  { id: 'scarecrow', icon: 'scarecrow', name: 'Scarecrow',       desc: 'Crows come half as often, and only two at a time.', cost: 5e3,   unlock: () => !!state.seen.crows },
+  { id: 'barncat',   icon: 'cat',       name: 'Barn Cat',        desc: 'Gophers need half as many taps.',                  cost: 1.5e4, unlock: () => !!state.seen.gopher },
+  { id: 'ladybugs',  icon: 'ladybug',   name: 'Ladybug Release', desc: 'Beetles you miss get eaten after 20 seconds.',      cost: 4e4,   unlock: () => !!state.seen.beetles },
+  { id: 'binlocks',  icon: 'bin',       name: 'Locking Bins',    desc: 'Raccoons need half as many taps.',                 cost: 8e4,   unlock: () => !!state.seen.raccoon },
+  { id: 'foilhats',  icon: 'foil',      name: 'Tinfoil Hats',    desc: 'UFOs need half as many taps.',                     cost: 5e5,   unlock: () => !!state.seen.ufo },
+  { id: 'radar',     icon: 'radar',     name: 'Radar Dish',      desc: 'UFOs give you 10 extra seconds.',                  cost: 5e6,   unlock: () => (state.pests.ufo || 0) >= 3 },
+  { id: 'away1', icon: 'clock', name: 'Farmhand',          desc: 'While the app is closed, your farm keeps growing at 25% speed for up to 1 hour.', cost: 2e4, unlock: () => baseCps() >= 10 },
+  { id: 'away2', icon: 'clock', name: 'Night Shift',       desc: 'Away growth rises to 50% speed for up to 4 hours.',                                cost: 2e6, unlock: () => has('away1') && baseCps() >= 1000 },
+  { id: 'away3', icon: 'clock', name: 'Full-Time Foreman', desc: 'Away growth rises to 75% speed for up to 8 hours.',                                cost: 2e8, unlock: () => has('away2') && baseCps() >= 1e5 },
+);
 BUILDINGS.forEach(b => TIERS.forEach((t, i) => UPGRADES.push({
   id: `${b.id}_${i}`, icon: b.id, name: `${b.name} ${t.label}`, desc: `Doubles what each ${b.name} makes.`,
   cost: b.base * t.cost, unlock: () => owned(b.id) >= t.own,
@@ -622,6 +704,46 @@ addAch('replant5', 'Crop rotation', 'Replant 5 times.', () => state.replants >= 
 addAch('signin', 'Name on the board', 'Sign in and join the leaderboard.', () => state.signedIn);
 addAch('podium', 'Podium', 'Reach the top 3 on a leaderboard.', () => state.bestRank > 0 && state.bestRank <= 3);
 
+// Pests and defenses
+const pestTotal = () => Object.values(state.pests).reduce((a, b) => a + b, 0);
+[[10, 'Pest control'], [100, 'Exterminator'], [500, 'Nature’s bouncer']]
+  .forEach(([n, name]) => addAch('pest' + n, name, `Chase off ${n} pests.`, () => pestTotal() >= n));
+addAch('gopher10', 'Whack-a-gopher', 'Bonk 10 gophers back into their holes.', () => (state.pests.gopher || 0) >= 10);
+addAch('crow25', 'Not today, birds', 'Shoo away 25 crows.', () => (state.pests.crow || 0) >= 25);
+addAch('beetle50', 'Beetle squasher', 'Squish 50 potato beetles.', () => (state.pests.beetle || 0) >= 50);
+addAch('ufo1', 'Close encounter', 'Drive off a UFO.', () => (state.pests.ufo || 0) >= 1);
+addAch('ufo10', 'Area 51 survivor', 'Drive off 10 UFOs.', () => (state.pests.ufo || 0) >= 10);
+addAch('defall', 'Fortified farm', 'Buy every pest defense.', () => ['scarecrow', 'barncat', 'ladybugs', 'binlocks', 'foilhats', 'radar'].every(id => has(id)));
+
+// Bigger goals
+[[1e12, 'Potato planet'], [1e15, 'Spudiverse']]
+  .forEach(([n, name]) => addAch('grow' + n, name, `Grow ${fmt(n)} taters all-time.`, () => state.allTime >= n));
+addAch('cps1e7', 'Global supplier', 'Grow 10M taters per second.', () => baseCps() >= 1e7);
+addAch('tap1e5', 'Thumb of steel', 'Tap the potato 100K times on screen.', () => state.clicks >= 1e5);
+addAch('fidget1e5', 'Knuckle cracker', 'Tap your fidget 100K times.', () => state.fidgetClicks >= 1e5);
+addAch('hoe50', 'Hoe-down', 'Own 50 Garden Hoes and watch them circle.', () => owned('hoe') >= 50);
+addAch('mars1', 'Spud in space', 'Own a Mars Greenhouse.', () => owned('mars') >= 1);
+addAch('hot100', 'Deep fried', 'Fill the fryer 100 times.', () => state.hotFryers >= 100);
+addAch('gold25', 'Gold rush', 'Catch 25 golden taters.', () => state.goldenTaters >= 25);
+addAch('replant25', 'Generational farmer', 'Replant 25 times.', () => state.replants >= 25);
+
+// Secret ribbons: hidden until found
+const addSecret = (id, name, desc, test) => ACH.push({ id, name, desc, test, secret: true });
+const eggFound = id => () => !!state.eggs[id];
+addSecret('egg_sun', 'Don’t look directly at it', 'Tap the sun 10 times in a row.', eggFound('sun'));
+addSecret('egg_party', 'Party potato', 'Tap the Tater Tapper logo 7 times.', eggFound('party'));
+addSecret('egg_hold', 'Gentle hold', 'Press and hold the potato for 3 seconds.', eggFound('hold'));
+addSecret('egg_flower', 'Green thumb', 'Tap the sprout 20 times in a row.', eggFound('flower'));
+addSecret('egg_spud', 'Cool spud', 'Set your leaderboard name to Spud.', eggFound('spud'));
+addSecret('egg_code', 'Old school', 'Swipe up, up, down, down, left, right, left, right (or type the classic code).', eggFound('code'));
+addSecret('egg_midnight', 'Midnight snack', 'Tap the potato in the first 5 minutes after midnight.', eggFound('midnight'));
+addSecret('egg_mars', 'Take me to your tater', 'Tap the red planet 5 times.', eggFound('mars'));
+addSecret('egg_speed', 'Speed demon', 'Press the fidget 15 times in 3 seconds.', eggFound('speed'));
+addSecret('egg_patience', 'Couch potato', 'Leave the game open for 5 minutes without tapping.', eggFound('patience'));
+addSecret('egg_holiday', 'Festive spud', 'Play on a holiday.', eggFound('holiday'));
+addSecret('egg_raccoon', 'Trash panda', 'Chase off the raccoon that only shows up late at night.', () => (state.pests.raccoon || 0) >= 1);
+addSecret('egg_abduct', 'Probed', 'Lose a building to aliens.', () => state.abducted >= 1);
+
 /* =====================================================================
    Icons (24×24 line drawings) and ribbons
    ===================================================================== */
@@ -638,12 +760,19 @@ const ICON = {
   grip:      '<path d="M8 21v-5.5L5.2 11a1.5 1.5 0 0 1 2.5-1.6L9 11.2V6a1.5 1.5 0 0 1 3 0v4-5a1.5 1.5 0 0 1 3 0v5-3.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-2 6z"/>',
   heat:      '<path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/>',
   luck:      '<path d="M7 20H5l-.6-7.5a7.6 7.6 0 1 1 15.2 0L19 20h-2l.5-7.5a5.5 5.5 0 1 0-11 0z"/>',
+  scarecrow: '<circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V21M4 10h16M7 10l-1.5 5M17 10l1.5 5M9 21h6"/>',
+  cat:       '<path d="M5 20v-8L4 5l4 3.5h8L20 5l-1 7v8z"/><path d="M9.5 13.5h.01M14.5 13.5h.01M11 16.5h2"/>',
+  ladybug:   '<ellipse cx="12" cy="14" rx="6.5" ry="7"/><path d="M12 7v14M9 4.5l1.5 2.5M15 4.5L13.5 7"/><path d="M9 11.5h.01M15 11.5h.01M9.5 16.5h.01M14.5 16.5h.01"/>',
+  bin:       '<path d="M5 8h14l-1.2 12H6.2z"/><path d="M4 8h16M9.5 4h5v4M10 12v5M14 12v5"/>',
+  foil:      '<path d="M12 3L5 19h14z"/><path d="M8 13l2 1 2-2 2 2 2-1"/>',
+  clock:     '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  radar:     '<path d="M4 18a10 10 0 0 1 10-10"/><path d="M8 18a6 6 0 0 1 6-6"/><circle cx="14" cy="18" r="1.5"/><path d="M3 21h18"/>',
   bt:        '<path d="M12 13v8"/><circle cx="12" cy="11" r="1.6"/><path d="M8.2 7.5a5.5 5.5 0 0 1 7.6 0M5.3 4.6a9.6 9.6 0 0 1 13.4 0"/>',
   wrench:    '<path d="M14.5 5.5a4 4 0 0 0 4.9 4.9l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8a4 4 0 0 0-1.9-1.9z"/>',
 };
 const icon = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICON[name] || ICON.wrench}</svg>`;
 const SPUD = '<svg viewBox="0 0 16 12" aria-hidden="true"><path d="M2 6C1 3 4 1 8 1s7 2 7 5-3 5-7 5-5.5-1-6-5z" fill="#c99258" stroke="currentColor" stroke-width="1.5"/></svg>';
-const RIBBON_COLORS = { grow: '#e0a52a', tap: '#c8372d', fidget: '#2b5ea8', farm: '#3f6b2a', fun: '#7b4bb3' };
+const RIBBON_COLORS = { grow: '#e0a52a', tap: '#c8372d', fidget: '#2b5ea8', farm: '#3f6b2a', fun: '#7b4bb3', pest: '#d9662b', gold: '#c99a2e' };
 function ribbon(color) {
   const petals = Array.from({ length: 12 }, (_, i) => {
     const a = i * Math.PI / 6, x = 20 + Math.cos(a) * 12.5, y = 16 + Math.sin(a) * 12.5;
@@ -658,7 +787,7 @@ function ribbon(color) {
   </svg>`;
 }
 const achColor = id => RIBBON_COLORS[
-  /^grow|^cps/.test(id) ? 'grow' : /^tap|^hot/.test(id) ? 'tap' : /^fidget|^sync/.test(id) ? 'fidget' : /^own|^lineup|^up/.test(id) ? 'farm' : 'fun'];
+  /^egg_/.test(id) ? 'fun' : /^pest|^gopher|^crow|^beetle|^ufo|^def/.test(id) ? 'pest' : /^grow|^cps/.test(id) ? 'grow' : /^tap|^hot/.test(id) ? 'tap' : /^fidget|^sync/.test(id) ? 'fidget' : /^own|^lineup|^up|^hoe|^mars/.test(id) ? 'farm' : 'gold'];
 
 /* =====================================================================
    Farm landscape: what you buy shows up in the field
@@ -768,7 +897,7 @@ const SAVE_KEY = 'taterTapper.v1';
 function freshState() {
   return { v: 2, taters: 0, run: 0, allTime: 0, clicks: 0, fidgetClicks: 0, buildings: {}, upgrades: [],
     achievements: [], seeds: 0, replants: 0, hotFryers: 0, goldenTaters: 0, bigSyncs: 0, bestRank: 0,
-    signedIn: false, name: '', lastSeen: Date.now(), fidgets: {} };
+    signedIn: false, name: '', lastSeen: Date.now(), fidgets: {}, pests: {}, seen: {}, eggs: {}, abducted: 0 };
 }
 function loadState() {
   let s = null;
@@ -789,7 +918,7 @@ const isHot = () => Date.now() < live.hotUntil;
 const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds);
 const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1);
 const baseCps = () => BUILDINGS.reduce((a, b) => a + b.cps * owned(b.id) * buildingMult(b), 0) * globalMult();
-const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1);
+const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1) * pestMult();
 const fidgetMult = () => has('bt1') ? 3 : 2;
 function clickValue(allowHot = true) {
   let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult();
@@ -818,6 +947,7 @@ function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
   grow(gain);
   if (fidget) state.fidgetClicks += count; else state.clicks += count;
   if (isLive) addHeat(3 * Math.min(count, 10));
+  if (isLive) { noteTap(fidget, count); if (fidget) fidgetHitThreat(count); }
   popText('+' + fmt(gain), x, y, fidget);
   kickDirt(Math.min(3 + count, 9));
   squish();
@@ -860,7 +990,8 @@ function replant() {
   toast(`Replanted! +${gain} seed potato${gain > 1 ? 'es' : ''}`);
 }
 
-function scheduleLucky() { live.nextLucky = Date.now() + (60 + Math.random() * 120) * 1000 / (has('luck1') ? 1.6 : 1); }
+// Golden taters are rare: one every 4–10 minutes, a bit sooner with the Lucky Horseshoe
+function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1); }
 function luckyTick() {
   const now = Date.now(), el = $('lucky');
   if (el.hidden && now >= live.nextLucky) {
@@ -1028,10 +1159,11 @@ function renderAwards() {
   $('achSummary').textContent = `Each ribbon adds 1% to everything you grow. You’re at +${n}%.`;
   $('achGrid').replaceChildren(...ACH.map(a => {
     const d = document.createElement('div');
-    d.className = 'ach' + (state.achievements.includes(a.id) ? ' got' : '');
+    const got = state.achievements.includes(a.id), hidden = a.secret && !got;
+    d.className = 'ach' + (got ? ' got' : '');
     d.innerHTML = ribbon(achColor(a.id)) + '<span><strong></strong><small></small></span>';
-    d.querySelector('strong').textContent = a.name;
-    d.querySelector('small').textContent = a.desc;
+    d.querySelector('strong').textContent = hidden ? 'Secret ribbon' : a.name;
+    d.querySelector('small').textContent = hidden ? 'Keep exploring. Something on this farm is hiding it.' : a.desc;
     return d;
   }));
 }
@@ -1039,7 +1171,7 @@ function renderAwards() {
 function checkAchievements() {
   const gained = ACH.filter(a => !state.achievements.includes(a.id) && a.test());
   if (!gained.length) return;
-  gained.forEach(a => { state.achievements.push(a.id); toast.color = achColor(a.id); toast(`Ribbon: ${a.name}`, 'award'); });
+  gained.forEach(a => { state.achievements.push(a.id); toast.color = achColor(a.id); toast(`${a.secret ? 'Secret ribbon' : 'Ribbon'}: ${a.name}`, 'award'); });
   save(); renderAwards();
 }
 
@@ -1134,10 +1266,13 @@ const showTab = name => tabs.find(t => t.dataset.tab === name).click();
 /* =====================================================================
    6) Input: screen potato + fidget
    ===================================================================== */
-$('tater').addEventListener('click', e => {
-  const r = $('field').getBoundingClientRect(), kb = e.detail === 0;
-  doClick(1, { x: kb ? null : e.clientX - r.left - 15, y: kb ? null : e.clientY - r.top - 30 });
+// Taps count the instant a finger lands, and every finger counts. Enter or Space still works from a keyboard.
+$('tater').addEventListener('pointerdown', e => {
+  if (e.button > 0) return;
+  const r = $('field').getBoundingClientRect();
+  doClick(1, { x: e.clientX - r.left - 15, y: e.clientY - r.top - 30 });
 });
+$('tater').addEventListener('click', e => { if (e.detail === 0) doClick(1); });
 
 const fidget = new TaterFidget({
   onClicks: (n, { fromSync }) => {
@@ -1218,7 +1353,7 @@ async function onSignedIn(user) {
         renderLists(true); renderAwards();
       }
     }
-  } catch (e) { console.warn('Cloud load failed', e); }
+  } catch (e) { console.warn('Cloud load failed', e); cloudProblem('load your farm', e); }
   if (!state.name) {                                    // default: first name + last initial
     const parts = (user.displayName || 'Farmer').trim().split(/\s+/);
     state.name = (parts[0] + (parts[1] ? ' ' + parts[1][0] + '.' : '')).slice(0, 20);
@@ -1227,6 +1362,19 @@ async function onSignedIn(user) {
   save();
   cloud.pending = true;
   fillProfile();
+}
+
+// Shows what the online save is doing on the Me tab, so problems are easy to spot from a phone
+function cloudStatus(msg) { $('cloudStatus').textContent = msg; }
+function cloudProblem(what, e) {
+  const code = (e && e.code) || 'unknown';
+  const hint = {
+    'permission-denied': 'Firestore is blocking it. In Firebase, open Firestore Database → Rules, paste in firestore.rules and tap Publish.',
+    'not-found': 'There’s no Firestore database yet. In Firebase, open Firestore Database and tap Create database.',
+    'failed-precondition': 'There’s no Firestore database yet. In Firebase, open Firestore Database and tap Create database.',
+    'unavailable': 'You look offline. It will try again on its own.',
+  }[code] || 'Firebase said: ' + (e && e.message ? e.message : code);
+  cloudStatus(`Couldn’t ${what} (${code}). ${hint}`);
 }
 
 async function pushCloud() {
@@ -1241,7 +1389,8 @@ async function pushCloud() {
       clicks: totalTaps(), fidgetClicks: state.fidgetClicks, achievements: state.achievements.length,
       updatedAt: serverTimestamp(),
     });
-  } catch (e) { console.warn('Cloud save failed', e); cloud.pending = true; }
+    cloudStatus(`Saved online and on the leaderboard at ${new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.`);
+  } catch (e) { console.warn('Cloud save failed', e); cloud.pending = true; cloudProblem('save online', e); }
 }
 
 function subscribeBoard() {
@@ -1255,7 +1404,8 @@ function subscribeBoard() {
     err => {
       console.warn(err);
       $('board').replaceChildren();
-      $('boardNote').textContent = 'Couldn’t load the leaderboard. Check your connection and try again.';
+      $('boardNote').textContent = `Couldn’t load the leaderboard (${err.code || 'unknown'}). Check the Me tab for details.`;
+      cloudProblem('load the leaderboard', err);
     });
 }
 
@@ -1306,6 +1456,7 @@ function renderAccount() {
   } else {
     $('accountText').textContent = state.name || 'Signed in';
     note.textContent = `Signed in as ${cloud.user.displayName || cloud.user.email}. Your farm saves online.`;
+    if (!$('cloudStatus').textContent) cloudStatus('Saving to the leaderboard…');
     const btn = Object.assign(document.createElement('button'), { className: 'btn', textContent: 'Sign out' });
     btn.addEventListener('click', () => cloud.A.signOut(cloud.auth));
     box.append(note, btn);
@@ -1337,6 +1488,7 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
   if (act === 'million') { grow(1e6); toast('+1M taters'); }
   if (act === 'golden') { live.nextLucky = 0; live.luckyUntil = 0; $('lucky').hidden = true; }
   if (act === 'fryer') addHeat(100);
+  if (act === 'pest') { threat.next = 0; if (threat.active) toast('A pest is already here'); else spawnThreat(true); }
   if (act === 'reset') {
     if (!confirm('Reset all progress on this device? This can’t be undone.')) return;
     try { localStorage.removeItem(SAVE_KEY); } catch {}
@@ -1349,25 +1501,362 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
 }));
 
 /* =====================================================================
+   7b) Pests, aliens and Easter eggs
+   ===================================================================== */
+const PEST_ART = {
+  gopher: `<svg viewBox="0 0 60 56"><ellipse cx="30" cy="50" rx="28" ry="7" fill="#57351e"/>
+    <circle cx="17" cy="17" r="5" fill="#9c6b3f" stroke="#2f2117" stroke-width="2"/><circle cx="43" cy="17" r="5" fill="#9c6b3f" stroke="#2f2117" stroke-width="2"/>
+    <path d="M12 50 C10 26 18 12 30 12 C42 12 50 26 48 50Z" fill="#9c6b3f" stroke="#2f2117" stroke-width="2.5"/>
+    <ellipse cx="30" cy="34" rx="11" ry="8" fill="#d9b48a"/>
+    <circle cx="23" cy="25" r="3" fill="#2f2117"/><circle cx="37" cy="25" r="3" fill="#2f2117"/><circle cx="24" cy="24" r="1" fill="#fff"/><circle cx="38" cy="24" r="1" fill="#fff"/>
+    <ellipse cx="30" cy="31" rx="3.5" ry="2.5" fill="#2f2117"/>
+    <rect x="26.5" y="35" width="3.4" height="5" fill="#fff" stroke="#2f2117"/><rect x="30" y="35" width="3.4" height="5" fill="#fff" stroke="#2f2117"/>
+    <ellipse cx="30" cy="50" rx="21" ry="4.5" fill="#6b4226"/></svg>`,
+  crow: `<svg viewBox="0 0 60 40"><path d="M8 22 C14 12 30 10 42 16 L54 14 L46 22 C40 30 22 32 8 22Z" fill="#1e1a22" stroke="#000" stroke-width="1.5"/>
+    <path d="M22 18 C26 2 38 0 40 4 C36 10 32 16 26 22Z" fill="#2c2733" stroke="#000" stroke-width="1.5"/>
+    <path d="M54 14 L60 16 L54 18Z" fill="#f2a12b"/><circle cx="48" cy="15" r="2" fill="#fff"/><circle cx="48.5" cy="15" r="1.1" fill="#000"/>
+    <path d="M8 22 L1 19 L4 26Z" fill="#1e1a22"/><path d="M28 28 v8 M34 28 v8" stroke="#f2a12b" stroke-width="2"/></svg>`,
+  beetle: `<svg viewBox="0 0 30 36"><path d="M6 12l-5-3M6 20H0M7 28l-5 4M24 12l5-3M24 20h6M23 28l5 4" stroke="#2f2117" stroke-width="2"/>
+    <circle cx="15" cy="7" r="5" fill="#d9662b" stroke="#2f2117" stroke-width="1.5"/>
+    <ellipse cx="15" cy="21" rx="10" ry="13" fill="#f2d14b" stroke="#2f2117" stroke-width="1.8"/>
+    <path d="M15 8v26M10.5 12c-1 6-1 14 0 19M19.5 12c1 6 1 14 0 19M6.5 16c0 5 0 9 1 13M23.5 16c0 5 0 9-1 13" stroke="#2f2117" stroke-width="1.6" fill="none"/></svg>`,
+  ufo: `<svg viewBox="0 0 90 90"><path class="beam" d="M30 34 L8 90 H82 L60 34Z" fill="rgba(160,255,140,.38)"/>
+    <ellipse cx="45" cy="30" rx="42" ry="11" fill="#b9c3c8" stroke="#2f2117" stroke-width="2.5"/>
+    <path d="M27 26 C28 9 62 9 63 26Z" fill="rgba(140,230,170,.85)" stroke="#2f2117" stroke-width="2.5"/>
+    <circle cx="45" cy="18" r="5.5" fill="#7ed957" stroke="#2f2117" stroke-width="1.5"/><circle cx="43.3" cy="17" r="1.5" fill="#000"/><circle cx="46.7" cy="17" r="1.5" fill="#000"/>
+    <g fill="#ffd45c" stroke="#2f2117" stroke-width="1"><circle cx="18" cy="31" r="3"/><circle cx="34" cy="34.5" r="3"/><circle cx="56" cy="34.5" r="3"/><circle cx="72" cy="31" r="3"/></g></svg>`,
+  raccoon: `<svg viewBox="0 0 60 56"><path d="M8 18 L6 4 L18 12Z M52 18 L54 4 L42 12Z" fill="#7d7f86" stroke="#2f2117" stroke-width="2"/>
+    <path d="M6 30 C6 14 18 8 30 8 C42 8 54 14 54 30 C54 44 42 52 30 52 C18 52 6 44 6 30Z" fill="#9a9ca3" stroke="#2f2117" stroke-width="2.5"/>
+    <path d="M8 28 C14 20 24 22 30 28 C36 22 46 20 52 28 C46 36 36 34 30 30 C24 34 14 36 8 28Z" fill="#2f2f36"/>
+    <circle cx="20" cy="28" r="3" fill="#fff"/><circle cx="40" cy="28" r="3" fill="#fff"/><circle cx="20" cy="28" r="1.6" fill="#000"/><circle cx="40" cy="28" r="1.6" fill="#000"/>
+    <path d="M22 40 C26 46 34 46 38 40 C34 38 26 38 22 40Z" fill="#e8e2d8"/><ellipse cx="30" cy="40" rx="3.5" ry="2.4" fill="#2f2117"/></svg>`,
+};
+const isNight = () => { const h = new Date().getHours(); return h >= 21 || h < 5; };
+const PESTS = {
+  gopher:  { title: 'Gopher!', msg: 'A gopher is digging up your patch. Tap it!', art: 'gopher', hp: () => has('barncat') ? 4 : 8, units: () => 1, time: 12000,
+             ok: () => owned('patch') >= 1, weight: () => 3, reward: 20 },
+  crows:   { title: 'Crows!', msg: 'Crows are pecking at your sprouts. Tap every one!', art: 'crow', hp: () => 1, units: () => has('scarecrow') ? 2 : 3, time: 9000,
+             ok: () => owned('patch') >= 3, weight: () => has('scarecrow') ? 1 : 2, reward: 6 },
+  beetles: { title: 'Potato beetles!', msg: 'Beetles are chewing your crop. Squish them!', art: 'beetle', hp: () => 1, units: () => 4 + Math.min(4, Math.floor(totalOwned() / 40)), time: 0,
+             ok: () => totalOwned() >= 10, weight: () => 2, reward: 4 },
+  ufo:     { title: 'UFO!', msg: 'Aliens are about to beam up part of your farm. Tap the saucer!', art: 'ufo', hp: () => has('foilhats') ? 10 : 20, units: () => 1, time: 15000,
+             ok: () => owned('tractor') + owned('farm') + owned('harvester') + owned('fryline') > 0, weight: () => 1, reward: 60 },
+  raccoon: { title: 'Raccoon!', msg: 'A raccoon is raiding the farm stand. Tap it!', art: 'raccoon', hp: () => has('binlocks') ? 5 : 10, units: () => 1, time: 12000,
+             ok: () => owned('stand') >= 1 && isNight(), weight: () => 3, reward: 30 },
+};
+const PEST_KEY = { gopher: 'gopher', crows: 'crow', beetles: 'beetle', ufo: 'ufo', raccoon: 'raccoon' };
+const WIN_MSG = { gopher: 'Bonk! The gopher dove back underground', crows: 'Shoo! The crows are gone', beetles: 'Every beetle squished',
+                  ufo: 'The UFO zoomed off and dropped some space spuds', raccoon: 'The raccoon scurried off empty-handed' };
+const threat = { active: null, next: Date.now() + 150000 };
+
+function scheduleThreat() { threat.next = Date.now() + (120 + Math.random() * 180) * 1000; }
+function pestMult() {
+  const a = threat.active;
+  return a && a.type === 'beetles' ? Math.max(0.3, 1 - 0.08 * a.units.filter(u => u.hp > 0).length) : 1;
+}
+
+function spawnThreat(force) {
+  if (threat.active) return;
+  const pool = Object.entries(PESTS).filter(([, p]) => p.ok());
+  if (!pool.length) { if (force) toast('No pests want your farm yet. Grow a bit more first.'); scheduleThreat(); return; }
+  let roll = Math.random() * pool.reduce((sum, [, p]) => sum + p.weight(), 0), type = pool[0][0];
+  for (const [k, p] of pool) { roll -= p.weight(); if (roll <= 0) { type = k; break; } }
+  const p = PESTS[type], t = $('tater'), layer = $('threats');
+  state.seen[type] = true;
+  const time = p.time ? p.time + (type === 'ufo' && has('radar') ? 10000 : 0) : 0;
+  threat.active = { type, units: [], started: Date.now(), ends: time ? Date.now() + time : 0, time };
+  const n = p.units();
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('button');
+    el.className = 'pest pest-' + p.art;
+    el.setAttribute('aria-label', 'Chase off the ' + p.art);
+    const hp = p.hp();
+    el.innerHTML = PEST_ART[p.art] + (hp > 1 ? '<i class="hp"><b></b></i>' : '');
+    if (type === 'gopher') { el.style.left = (12 + Math.random() * 62) + '%'; el.style.bottom = (3 + Math.random() * 9) + '%'; }
+    else if (type === 'crows') { el.style.left = (6 + (i / n) * 70 + Math.random() * 12) + '%'; el.style.bottom = (8 + Math.random() * 18) + '%'; }
+    else if (type === 'beetles') {
+      const ang = (i / n) * Math.PI * 2 + Math.random() * 0.6, rr = 0.22 + Math.random() * 0.12;
+      el.style.left = (t.offsetLeft + t.offsetWidth * (0.517 + Math.cos(ang) * rr * 1.2)) + 'px';
+      el.style.top = (t.offsetTop + t.offsetHeight * (0.48 + Math.sin(ang) * rr)) + 'px';
+      el.style.setProperty('--r', Math.round(Math.random() * 360) + 'deg');
+    }
+    else if (type === 'ufo') { el.style.left = (18 + Math.random() * 46) + '%'; el.style.top = '0'; }
+    else if (type === 'raccoon') { el.style.left = Math.random() < 0.5 ? '4%' : '74%'; el.style.bottom = '12%'; }
+    const unit = { el, hp, max: hp };
+    el.addEventListener('pointerdown', e => { e.stopPropagation(); hitUnit(unit, 1); });
+    el.addEventListener('click', e => { if (e.detail === 0) hitUnit(unit, 1); });
+    layer.appendChild(el);
+    threat.active.units.push(unit);
+  }
+  showAlert();
+}
+
+function hitUnit(unit, dmg) {
+  const a = threat.active;
+  if (!a || unit.hp <= 0) return;
+  unit.hp -= dmg;
+  const bar = unit.el.querySelector('.hp b');
+  if (bar) bar.style.width = Math.max(0, unit.hp / unit.max * 100) + '%';
+  unit.el.classList.remove('hit'); void unit.el.offsetWidth; unit.el.classList.add('hit');
+  if (unit.hp <= 0) {
+    state.pests[PEST_KEY[a.type]] = (state.pests[PEST_KEY[a.type]] || 0) + 1;
+    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward);
+    grow(bonus);
+    const fr = $('field').getBoundingClientRect(), er = unit.el.getBoundingClientRect();
+    popText('+' + fmt(bonus), er.left - fr.left + er.width / 2 - 20, er.top - fr.top - 10, true);
+    unit.el.classList.add('gone');
+    setTimeout(() => unit.el.remove(), 400);
+    if (a.units.every(u => u.hp <= 0)) endThreat(true);
+  }
+  if (threat.active) showAlert();
+  renderLive();
+}
+function fidgetHitThreat(n) {          // fidget presses whack whatever pest is out
+  for (let i = 0; i < n && threat.active; i++) {
+    const u = threat.active.units.find(x => x.hp > 0);
+    if (!u) break;
+    hitUnit(u, 1);
+  }
+}
+
+function endThreat(won) {
+  const a = threat.active;
+  if (!a) return;
+  threat.active = null;
+  const left = a.units.filter(u => u.hp > 0);
+  left.forEach(u => { u.el.classList.add('flee'); setTimeout(() => u.el.remove(), 650); });
+  if (won) toast(WIN_MSG[a.type]);
+  else if (a.type === 'gopher' || a.type === 'raccoon') {
+    const loss = Math.min(state.taters * (a.type === 'raccoon' ? 0.10 : 0.08), Math.max(50, baseCps() * (a.type === 'raccoon' ? 120 : 90)));
+    state.taters -= loss;
+    toast(`The ${a.type} got away with ${fmt(loss)} taters`);
+  } else if (a.type === 'crows') {
+    const loss = Math.min(state.taters * 0.03 * left.length, Math.max(20, baseCps() * 30 * left.length));
+    state.taters -= loss;
+    toast(`${left.length} crow${left.length > 1 ? 's' : ''} flew off with ${fmt(loss)} taters`);
+  } else if (a.type === 'beetles') toast('The ladybugs ate the rest of the beetles');
+  else if (a.type === 'ufo') {
+    const id = ['fryline', 'harvester', 'farm', 'tractor', 'stand', 'patch', 'hoe'].find(b => owned(b) > 0);
+    if (id) {
+      state.buildings[id] = owned(id) - 1;
+      state.abducted++;
+      toast(`Aliens beamed up a ${BUILDINGS.find(b => b.id === id).name}!`);
+    } else toast('The UFO looked around, got confused and left');
+  }
+  $('alert').hidden = true;
+  scheduleThreat();
+  save(); renderLive(); renderLists(true);
+}
+
+function showAlert() {
+  const a = threat.active, p = PESTS[a.type];
+  $('alert').hidden = false;
+  $('alertTitle').textContent = p.title;
+  const alive = a.units.filter(u => u.hp > 0).length;
+  $('alertMsg').textContent = a.type === 'beetles'
+    ? `${p.msg} Your farm is ${Math.round((1 - pestMult()) * 100)}% slower until they’re gone.`
+    : p.msg + (a.units.length > 1 ? ` ${alive} left.` : '');
+  updateAlertBar();
+}
+function updateAlertBar() {
+  const a = threat.active;
+  if (!a) return;
+  const pct = a.type === 'beetles'
+    ? (has('ladybugs') ? Math.max(0, 1 - (Date.now() - a.started) / 20000) : a.units.filter(u => u.hp > 0).length / a.units.length)
+    : Math.max(0, (a.ends - Date.now()) / (a.time + (a.type === 'ufo' && has('radar') ? 10000 : 0)));
+  $('alertBar').style.width = (pct * 100) + '%';
+}
+
+let threatLastTick = Date.now();
+function threatTick() {
+  const now = Date.now(), gap = now - threatLastTick;
+  threatLastTick = now;
+  if (document.hidden || gap > 2000) {         // pests wait while the game is in the background
+    threat.next += gap;
+    if (threat.active && threat.active.ends) threat.active.ends += gap;
+    if (threat.active) threat.active.started += gap;
+    return;
+  }
+  if (!threat.active) {
+    if (now >= threat.next && totalOwned() >= 3) spawnThreat();
+    return;
+  }
+  const a = threat.active;
+  if (a.type === 'beetles' && has('ladybugs') && now - a.started > 20000) endThreat(false);
+  else if (a.ends && now >= a.ends) endThreat(false);
+  else updateAlertBar();
+}
+
+/* ---------- Easter eggs ---------- */
+function egg(id, msg) {
+  if (state.eggs[id]) return false;
+  state.eggs[id] = Date.now();
+  save();
+  if (msg) toast(msg);
+  return true;
+}
+let lastTapAt = Date.now(), fidgetTimes = [];
+function noteTap(fidget, count) {
+  const now = new Date();
+  lastTapAt = now.getTime();
+  if (now.getHours() === 0 && now.getMinutes() < 5) egg('midnight', 'A midnight snack for the potato');
+  if (fidget) {
+    for (let i = 0; i < count; i++) fidgetTimes.push(lastTapAt);
+    fidgetTimes = fidgetTimes.filter(t => lastTapAt - t < 3000);
+    if (fidgetTimes.length >= 15) egg('speed', 'Whoa, those are fast fingers');
+  }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) lastTapAt = Date.now(); });
+
+// Tap counters that need several quick taps in a row
+function tapCounter(el, need, windowMs, onDone) {
+  let n = 0, last = 0;
+  el.addEventListener('pointerdown', () => {
+    const now = Date.now();
+    n = now - last < windowMs ? n + 1 : 1;
+    last = now;
+    if (n >= need) { n = 0; onDone(); }
+  });
+}
+tapCounter(document.querySelector('.sun'), 10, 1500, () => {
+  egg('sun');
+  toast('Ouch, bright! The sun cranked up your fryer');
+  live.heat = 99; addHeat(5);
+});
+tapCounter(document.querySelector('.logo'), 7, 1200, () => {
+  egg('party');
+  toast('Party potato!');
+  $('tater').classList.add('disco');
+  setTimeout(() => $('tater').classList.remove('disco'), 15000);
+});
+tapCounter($('mars'), 5, 1500, () => {
+  egg('mars');
+  toast('A tiny voice from Mars: “Take me to your tater.”');
+});
+
+// Hold the potato for 3 seconds
+let holdTimer = 0;
+$('tater').addEventListener('pointerdown', () => {
+  clearTimeout(holdTimer);
+  holdTimer = setTimeout(() => {
+    egg('hold');
+    toast('The potato feels very loved');
+    $('tater').classList.add('blush');
+    setTimeout(() => $('tater').classList.remove('blush'), 6000);
+  }, 3000);
+});
+['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => $('tater').addEventListener(ev, () => clearTimeout(holdTimer)));
+
+// Tap the sprout 20 times in a row and it flowers
+let sproutRun = 0;
+$('tater').addEventListener('pointerdown', e => {
+  if (e.button > 0) return;
+  const r = $('tater').getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width * 300, y = (e.clientY - r.top) / r.height * 220;
+  if (x > 180 && x < 268 && y > 18 && y < 86) {
+    if (++sproutRun >= 20 && egg('flower', 'Your sprout bloomed!')) renderEggs();
+  } else sproutRun = 0;
+});
+
+// The classic code: swipes on phones, arrow keys plus B A on keyboards
+const CODE = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right'];
+let codeRun = [], keyRun = [], swipeStart = null;
+function codeStep(dir) {
+  codeRun = [...codeRun, dir].slice(-CODE.length);
+  if (codeRun.join() === CODE.join()) { codeRun = []; codeReward(); }
+}
+function codeReward() {
+  if (!egg('code')) return toast('Nice try. That code only works once.');
+  const g = Math.max(1000, baseCps() * 300);
+  grow(g);
+  toast(`Cheat code accepted: +${fmt(g)} taters`);
+  for (let i = 0; i < 6; i++) setTimeout(() => kickDirt(9), i * 120);
+}
+document.querySelector('.scene').addEventListener('pointerdown', e => { swipeStart = { x: e.clientX, y: e.clientY }; });
+document.addEventListener('pointerup', e => {
+  if (!swipeStart) return;
+  const dx = e.clientX - swipeStart.x, dy = e.clientY - swipeStart.y;
+  swipeStart = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 45) return;
+  codeStep(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+});
+document.addEventListener('keydown', e => {
+  const k = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', b: 'b', B: 'b', a: 'a', A: 'a' }[e.key];
+  if (!k) { keyRun = []; return; }
+  keyRun = [...keyRun, k].slice(-10);
+  if (keyRun.join() === [...CODE, 'b', 'a'].join()) { keyRun = []; codeReward(); }
+});
+
+// Holidays: a hat for the potato
+const HATS = {
+  witch: '<path d="M88 42 L176 42 L138 -34 Z" fill="#3a2a4a" stroke="var(--outline)" stroke-width="4" stroke-linejoin="round"/><ellipse cx="132" cy="42" rx="62" ry="10" fill="#3a2a4a" stroke="var(--outline)" stroke-width="4"/><rect x="110" y="26" width="44" height="8" fill="#f4c542"/>',
+  santa: '<path d="M98 42 C108 -8 160 -18 182 8 L174 42Z" fill="#c8372d" stroke="var(--outline)" stroke-width="4"/><rect x="90" y="32" width="96" height="16" rx="8" fill="#fff" stroke="var(--outline)" stroke-width="3"/><circle cx="184" cy="8" r="10" fill="#fff" stroke="var(--outline)" stroke-width="3"/>',
+  party: '<path d="M114 42 L140 -20 L166 42Z" fill="#2b5ea8" stroke="var(--outline)" stroke-width="4" stroke-linejoin="round"/><path d="M127 14 L153 14 M121 30 L159 30" stroke="#f4c542" stroke-width="5"/><circle cx="140" cy="-22" r="8" fill="#f4c542" stroke="var(--outline)" stroke-width="3"/>',
+};
+(function holidays() {
+  const d = new Date(), m = d.getMonth() + 1, day = d.getDate();
+  let hat = null, sweet = false;
+  if (m === 10 && day >= 25) hat = 'witch';
+  else if (m === 12 && day >= 20 && day <= 26) hat = 'santa';
+  else if ((m === 1 && day === 1) || (m === 12 && day === 31)) hat = 'party';
+  else if (m === 4 && day === 1) sweet = true;
+  if (hat) { $('potHat').innerHTML = HATS[hat]; $('tater').classList.add('hat'); }
+  if (sweet) { $('tater').classList.add('sweet'); toast('Wait… is that a sweet potato?'); }
+  if (hat || sweet) egg('holiday');
+})();
+
+function renderEggs() {
+  const t = $('tater'), spud = /^spud$/i.test((state.name || '').trim());
+  t.classList.toggle('shades', spud);
+  if (spud) egg('spud', 'Looking cool, Spud');
+  t.classList.toggle('flower', !!state.eggs.flower);
+  if (!document.hidden && Date.now() - lastTapAt > 300000) egg('patience', 'You’ve been very still. The potato appreciates the break.');
+}
+
+/* =====================================================================
    8) Game loop and startup
    ===================================================================== */
-(function offlineEarnings() {
-  const away = Math.min(Date.now() - state.lastSeen, 8 * 3600e3) / 1000;
-  const g = baseCps() * away * 0.5;
-  if (away > 60 && g >= 1) { grow(g); setTimeout(() => toast(`While you were away, your farm grew ${fmt(g)} taters`), 600); }
-})();
+// The farm only grows while the app is open. Away growth needs a Farmhand, Night Shift or Foreman.
+const awayPlan = () => has('away3') ? { rate: 0.75, hours: 8, who: 'foreman' }
+  : has('away2') ? { rate: 0.5, hours: 4, who: 'night shift' }
+  : has('away1') ? { rate: 0.25, hours: 1, who: 'farmhand' } : null;
+let awayHinted = false;
+function applyAway(ms) {
+  if (ms < 60000) return;
+  const plan = awayPlan(), base = baseCps();
+  if (!plan) {
+    if (base > 0 && !awayHinted) { awayHinted = true; setTimeout(() => toast('Your farm rests while the app is closed. Hire a Farmhand to keep it growing.'), 600); }
+    return;
+  }
+  const g = base * (Math.min(ms, plan.hours * 3600e3) / 1000) * plan.rate;
+  if (g >= 1) { grow(g); setTimeout(() => toast(`While you were away, your ${plan.who} grew ${fmt(g)} taters`), 600); }
+}
+applyAway(Date.now() - state.lastSeen);
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else if (hiddenAt) { applyAway(Date.now() - hiddenAt); hiddenAt = 0; renderLive(); }
+});
 
 let last = performance.now();
 setInterval(() => {
   const now = performance.now(), dt = Math.min((now - last) / 1000, 60);
   last = now;
+  if (document.hidden) {                      // nothing grows or appears while the app is in the background
+    live.nextLucky += dt * 1000;
+    if (!$('lucky').hidden) live.luckyUntil += dt * 1000;
+    threatTick();
+    return;
+  }
   grow(cps() * dt);
   live.heat = Math.max(0, live.heat - 15 * dt);
   luckyTick();
+  threatTick();
   renderLive();
 }, 100);
 setInterval(() => {
   checkAchievements();
+  renderEggs();
   renderLists();
   if (!$('tab-me').hidden) renderMe();
   pushCloud();
@@ -1380,8 +1869,23 @@ renderLive(); renderLists(true); renderAwards(); renderMe(); renderBoard(null);
 /* =====================================================================
    9) Home screen app: offline support and the install button
    ===================================================================== */
+// Stop pinch-zoom and double-tap zoom so fast tapping never zooms the page
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+// In the game area, quick taps must never turn into a double-tap zoom. Taps there are handled on
+// pointerdown, so cancelling the browser's own touch handling loses nothing.
+document.addEventListener('touchend', e => {
+  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert')) e.preventDefault();
+}, { passive: false });
+document.addEventListener('dblclick', e => e.preventDefault());
+// Double-tap zoom is turned off by touch-action: manipulation in the CSS, so every fast tap still counts
+
 const topLevel = (() => { try { return window.top === window; } catch { return false; } })();
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+// Keep the installed app upright where the phone allows it (Android). iPhone ignores this, so the
+// "turn your phone upright" screen covers the game in landscape instead.
+try { if (standalone && screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(() => {}); } catch {}
 if ('serviceWorker' in navigator && location.protocol === 'https:' && topLevel) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

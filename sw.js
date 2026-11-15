@@ -1,6 +1,6 @@
 // Tater Tapper service worker: lets the game open offline and load instantly.
 // Bump VERSION whenever you upload a new index.html so players get the update.
-const VERSION = 'tater-v2';
+const VERSION = 'tater-v6';
 const SHELL = ['./', './index.html', './config.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
