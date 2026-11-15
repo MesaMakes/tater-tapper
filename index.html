@@ -116,6 +116,7 @@
   .sign::before { left: 9px; } .sign::after { right: 9px; }
   .sign b { font: 400 clamp(2.4rem, 11vw, 3.6rem)/1.05 var(--slab); font-variant-numeric: tabular-nums; letter-spacing: .01em; text-shadow: 0 2px 0 rgba(0,0,0,.25); }
   .sign span { font-weight: 600; font-size: .9rem; opacity: .92; }
+  .sign small { font-weight: 600; font-size: .74rem; opacity: .85; margin-top: 1px; }
 
   .field { position: relative; width: calc(100% + 28px); margin: 0 -14px; height: calc(256px + 37.5cqw); display: grid; justify-items: center; align-items: end; }
   .land { position: absolute; inset: auto 0 0; width: 100%; height: auto; aspect-ratio: 2 / 1; display: block; }
@@ -396,7 +397,13 @@
   .nado svg { display: block; width: 100%; height: auto; animation: wobble .3s ease-in-out infinite alternate; transform-origin: 50% 100%; }
   @keyframes sweep { from { left: -25%; } to { left: 110%; } }
   @keyframes wobble { from { transform: rotate(-5deg) scaleX(.95); } to { transform: rotate(5deg) scaleX(1.05); } }
-  .scene { transition: transform .9s cubic-bezier(.5,1.5,.4,1); }
+  @property --sky-1  { syntax: '<color>'; inherits: true; initial-value: #7fc3dc; }
+  @property --sky-2  { syntax: '<color>'; inherits: true; initial-value: #cfe9e6; }
+  @property --hill   { syntax: '<color>'; inherits: true; initial-value: #7aa64a; }
+  @property --hill-2 { syntax: '<color>'; inherits: true; initial-value: #5a8a34; }
+  @property --soil   { syntax: '<color>'; inherits: true; initial-value: #6b4226; }
+  @property --soil-2 { syntax: '<color>'; inherits: true; initial-value: #57351e; }
+  .scene { transition: transform .9s cubic-bezier(.5,1.5,.4,1), --sky-1 4s, --sky-2 4s, --hill 4s, --hill-2 4s, --soil 4s, --soil-2 4s; }
   .scene.flip { transform: rotate(180deg); }
   .tater-btn.dance svg { animation: dance .5s ease-in-out infinite; }
   @keyframes dance { 0%, 100% { transform: rotate(-8deg) translateY(0); } 50% { transform: rotate(8deg) translateY(-14px); } }
@@ -420,6 +427,102 @@
   @keyframes disco { from { filter: hue-rotate(0deg) saturate(1.6); } to { filter: hue-rotate(360deg) saturate(1.6); } }
   .tater-btn.sweet svg { filter: hue-rotate(-28deg) saturate(1.7); }
 
+  /* ---------- Day and night ---------- */
+  .scene[data-phase="day"]   { --sky-1: #7fc3dc; --sky-2: #cfe9e6; --sun: #ffd45c; --hill: #7aa64a; --hill-2: #5a8a34; --soil: #6b4226; --soil-2: #57351e; --light: 1; }
+  .scene[data-phase="dawn"]  { --sky-1: #f2a7a0; --sky-2: #ffe1b0; --sun: #ffb347; --hill: #7aa64a; --hill-2: #5a8a34; --soil: #6b4226; --soil-2: #57351e; --light: .92; }
+  .scene[data-phase="dusk"]  { --sky-1: #4f4486; --sky-2: #ff9a5a; --sun: #ff7a3d; --hill: #6a8f45; --hill-2: #4c7432; --soil: #5e3a22; --soil-2: #4a2d19; --light: .82; }
+  .scene[data-phase="night"] { --sky-1: #0b1230; --sky-2: #27305a; --sun: #f3ecd2; --hill: #2f4a26; --hill-2: #233a1c; --soil: #3b2617; --soil-2: #2c1c10; --light: .6; }
+  .sun { transition: top 3s, right 3s; }
+  .scene[data-phase="dawn"] .sun, .scene[data-phase="dusk"] .sun { top: 70px; right: -150px; }
+  .scene[data-phase="night"] .sun { background: none; animation: none; top: -70px; right: -90px; }
+  .scene[data-phase="night"] .sun::after { box-shadow: inset var(--moonx, 0px) 0 0 0 rgba(9,14,38,.93), 0 0 30px rgba(243,236,210,.45); }
+  .scene[data-phase="night"] .tater-btn, .scene[data-phase="night"] .orbit { filter: brightness(.84) saturate(.9); }
+  .stars { position: absolute; inset: 0 0 45% 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 3s;
+           background-image: radial-gradient(1.6px 1.6px at 8% 18%, #fff, transparent), radial-gradient(1.2px 1.2px at 22% 44%, #fff, transparent),
+             radial-gradient(1.8px 1.8px at 35% 12%, #fff, transparent), radial-gradient(1.2px 1.2px at 47% 36%, #fff, transparent),
+             radial-gradient(1.5px 1.5px at 58% 8%, #fff, transparent), radial-gradient(1.2px 1.2px at 66% 52%, #fff, transparent),
+             radial-gradient(1.7px 1.7px at 79% 26%, #fff, transparent), radial-gradient(1.2px 1.2px at 90% 48%, #fff, transparent),
+             radial-gradient(1.3px 1.3px at 15% 62%, #fff, transparent), radial-gradient(1.6px 1.6px at 72% 70%, #fff, transparent),
+             radial-gradient(1.2px 1.2px at 40% 66%, #fff, transparent), radial-gradient(1.4px 1.4px at 95% 12%, #fff, transparent);
+           animation: twinkle 2.6s ease-in-out infinite alternate; }
+  @keyframes twinkle { to { filter: brightness(.55); } }
+  .scene[data-phase="night"] .stars { opacity: 1; } .scene[data-phase="dusk"] .stars { opacity: .35; }
+  .clouds { position: absolute; inset: 0 0 50% 0; z-index: -1; pointer-events: none; transition: opacity 3s; }
+  .clouds i { position: absolute; left: 0; width: 120px; height: 34px; border-radius: 99px; background: #fff; opacity: .85; animation: cloud var(--t, 120s) linear infinite; animation-delay: var(--d, 0s); }
+  .clouds i::before, .clouds i::after { content: ""; position: absolute; border-radius: 50%; background: inherit; }
+  .clouds i::before { width: 54px; height: 54px; left: 18px; top: -26px; } .clouds i::after { width: 40px; height: 40px; left: 60px; top: -18px; }
+  @keyframes cloud { from { transform: translateX(-180px); } to { transform: translateX(calc(100cqw + 180px)); } }
+  .scene[data-phase="dawn"] .clouds i { background: #ffe0d2; } .scene[data-phase="dusk"] .clouds i { background: #ffbfa6; }
+  .scene[data-phase="night"] .clouds { opacity: .12; }
+  .mist { position: absolute; inset: auto 0 0; height: 55%; pointer-events: none; z-index: 1; opacity: 0; transition: opacity 3s;
+          background: linear-gradient(transparent, rgba(255,255,255,.5) 70%); }
+  .scene[data-phase="dawn"] .mist { opacity: 1; }
+  .flies { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+  .fly { position: absolute; width: 38px; height: 38px; border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer;
+         animation: drift var(--t, 9s) ease-in-out infinite alternate; }
+  .fly::before { content: ""; position: absolute; inset: 13px; border-radius: 50%; background: #f4ff8a;
+                 box-shadow: 0 0 10px 4px rgba(214,255,90,.85), 0 0 24px 9px rgba(214,255,90,.35); animation: glow 1.6s ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+  .fly.caught { pointer-events: none; } .fly.caught::before { animation: poof .4s ease-in forwards; }
+  @keyframes drift { to { transform: translate(var(--dx, 30px), var(--dy, -24px)); } }
+  @keyframes glow { from { opacity: .25; } to { opacity: 1; } }
+  .star-shot { position: absolute; width: 130px; height: 34px; border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer; animation: shoot 2.4s ease-in forwards; }
+  .star-shot::before { content: ""; position: absolute; right: 0; top: 50%; width: 100%; height: 3px; border-radius: 3px; background: linear-gradient(90deg, transparent, #fff); }
+  .star-shot::after { content: ""; position: absolute; right: -4px; top: calc(50% - 5px); width: 11px; height: 11px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px 4px #fff; }
+  @keyframes shoot { from { transform: translate(0, 0) rotate(18deg); opacity: 1; } to { transform: translate(55cqw, 20cqw) rotate(18deg); opacity: 0; } }
+  .rooster, .ghost { position: absolute; border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer; animation: pestIn .4s cubic-bezier(.3,1.6,.5,1) both; }
+  .rooster { width: min(26vw, 108px); left: 6%; bottom: 13%; }
+  .ghost { width: min(34vw, 140px); top: 14%; left: 30%; }
+  .rooster svg, .ghost svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff); }
+  .rooster svg { animation: hover .8s ease-in-out infinite; } .ghost svg { animation: float 2.4s ease-in-out infinite; opacity: .88; }
+
+  /* The sun and moon travel across the sky on a real arc */
+  .scene .sun { left: var(--cx, 85%) !important; top: var(--cy, 10%) !important; right: auto !important; translate: -50% -50%; transition: left 3s linear, top 3s linear; }
+  .sign .daytext { display: block; font-weight: 600; font-size: .7rem; opacity: .75; }
+  .scene[data-phase="night"] .land use[href="#s-barn"], .scene[data-phase="night"] .land use[href="#s-factory"], .scene[data-phase="dusk"] .land use[href="#s-barn"] {
+    filter: drop-shadow(0 0 6px rgba(255,212,92,.75)); }
+
+  /* Seasons */
+  .seasonfx { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .leaf { position: absolute; top: -8%; width: 30px; border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer;
+          animation: leaffall var(--t, 9s) linear forwards; }
+  .leaf svg { display: block; width: 100%; height: auto; animation: sway 1.6s ease-in-out infinite alternate; }
+  .leaf.got { pointer-events: none; } .leaf.got svg { animation: poof .35s ease-in forwards; }
+  @keyframes leaffall { to { top: 100%; } }
+  @keyframes sway { from { transform: translateX(-14px) rotate(-30deg); } to { transform: translateX(14px) rotate(30deg); } }
+  .snowfx { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 3s;
+            background-image: radial-gradient(3px 3px at 10% 20%, #fff, transparent), radial-gradient(2px 2px at 30% 60%, #fff, transparent),
+              radial-gradient(3px 3px at 50% 10%, #fff, transparent), radial-gradient(2px 2px at 70% 40%, #fff, transparent),
+              radial-gradient(3px 3px at 90% 70%, #fff, transparent), radial-gradient(2px 2px at 20% 85%, #fff, transparent),
+              radial-gradient(2.5px 2.5px at 60% 80%, #fff, transparent), radial-gradient(2px 2px at 82% 15%, #fff, transparent);
+            background-size: 220px 220px; animation: snow 9s linear infinite; }
+  .scene[data-season="winter"] .snowfx { opacity: .9; }
+  @keyframes snow { to { background-position: 40px 220px; } }
+
+  /* Thunderstorms, lightning and rainbows */
+  .stormfx { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 3s;
+             background: repeating-linear-gradient(105deg, transparent 0 16px, rgba(220,230,255,.35) 16px 17.5px),
+                         linear-gradient(rgba(30,34,52,.85), rgba(30,34,52,.35) 45%, transparent 75%);
+             background-size: 100% 70px, 100% 100%; animation: rainfx .45s linear infinite; }
+  .scene.storm .stormfx { opacity: 1; }
+  @keyframes rainfx { to { background-position: -14px 70px, 0 0; } }
+  .flashfx { position: absolute; inset: 0; z-index: 7; pointer-events: none; background: #fff; opacity: 0; }
+  .flashfx.go { animation: flash .6s ease-out; }
+  @keyframes flash { 0% { opacity: .85; } 15% { opacity: .1; } 25% { opacity: .7; } 100% { opacity: 0; } }
+  .bolt { position: absolute; top: 2%; width: min(14vw, 56px); border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer;
+          filter: drop-shadow(0 0 10px #fff36b) drop-shadow(0 0 4px #fff); animation: pestIn .15s both; }
+  .bolt svg { display: block; width: 100%; height: auto; }
+  .rainbow { position: absolute; left: 8%; top: 4%; width: 84%; border: 0; padding: 0; background: none; pointer-events: auto; cursor: pointer; opacity: .82;
+             animation: pestIn 1.2s ease-out both; }
+  .rainbow svg { display: block; width: 100%; height: auto; }
+
+  /* Campfire from 8 to 10 PM */
+  .campfire { position: absolute; z-index: 4; right: 4%; bottom: 3%; width: min(22vw, 90px); border: 0; padding: 0; background: none; cursor: pointer;
+              filter: drop-shadow(0 0 16px rgba(255,138,31,.9)); }
+  .campfire svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .campfire .fl { transform-box: fill-box; transform-origin: 50% 100%; animation: flick .18s steps(2) infinite; }
+  @keyframes float { 50% { transform: translateY(-14px) rotate(-4deg); } }
+  .rooster.gone, .ghost.gone, .star-shot.gone { animation: poof .4s ease-in forwards; pointer-events: none; }
+
   /* News ticker */
   .ticker { width: 100%; margin-top: 8px; height: 26px; overflow: hidden; border-radius: 999px; background: rgba(47,33,23,.78); color: #fff6e2;
             border: 2px solid var(--outline); display: flex; align-items: center; position: relative; z-index: 2; }
@@ -431,7 +534,7 @@
   /* The One Starch: the farm slowly turns volcanic */
   .doom { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: calc(var(--doom, 0) * .92); transition: opacity 2s;
           background: radial-gradient(ellipse at 50% 100%, rgba(255,120,20,.6), transparent 60%), linear-gradient(#250805, #6e1a0a 45%, rgba(184,50,15,.65) 72%, transparent 88%); }
-  .land { filter: brightness(calc(1 - var(--doom, 0) * .45)) saturate(calc(1 - var(--doom, 0) * .5)); }
+  .land { filter: brightness(calc(var(--light, 1) - var(--doom, 0) * .45)) saturate(calc(1 - var(--doom, 0) * .5)); transition: filter 3s; }
   .field::after { content: ""; position: absolute; inset: auto 0 0; height: 45%; pointer-events: none; z-index: 1; opacity: var(--doom, 0);
                   background: linear-gradient(transparent, rgba(255,90,20,.55)); }
   .eye { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% 0; width: min(36vw, 150px); pointer-events: none; animation: eyeIn 1.2s cubic-bezier(.3,1.4,.5,1) both; }
@@ -462,6 +565,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .ticker span { animation: none; padding-left: 10px; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .stars, .clouds i, .fly, .fly::before, .rooster svg, .ghost svg { animation: none !important; }
+    .star-shot { animation-duration: 6s; }
     .eye, .eye .flames, .tater-btn.roll svg, .smoke-screen { animation: none !important; }
     .pest, .pest svg, .pest-ufo .beam, .alert, .tater-btn.disco svg, .walker svg, .rocket .flame, .pet .wing, .pbld i, .rift, .nado svg { animation: none !important; }
     .pest::before { animation: none; transform: scale(1.05); }
@@ -469,6 +574,7 @@
     .tater-btn.dance svg, .hotpot svg { animation: none; }
     .pet { animation-duration: 60s; } .walker { animation-duration: 25s; }
     .tool svg { animation: none; }
+    .leaf, .leaf svg, .snowfx, .stormfx, .campfire .fl { animation: none !important; }
     .ledger { transition: none; }
     .sun, .lucky, .dot.wait, .land .drive, .land .smoke, .land .item.new > *, .herd svg.i.new { animation: none; }
     .land .smoke { opacity: 0; }
@@ -482,6 +588,11 @@
 <div class="app">
   <section class="scene" aria-label="Your field">
     <div class="sun" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="snowfx" aria-hidden="true"></div>
+    <div class="stormfx" aria-hidden="true"></div>
+    <div class="flashfx" id="flashfx" aria-hidden="true"></div>
+    <div class="clouds" aria-hidden="true"><i style="top:14%;--t:120s;--d:-30s"></i><i style="top:30%;--t:160s;--d:-95s;scale:.7"></i><i style="top:6%;--t:95s;--d:-60s;scale:.85"></i></div>
     <div class="doom" aria-hidden="true"></div>
     <svg class="mars" id="mars" viewBox="0 0 64 64" hidden aria-hidden="true">
       <circle cx="32" cy="38" r="22" fill="#c4502f" stroke="var(--outline)" stroke-width="2.5"/>
@@ -498,7 +609,7 @@
     <div class="ticker" aria-hidden="true"><b>NEWS</b><div class="lane"><span id="tickerText"></span></div></div>
     <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
-    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span></div>
+    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span><small id="phaseText"></small><small class="daytext" id="dayText"></small></div>
 
     <div class="fryer" id="fryer" role="progressbar" aria-label="Fryer heat" aria-valuemin="0" aria-valuemax="100">
       <span class="bulb"><svg class="i" viewBox="0 0 24 24"><path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/></svg></span>
@@ -578,7 +689,14 @@
         </svg>
       </button>
       <div class="buffs" id="buffs"></div>
+      <div class="mist" aria-hidden="true"></div>
       <div class="walkers" id="walkers"></div>
+      <div class="flies" id="flies"></div>
+      <div class="seasonfx" id="seasonfx"></div>
+      <button class="campfire" id="campfire" hidden aria-label="Campfire. Tap to roast a potato"><svg viewBox="0 0 80 70"><ellipse cx="40" cy="62" rx="34" ry="6" fill="rgba(0,0,0,.3)"/>
+        <path d="M8 60 L72 46 M8 46 L72 60" stroke="#6b4226" stroke-width="9" stroke-linecap="round"/>
+        <path class="fl" d="M40 6 C52 22 58 30 54 44 C52 52 46 56 40 56 C32 56 26 50 26 42 C26 34 32 30 34 22 C38 28 40 30 42 32 C44 22 42 14 40 6Z" fill="#ff8a1f" stroke="#2f2117" stroke-width="2.5"/>
+        <path class="fl" d="M40 30 C46 38 48 44 44 50 C42 53 38 53 36 50 C33 46 36 40 40 30Z" fill="#ffd45c"/></svg></button>
       <div class="threats" id="threats"></div>
     </div>
   </section>
@@ -648,6 +766,7 @@
           <h3>Sound and vibration</h3>
           <label class="toggle"><input type="checkbox" id="soundToggle"> <span>Pest sounds</span></label>
           <label class="toggle"><input type="checkbox" id="hapticToggle"> <span>Vibration</span></label>
+          <label class="toggle"><input type="checkbox" id="fastDayToggle"> <span>Fast days: a whole day passes every 24 minutes</span></label>
           <label class="toggle" id="lowresRow" hidden><input type="checkbox" id="lowresToggle"> <span>144p mode (Recorded on a Potato): taps +10%</span></label>
           <p class="note" id="feelNote" hidden></p>
         </div>
@@ -683,6 +802,13 @@
             <button class="btn" data-pt="rain">Tater rain</button>
             <button class="btn" data-pt="nado">Spudnado</button>
             <button class="btn" data-pt="hotpot">Hot potato</button>
+            <button class="btn" data-pt="phase">Next time of day</button>
+            <button class="btn" data-pt="season">Next season</button>
+            <button class="btn" data-pt="weekday">Next weekday</button>
+            <button class="btn" data-pt="storm">Start a storm</button>
+            <button class="btn" data-pt="rooster">Rooster</button>
+            <button class="btn" data-pt="ghost">Ghost</button>
+            <button class="btn" data-pt="star">Shooting star</button>
             <button class="btn go" data-pt="reset">Reset all progress</button>
           </div>
         </div>
@@ -859,6 +985,10 @@ UPGRADES.push(
   { id: 'onestarch',  icon: 'ring',      name: 'The One Starch',       desc: 'A cursed ring. Everything you grow is tripled, but your farm slowly turns into a volcanic wasteland.', cost: 1e13, unlock: () => state.allTime >= 1e13 },
   { id: 'selfaware',  icon: 'fryline',   name: 'Self-Aware Fry Factories', desc: 'Fry Factories make 10× more. They promise they aren’t plotting anything.', cost: 1e14, unlock: () => owned('fryline') >= 50 },
 );
+UPGRADES.push(
+  { id: 'growlights', icon: 'sun',  name: 'Grow Lights', desc: 'No more slow nights: crops grow 25% faster at night instead of 25% slower.', cost: 7.5e4, unlock: () => !!(state.phasesSeen || {}).night },
+  { id: 'firejar',    icon: 'jar',  name: 'Firefly Jar', desc: 'Fireflies are worth 5× more, and two extra come out each evening.', cost: 2.5e5, unlock: () => (state.fireflies || 0) >= 10 },
+);
 BUILDINGS.forEach(b => TIERS.forEach((t, i) => UPGRADES.push({
   id: `${b.id}_${i}`, icon: b.id, name: `${b.name} ${t.label}`, desc: `Doubles what each ${b.name} makes.`,
   cost: b.base * t.cost, unlock: () => owned(b.id) >= t.own,
@@ -986,6 +1116,49 @@ addSecret('egg_eye', 'Watched', 'Wear the One Starch long enough that the Eye of
 addSecret('egg_wasteland', 'Volcanic wasteland', 'Let The One Starch turn your whole farm to lava.', eggFound('wasteland'));
 addSecret('egg_fryer', 'Into the fryer', 'Toss The One Starch into the fryer.', eggFound('fryer'));
 
+// Day and night
+addAch('dawn1', 'Early bird', 'Tap the potato at dawn (5 to 7 AM).', () => (state.dawnTaps || 0) >= 1);
+addAch('night100', 'Night owl', 'Tap 100 times at night (8 PM to 5 AM).', () => (state.nightTaps || 0) >= 100);
+addAch('circle', 'Full circle', 'Play at dawn, during the day, at dusk and at night.', () => ['dawn', 'day', 'dusk', 'night'].every(k => (state.phasesSeen || {})[k]));
+addAch('rooster1', 'Rise and shine', 'Tap the rooster when it crows at sunrise.', () => (state.roosters || 0) >= 1);
+addAch('rooster7', 'Morning person', 'Tap the sunrise rooster 7 times.', () => (state.roosters || 0) >= 7);
+addAch('noon1', 'High noon', 'Catch the golden tater that shows up at noon.', () => (state.noonGolds || 0) >= 1);
+addAch('goldenhour', 'Golden hour', 'Catch a golden tater during golden hour (5 to 6 PM).', () => (state.goldenHourGolds || 0) >= 1);
+addAch('fly25', 'Firefly catcher', 'Catch 25 fireflies.', () => (state.fireflies || 0) >= 25);
+addAch('fly250', 'Glow-getter', 'Catch 250 fireflies.', () => (state.fireflies || 0) >= 250);
+addAch('star1', 'Wish upon a spud', 'Tap a shooting star.', () => (state.stars || 0) >= 1);
+addAch('star10', 'Stargazer', 'Tap 10 shooting stars.', () => (state.stars || 0) >= 10);
+addAch('lights', 'Lights on', 'Install Grow Lights.', () => has('growlights'));
+addSecret('egg_ghost', 'Things that go bump', 'Bust the ghost potato during the witching hour (3:00 to 3:30 AM).', eggFound('ghost'));
+addSecret('egg_howl', 'Howl at the moon', 'Tap the moon on a full moon night.', eggFound('howl'));
+addSecret('egg_moonstruck', 'Moonstruck', 'Tap the potato 100 times on a full moon night.', eggFound('moonstruck'));
+
+// Seasons, weekdays, streaks and weather
+const seen = k => () => !!(state.seasons || {})[k];
+addAch('spring1', 'Spring sprout', 'Play in spring (March to May).', seen('spring'));
+addAch('summer1', 'Summer spud', 'Play in summer (June to August).', seen('summer'));
+addAch('fall1', 'Fall harvest', 'Play in fall (September to November).', seen('fall'));
+addAch('winter1', 'Winter warmer', 'Play in winter (December to February).', seen('winter'));
+addAch('seasons4', 'Four seasons', 'Play in every season of the year.', () => ['spring', 'summer', 'fall', 'winter'].every(k => (state.seasons || {})[k]));
+addAch('leaves50', 'Leaf peeper', 'Catch 50 falling leaves in the fall.', () => (state.leaves || 0) >= 50);
+addAch('petals50', 'Petal pusher', 'Catch 50 falling blossoms in the spring.', () => (state.petals || 0) >= 50);
+addAch('storm1', 'Thunder spud', 'Catch a lightning bolt during a thunderstorm.', () => (state.bolts || 0) >= 1);
+addAch('storm10', 'Storm chaser', 'Catch 10 lightning bolts.', () => (state.bolts || 0) >= 10);
+addAch('camp1', 'Campfire stories', 'Roast a potato at the campfire (8 to 10 PM).', () => (state.camp || 0) >= 1);
+addAch('camp10', 'Roast master', 'Roast at the campfire on 10 different nights.', () => (state.camp || 0) >= 10);
+addAch('lunch200', 'Lunch rush', 'Tap 200 times during the lunch rush (11:30 AM to 1:30 PM).', () => (state.lunchTaps || 0) >= 200);
+addAch('market1', 'Bargain hunter', 'Buy a building at the night market (11 PM to 1 AM).', () => (state.marketBuys || 0) >= 1);
+addAch('friday', 'Fry-day', 'Play on a Friday.', () => !!(state.weekdays || {})[5]);
+addAch('weekend', 'Weekend warrior', 'Play on a Saturday and a Sunday.', () => !!(state.weekdays || {})[6] && !!(state.weekdays || {})[0]);
+addAch('week7', 'Seven-day spud', 'Play on every day of the week.', () => [0, 1, 2, 3, 4, 5, 6].every(d => (state.weekdays || {})[d]));
+addAch('streak3', 'Regular', 'Play 3 days in a row.', () => ((state.streak || {}).best || 0) >= 3);
+addAch('streak7', 'Creature of habit', 'Play 7 days in a row.', () => ((state.streak || {}).best || 0) >= 7);
+addAch('streak30', 'Farm life', 'Play 30 days in a row.', () => ((state.streak || {}).best || 0) >= 30);
+addSecret('egg_rainbow', 'Pot of gold', 'Tap the rainbow that shows up right after an afternoon thunderstorm.', eggFound('rainbow'));
+addSecret('egg_newmoon', 'Dark skies', 'Catch a shooting star on a new moon night.', eggFound('newmoon'));
+addSecret('egg_insomniac', 'Insomniac', 'Play at 3 AM.', eggFound('insomniac'));
+addSecret('egg_fastday', 'Time flies', 'Turn on fast days.', eggFound('fastday'));
+
 /* =====================================================================
    Icons (24×24 line drawings) and ribbons
    ===================================================================== */
@@ -1021,6 +1194,8 @@ const ICON = {
   press:     '<path d="M12 3v8M7 11h10v3H7zM5 21h14l-2-7H7z"/>',
   cauldron:  '<path d="M5 9h14l-1 8a4 4 0 0 1-4 3h-4a4 4 0 0 1-4-3z"/><path d="M3 9h18M8 5.5h.01M12 4h.01M16 5.5h.01"/>',
   dice:      '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01"/>',
+  sun:       '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>',
+  jar:       '<path d="M8 3h8v3H8z"/><path d="M7 6h10l1 3v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V9z"/><path d="M10 13h.01M14 15h.01M12 11h.01"/>',
   clock:     '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   radar:     '<path d="M4 18a10 10 0 0 1 10-10"/><path d="M8 18a6 6 0 0 1 6-6"/><circle cx="14" cy="18" r="1.5"/><path d="M3 21h18"/>',
   bt:        '<path d="M12 13v8"/><circle cx="12" cy="11" r="1.6"/><path d="M8.2 7.5a5.5 5.5 0 0 1 7.6 0M5.3 4.6a9.6 9.6 0 0 1 13.4 0"/>',
@@ -1154,7 +1329,9 @@ function freshState() {
   return { v: 2, taters: 0, run: 0, allTime: 0, clicks: 0, fidgetClicks: 0, buildings: {}, upgrades: [],
     achievements: [], seeds: 0, replants: 0, hotFryers: 0, goldenTaters: 0, bigSyncs: 0, bestRank: 0,
     signedIn: false, name: '', lastSeen: Date.now(), fidgets: {}, pests: {}, seen: {}, eggs: {}, abducted: 0, bigfoot: 0, portals: 0, caught: 0, feasts: 0, hotPotatoes: 0, fidgetConnected: false, settings: { sound: true, haptics: true, lowres: false },
-    kitchen: { pot: 0, press: 0, cauldron: 0 }, totemUsed: false, totemSaves: 0, ringTime: 0, idahoRaids: 0, gambleAt: 0 };
+    kitchen: { pot: 0, press: 0, cauldron: 0 }, totemUsed: false, totemSaves: 0, ringTime: 0, idahoRaids: 0, gambleAt: 0,
+    day: {}, phasesSeen: {}, roosters: 0, noonGolds: 0, goldenHourGolds: 0, fireflies: 0, stars: 0, dawnTaps: 0, nightTaps: 0, moonTaps: 0,
+    seasons: {}, weekdays: {}, leaves: 0, petals: 0, bolts: 0, camp: 0, lunchTaps: 0, marketBuys: 0, rainbows: 0, streak: { last: '', count: 0, best: 0 } };
 }
 function loadState() {
   let s = null;
@@ -1174,7 +1351,7 @@ const totalTaps = () => state.clicks + state.fidgetClicks;
 const isHot = () => Date.now() < live.hotUntil;
 const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds) * extraMult();
 const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1)
-  * (has('redsoil') && (b.id === 'patch' || b.id === 'mars') ? 3 : 1) * (has('selfaware') && b.id === 'fryline' ? 10 : 1);
+  * (has('redsoil') && (b.id === 'patch' || b.id === 'mars') ? 3 : 1) * (has('selfaware') && b.id === 'fryline' ? 10 : 1) * calendarMult(b.id);
 const baseCps = () => BUILDINGS.reduce((a, b) => a + b.cps * owned(b.id) * buildingMult(b), 0) * globalMult();
 const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1) * pestMult();
 const fidgetMult = () => has('bt1') ? 3 : 2;
@@ -1185,7 +1362,7 @@ function clickValue(allowHot = true) {
   if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
   return v;
 }
-function costOf(b, n = 1) { const r = 1.15; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1); }
+function costOf(b, n = 1) { const r = 1.15; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1) * (nightMarket() ? 0.9 : 1); }
 function grow(n) { state.taters += n; state.run += n; state.allTime += n; }
 const seedGain = () => Math.floor(Math.cbrt(state.run / 1e6));
 
@@ -1205,7 +1382,13 @@ function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
   if (isLive && !fidget && threat.active && threat.active.type === 'twin' && Math.random() < 0.5) {   // your evil twin grabs half your taps
     popText('stolen!', x, y); squish(); return;
   }
-  const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count * (isLive && Date.now() < (live.nadoUntil || 0) ? 2 : 1);
+  let monday = 1;
+  if (isLive && weekday() === 1) {                      // Fresh-start Monday: the first 100 taps of the day count double
+    state.day = state.day || {};
+    if (state.day.monKey !== gameDay()) { state.day.monKey = gameDay(); state.day.monTaps = 0; }
+    if (state.day.monTaps < 100) { monday = 2; state.day.monTaps += count; }
+  }
+  const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count * (isLive && Date.now() < (live.nadoUntil || 0) ? 2 : 1) * (isLive && fullMoonNight() ? 1.5 : 1) * monday;
   grow(gain);
   if (fidget) state.fidgetClicks += count; else state.clicks += count;
   if (isLive) addHeat(3 * Math.min(count, 10));
@@ -1219,7 +1402,7 @@ function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
 
 function addHeat(amount) {
   if (isHot()) return;
-  live.heat = Math.min(100, live.heat + amount);
+  live.heat = Math.min(100, live.heat + amount * (seasonNow() === 'winter' ? 1.5 : 1));
   if (live.heat >= 100) {
     live.heat = 0;
     live.hotUntil = Date.now() + (has('heat1') ? 20000 : 10000);
@@ -1233,6 +1416,7 @@ function buy(b) {
   if (state.taters < c) return false;
   state.taters -= c;
   state.buildings[b.id] = owned(b.id) + live.buyQty;
+  if (nightMarket()) state.marketBuys = (state.marketBuys || 0) + 1;
   if (state.taters < 1 && c >= 1000) egg('small', 'Small potatoes. You spent every last tater.');
   save(); renderLive(); renderLists();
   return true;
@@ -1257,7 +1441,7 @@ function replant() {
 }
 
 // Golden taters are rare: one every 4–10 minutes, a bit sooner with the Lucky Horseshoe
-function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1); }
+function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1) / (isGoldenHour() ? 2 : 1); }
 function luckyTick() {
   const now = Date.now(), el = $('lucky');
   if (el.hidden && now >= live.nextLucky) {
@@ -1274,6 +1458,8 @@ $('lucky').addEventListener('click', () => {
   $('lucky').hidden = true;
   if (new Date().getDay() === 2) egg('tottuesday', 'A golden tater tot! Happy Tot Tuesday');
   state.goldenTaters++;
+  if (live.noonGold) { live.noonGold = false; state.noonGolds = (state.noonGolds || 0) + 1; }
+  if (isGoldenHour()) state.goldenHourGolds = (state.goldenHourGolds || 0) + 1;
   haptic('gold'); sfx.gold();
   scheduleLucky();
   if (baseCps() > 0 && Math.random() < 0.5) {
@@ -1362,7 +1548,11 @@ function renderLive() {
   if (now < (live.feastUntil || 0)) buffs.push(`Harvest feast ×2, ${Math.ceil((live.feastUntil - now) / 1000)}s`);
   if (now < (live.nadoUntil || 0)) buffs.push('Spudnado: taps ×2');
   if (now < (live.breakfastUntil || 0)) buffs.push(`Second breakfast ×2, ${Math.ceil((live.breakfastUntil - now) / 1000)}s`);
-  if (couchActive()) buffs.push('Couch potato +50%');
+  if (couchActive()) buffs.push(weekday() === 0 ? 'Lazy Sunday couch +100%' : 'Couch potato +50%');
+  if (lunchRush()) buffs.push('Lunch rush: Farm Stands ×3');
+  if (nightMarket()) buffs.push('Night market: 10% off buildings');
+  if (campfireLit()) buffs.push('Campfire: the fryer stays hot');
+  if (stormNow()) buffs.push('Thunderstorm: catch the lightning!');
   if (fidget.connected) buffs.push(`Fidget taps ×${fidgetMult()}`);
   const key = buffs.join('|');
   if ($('buffs').dataset.key !== key) {
@@ -1768,6 +1958,13 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
   if (act === 'twin' || act === 'meteors') { if (threat.active) toast('A pest is already here'); else spawnThreat(true, act); }
   if (act === 'parade') spawnParade();
   if (act === 'hotpot') startHotPotato();
+  if (act === 'phase') { const order = [6, 12, 15.5, 17.1, 18, 20.5, 23.5, 3.1]; const cur = order.indexOf(live.hourOverride); live.hourOverride = order[(cur + 1) % order.length]; dayTick(); }
+  if (act === 'season') { const order = ['spring', 'summer', 'fall', 'winter']; live.seasonOverride = order[(order.indexOf(seasonNow()) + 1) % 4]; toast('Season: ' + live.seasonOverride); dayTick(); }
+  if (act === 'weekday') { live.dowOverride = (weekday() + 1) % 7; toast(WEEKDAY_SPECIAL[live.dowOverride]); dayTick(); }
+  if (act === 'storm') { live.stormOverride = true; live.hourOverride = 15.5; live.nextBolt = 0; dayTick(); }
+  if (act === 'rooster') spawnRooster();
+  if (act === 'ghost') spawnGhost();
+  if (act === 'star') spawnStar();
   if (act === 'rain') startRain();
   if (act === 'nado') spawnNado();
   if (act === 'dragon') { if (threat.active) toast('A pest is already here'); else spawnThreat(true, 'dragon'); }
@@ -1831,16 +2028,16 @@ const PEST_ART = {
     <circle cx="20" cy="28" r="3" fill="#fff"/><circle cx="40" cy="28" r="3" fill="#fff"/><circle cx="20" cy="28" r="1.6" fill="#000"/><circle cx="40" cy="28" r="1.6" fill="#000"/>
     <path d="M22 40 C26 46 34 46 38 40 C34 38 26 38 22 40Z" fill="#e8e2d8"/><ellipse cx="30" cy="40" rx="3.5" ry="2.4" fill="#2f2117"/></svg>`,
 };
-const isNight = () => { const h = new Date().getHours(); return h >= 21 || h < 5; };
+const isNight = () => phaseOf(gameHour()) === 'night';
 const PESTS = {
   gopher:  { title: 'Gopher!', msg: 'A gopher is digging up your patch. Tap it!', art: 'gopher', hp: () => has('barncat') ? 4 : 8, units: () => 1, time: 12000,
              ok: () => owned('patch') >= 1, weight: () => 3, reward: 20 },
   crows:   { title: 'Crows!', msg: 'Crows are pecking at your sprouts. Tap every one!', art: 'crow', hp: () => 1, units: () => has('scarecrow') ? 2 : 3, time: 9000,
-             ok: () => owned('patch') >= 3, weight: () => has('scarecrow') ? 1 : 2, reward: 6 },
+             ok: () => owned('patch') >= 3, weight: () => isNight() ? 0 : (has('scarecrow') ? 1 : 2), reward: 6 },
   beetles: { title: 'Potato beetles!', msg: 'Beetles are chewing your crop. Squish them!', art: 'beetle', hp: () => 1, units: () => 4 + Math.min(4, Math.floor(totalOwned() / 40)), time: 0,
              ok: () => totalOwned() >= 10, weight: () => 2, reward: 4 },
   ufo:     { title: 'UFO!', msg: 'Aliens are about to beam up part of your farm. Tap the saucer!', art: 'ufo', hp: () => has('foilhats') ? 10 : 20, units: () => 1, time: 15000,
-             ok: () => owned('tractor') + owned('farm') + owned('harvester') + owned('fryline') > 0, weight: () => 1, reward: 60 },
+             ok: () => owned('tractor') + owned('farm') + owned('harvester') + owned('fryline') > 0, weight: () => isNight() ? 2 : 1, reward: 60 },
   raccoon: { title: 'Raccoon!', msg: 'A raccoon is raiding the farm stand. Tap it!', art: 'raccoon', hp: () => has('binlocks') ? 5 : 10, units: () => 1, time: 12000,
              ok: () => owned('stand') >= 1 && isNight(), weight: () => 3, reward: 30 },
   dragon:  { title: 'Dragon!', msg: 'A wild dragon is about to roast your field. Tap it fast!', art: 'dragon', hp: () => has('fireproof') ? 20 : 40, units: () => 1, time: 18000,
@@ -1848,7 +2045,7 @@ const PESTS = {
   twin:    { title: 'Evil twin!', msg: 'Your evil twin is stealing half your taps. Tap it to send it packing!', art: 'twin', hp: () => 15, units: () => 1, time: 20000,
              ok: () => totalOwned() >= 40, weight: () => 1, reward: 90 },
   meteors: { title: 'Meteor shower!', msg: 'Meteors are falling on your field. Zap them before they land!', art: 'meteor', hp: () => 1, units: () => 4, time: 9500,
-             ok: () => owned('mars') >= 1 || owned('spudnik') >= 1, weight: () => 1, reward: 8 },
+             ok: () => owned('mars') >= 1 || owned('spudnik') >= 1, weight: () => isNight() ? 2 : 1, reward: 8 },
 };
 const PEST_KEY = { gopher: 'gopher', crows: 'crow', beetles: 'beetle', ufo: 'ufo', raccoon: 'raccoon', dragon: 'dragon', twin: 'twin', meteors: 'meteor' };
 const WIN_MSG = { gopher: 'Bonk! The gopher dove back underground', crows: 'Shoo! The crows are gone', beetles: 'Every beetle squished',
@@ -1864,7 +2061,7 @@ function beetleMult() {
 }
 function pestMult() {
   const now = Date.now();
-  return beetleMult() * (now < (live.feastUntil || 0) ? 2 : 1) * (now < (live.breakfastUntil || 0) ? 2 : 1) * (couchActive() ? 1.5 : 1);
+  return beetleMult() * (now < (live.feastUntil || 0) ? 2 : 1) * (now < (live.breakfastUntil || 0) ? 2 : 1) * (couchActive() ? (weekday() === 0 ? 2 : 1.5) : 1) * timeMult();
 }
 
 function spawnThreat(force, forceType) {
@@ -2160,9 +2357,11 @@ function wonderTick() {
   }
   if (now >= wonder.snark) { wonder.snark = later(150, 320); if (has('aibattery')) toast('AI: ' + AI_LINES[Math.floor(Math.random() * AI_LINES.length)]); }
   if (now >= wonder.bigfoot) {
-    wonder.bigfoot = now + (360 + Math.random() * 540) * 1000;
+    wonder.bigfoot = now + (360 + Math.random() * 540) * 1000 * (isNight() ? 0.5 : 1);   // Bigfoot prefers the dark
     if (totalOwned() >= 20) spawnBigfoot();
   }
+  if (weekday() === 3) ['parade', 'rain', 'bigfoot', 'nado', 'hotpot'].forEach(k => { wonder[k] -= gap; });   // Wild Wednesday
+  if (weekday() === 4) wonder.rift -= gap;                                                              // Throwback Thursday
   if (now >= wonder.rift) {
     wonder.rift = now + (180 + Math.random() * 180) * 1000;
     if (owned('portal') > 0) openRift();
@@ -2457,6 +2656,7 @@ function fillFeel() {
   $('soundToggle').checked = !!state.settings.sound;
   $('hapticToggle').checked = !!state.settings.haptics;
   $('lowresToggle').checked = !!state.settings.lowres;
+  $('fastDayToggle').checked = !!state.settings.fastDay;
   const note = onIPhone
     ? 'On iPhone, sounds follow the ring/silent switch, and vibration needs iOS 18 or newer.'
     : (!canVibrate ? 'This browser can’t vibrate, so you’ll get sounds only.' : '');
@@ -2465,6 +2665,7 @@ function fillFeel() {
 }
 $('soundToggle').addEventListener('change', e => { state.settings.sound = e.target.checked; save(); if (e.target.checked) sfx.win(); });
 $('hapticToggle').addEventListener('change', e => { state.settings.haptics = e.target.checked; save(); if (e.target.checked) haptic('win'); });
+$('fastDayToggle').addEventListener('change', e => { state.settings.fastDay = e.target.checked; save(); if (e.target.checked) egg('fastday', 'Time flies when you’re growing taters.'); dayTick(); });
 $('lowresToggle').addEventListener('change', e => { state.settings.lowres = e.target.checked; save(); if (e.target.checked) egg('lowres'); renderExtras(); });
 if (!state.settings) state.settings = { sound: true, haptics: true };
 fillFeel();
@@ -2472,7 +2673,7 @@ fillFeel();
 /* ---------- Kitchen, Risky Root, cursed rings and other pop culture ---------- */
 const kitLevel = id => (state.kitchen && state.kitchen[id]) || 0;
 function extraMult() {
-  return (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
+  return streakBonus() * (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
 }
 const couchActive = () => has('couch') && !document.hidden && Date.now() - lastTapAt > 10000;
 const doomLevel = () => has('onestarch') ? Math.min(1, (state.ringTime || 0) / 1800) : 0;   // full lava after 30 minutes of play
@@ -2669,6 +2870,358 @@ $('tickerText').addEventListener('animationend', nextHeadline);
 nextHeadline();
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(nextHeadline, 9000);
 
+/* ---------- Day and night ---------- */
+// The farm follows your phone's clock, or a fast clock where a whole day passes every 24 minutes.
+function gameHour() {
+  if (typeof live.hourOverride === 'number') return live.hourOverride;
+  if (state.settings && state.settings.fastDay) return (Date.now() / 60000) % 24;
+  const d = new Date();
+  return d.getHours() + d.getMinutes() / 60;
+}
+function gameDay() {
+  if (state.settings && state.settings.fastDay) return 'f' + Math.floor(Date.now() / 1440000);
+  return new Date().toDateString();
+}
+function phaseOf(h) { return h >= 5 && h < 7 ? 'dawn' : h >= 7 && h < 17 ? 'day' : h >= 17 && h < 20 ? 'dusk' : 'night'; }
+function isGoldenHour() { const h = gameHour(); return h >= 17 && h < 18; }
+function moonPhase() {                                    // 0 = new moon, 0.5 = full moon
+  const synodic = 29.530588853, age = ((Date.now() - Date.UTC(2000, 0, 6, 18, 14)) / 86400000) % synodic;
+  return (age < 0 ? age + synodic : age) / synodic;
+}
+function isFullMoon() { const p = moonPhase(); return p > 0.466 && p < 0.534; }
+function fullMoonNight() { return isNight() && isFullMoon(); }
+function timeMult() {
+  const ph = phaseOf(gameHour());
+  if (ph === 'day' && seasonNow() === 'summer') return 1.1;   // long summer days
+  if (ph === 'dawn') return 1.25;                         // morning dew
+  if (ph === 'night') return has('growlights') ? 1.25 : 0.75;
+  return 1;
+}
+function phaseLabel() {
+  const h = gameHour(), ph = phaseOf(h);
+  if (ph === 'dawn') return 'Dawn: morning dew, +25% growth';
+  if (ph === 'day') return h >= 12 && h < 12.5 ? 'High noon' : 'Daytime';
+  if (ph === 'dusk') return isGoldenHour() ? 'Golden hour: twice the golden taters' : 'Dusk: fireflies are out';
+  if (fullMoonNight()) return 'Full moon: taps ×1.5';
+  return has('growlights') ? 'Night: grow lights on, +25%' : 'Night: crops grow 25% slower';
+}
+const PHASE_NEWS = {
+  dawn: 'The sun is coming up. Morning dew: +25% growth until 7.',
+  day: 'Good morning! The whole farm is wide awake.',
+  dusk: 'The sun is setting. Golden hour: golden taters show up twice as often.',
+  night: 'Night falls. Watch the skies…',
+};
+let lastPhase = '';
+function dayTick() {
+  if (document.hidden) return;
+  const h = gameHour(), ph = phaseOf(h), day = gameDay(), scene = document.querySelector('.scene');
+  if (ph !== lastPhase) {
+    scene.dataset.phase = ph;
+    if (lastPhase) { toast(PHASE_NEWS[ph] + (ph === 'night' && !has('growlights') ? ' Crops grow 25% slower until dawn.' : '')); if (ph === 'night') sfx.owl(); }
+    lastPhase = ph;
+    live.nextStar = Date.now() + (60 + Math.random() * 120) * 1000;
+  }
+  if (!(state.phasesSeen || {})[ph]) { state.phasesSeen = { ...(state.phasesSeen || {}), [ph]: true }; save(); }
+  $('phaseText').textContent = phaseLabel();
+  // the moon's shape follows the real moon
+  const p = moonPhase(), lit = (1 - Math.cos(2 * Math.PI * p)) / 2, disc = 96;
+  document.querySelector('.sun').style.setProperty('--moonx', ((p < 0.5 ? 1 : -1) * disc * (1 - lit)).toFixed(1) + 'px');
+  state.day = state.day || {};
+  if (h >= 6 && h < 6.5 && state.day.rooster !== day) { state.day.rooster = day; spawnRooster(); }
+  if (h >= 12 && h < 12.5 && state.day.noon !== day) { state.day.noon = day; live.noonGold = true; live.nextLucky = 0; toast('High noon! A golden tater is on its way'); }
+  if (h >= 3 && h < 3.5 && state.day.ghost !== day) { state.day.ghost = day; spawnGhost(); }
+  if (h >= 3 && h < 4) egg('insomniac', 'It’s 3 AM. The potato is worried about you.');
+  // fireflies from 6 PM to 5 AM
+  const want = (h >= 18 || h < 5) ? (has('firejar') ? 6 : 4) : 0, have = document.querySelectorAll('.fly:not(.caught)').length;
+  if (have < want && Math.random() < 0.35) spawnFly();
+  if (want === 0) document.querySelectorAll('.fly').forEach(f => f.remove());
+  // shooting stars at night
+  if (ph === 'night' && Date.now() >= (live.nextStar || 0)) { live.nextStar = Date.now() + (180 + Math.random() * 180) * 1000; spawnStar(); }
+  dayExtras(h, ph, day);
+}
+function timeTap(count) {
+  const ph = phaseOf(gameHour());
+  if (ph === 'dawn') state.dawnTaps = (state.dawnTaps || 0) + count;
+  if (ph === 'night') state.nightTaps = (state.nightTaps || 0) + count;
+  if (lunchRush()) state.lunchTaps = (state.lunchTaps || 0) + count;
+  if (fullMoonNight()) {
+    state.moonTaps = (state.moonTaps || 0) + count;
+    if (state.moonTaps >= 100) egg('moonstruck', 'Moonstruck! The potato howls along with you.');
+  }
+}
+
+sfx.rooster = () => { const c = audio(); if (!c) return;
+  tone(c, { wave: 'sawtooth', f0: 500, f1: 900, dur: 0.15, vol: 0.07 }); tone(c, { wave: 'sawtooth', f0: 900, f1: 1150, at: 0.17, dur: 0.35, vol: 0.07 });
+  tone(c, { wave: 'sawtooth', f0: 1150, f1: 600, at: 0.55, dur: 0.45, vol: 0.06 }); };
+sfx.owl = () => { const c = audio(); if (c) [0, 0.5].forEach(a => tone(c, { f0: 420, f1: 370, at: a, dur: 0.35, vol: 0.14 })); };
+sfx.howl = () => { const c = audio(); if (!c) return; tone(c, { f0: 300, f1: 720, dur: 0.8, vol: 0.12 }); tone(c, { f0: 720, f1: 440, at: 0.8, dur: 1.1, vol: 0.1 }); };
+sfx.chime = () => { const c = audio(); if (c) tone(c, { f0: 1800, f1: 2500, dur: 0.15, vol: 0.07 }); };
+
+const ROOSTER = `<svg viewBox="0 0 64 64"><path d="M14 30 C4 22 4 10 12 6 C12 14 16 18 20 22Z M10 34 C0 30 0 18 6 14 C8 22 12 26 16 28Z" fill="#2d6b3a" stroke="#2f2117" stroke-width="2"/>
+  <path d="M16 26 C20 46 36 54 48 46 C56 40 54 28 48 22 L44 12 L36 14 C34 24 28 26 16 26Z" fill="#fff6e2" stroke="#2f2117" stroke-width="2.5"/>
+  <path d="M38 8 c2-6 6-6 6-1 c2-4 6-3 5 2 c3-1 5 2 2 5 L40 14Z" fill="#c8372d" stroke="#2f2117" stroke-width="2"/>
+  <path d="M48 16 L58 19 L48 22Z" fill="#f2a12b" stroke="#2f2117" stroke-width="1.5"/><path d="M46 24 c1 5-3 6-4 2Z" fill="#c8372d"/>
+  <circle cx="44" cy="16" r="2" fill="#2f2117"/><path d="M32 50 v10 M40 50 v10 M28 60 h8 M36 60 h8" stroke="#f2a12b" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const GHOST = `<svg viewBox="0 0 100 110"><path d="M10 50 C8 22 30 8 50 8 C72 8 92 22 90 50 L90 96 L80 88 L70 98 L60 88 L50 98 L40 88 L30 98 L20 88 L10 96Z" fill="#f6f4ff" stroke="#2f2117" stroke-width="3"/>
+  <ellipse cx="36" cy="44" rx="7" ry="10" fill="#2f2117"/><ellipse cx="64" cy="44" rx="7" ry="10" fill="#2f2117"/>
+  <ellipse cx="50" cy="70" rx="8" ry="10" fill="#2f2117"/><g fill="#d9d2c6"><circle cx="24" cy="30" r="3"/><circle cx="76" cy="60" r="3"/><circle cx="30" cy="76" r="2.5"/></g></svg>`;
+
+function spawnRooster() {
+  if (document.querySelector('.rooster')) return;
+  const el = document.createElement('button');
+  el.className = 'rooster';
+  el.setAttribute('aria-label', 'The rooster is crowing. Tap it');
+  el.innerHTML = ROOSTER;
+  const bye = setTimeout(() => { el.classList.add('gone'); setTimeout(() => el.remove(), 450); }, 20000);
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation(); clearTimeout(bye);
+    el.classList.add('gone'); setTimeout(() => el.remove(), 450);
+    state.roosters = (state.roosters || 0) + 1;
+    const g = Math.max(100, baseCps() * 120);
+    grow(g); sfx.rooster(); haptic('win');
+    toast(`Cock-a-doodle-spud! The rooster woke up ${fmt(g)} taters`);
+    save();
+  });
+  $('threats').appendChild(el);
+  sfx.rooster();
+  toast('The rooster is crowing on the fence! Tap it before it hops off');
+}
+function spawnGhost() {
+  if (document.querySelector('.ghost')) return;
+  const el = document.createElement('button');
+  let boos = 0;
+  el.className = 'ghost';
+  el.setAttribute('aria-label', 'A ghost potato. Tap it 5 times');
+  el.innerHTML = GHOST;
+  const bye = setTimeout(() => { el.classList.add('gone'); setTimeout(() => el.remove(), 450); }, 20000);
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation(); sfx.hit();
+    if (++boos < 5) return;
+    clearTimeout(bye);
+    el.classList.add('gone'); setTimeout(() => el.remove(), 450);
+    const g = Math.max(500, baseCps() * 200);
+    grow(g); sfx.win();
+    egg('ghost');
+    toast(`Boo-sted! The ghost potato left behind ${fmt(g)} taters`);
+    save();
+  });
+  $('threats').appendChild(el);
+  toast('It’s the witching hour… something spooky is floating over the field');
+}
+function spawnFly() {
+  const el = document.createElement('button');
+  el.className = 'fly';
+  el.setAttribute('aria-label', 'A firefly. Tap to catch it');
+  el.style.left = (6 + Math.random() * 82) + '%';
+  el.style.top = (8 + Math.random() * 62) + '%';
+  el.style.setProperty('--t', (6 + Math.random() * 6).toFixed(1) + 's');
+  el.style.setProperty('--d', (-Math.random() * 2).toFixed(1) + 's');
+  el.style.setProperty('--dx', Math.round(Math.random() * 80 - 40) + 'px');
+  el.style.setProperty('--dy', Math.round(Math.random() * 60 - 30) + 'px');
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    if (el.classList.contains('caught')) return;
+    el.classList.add('caught');
+    state.fireflies = (state.fireflies || 0) + 1;
+    const g = Math.max(5, baseCps() * 5) * (has('firejar') ? 5 : 1);
+    grow(g); sfx.chime(); haptic('hit');
+    const fr = $('field').getBoundingClientRect(), er = el.getBoundingClientRect();
+    popText('+' + fmt(g), er.left - fr.left - 10, er.top - fr.top - 10);
+    setTimeout(() => el.remove(), 420);
+  });
+  $('flies').appendChild(el);
+}
+function spawnStar() {
+  const el = document.createElement('button');
+  el.className = 'star-shot';
+  el.setAttribute('aria-label', 'A shooting star. Tap to make a wish');
+  el.style.left = (Math.random() * 30) + '%';
+  el.style.top = (2 + Math.random() * 18) + '%';
+  el.addEventListener('animationend', e => { if (e.target === el) el.remove(); });
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    el.remove();
+    state.stars = (state.stars || 0) + 1;
+    { const mp = moonPhase(); if (mp < 0.034 || mp > 0.966) egg('newmoon', 'A wish on a moonless night. Extra lucky!'); }
+    sfx.gold(); haptic('gold');
+    if (Math.random() < 0.5) { live.frenzyUntil = Date.now() + 30000; toast('Your wish came true: Bumper crop ×7 for 30 seconds'); }
+    else { live.nextLucky = 0; toast('Your wish came true: a golden tater is on its way'); }
+    save();
+  });
+  $('threats').appendChild(el);
+}
+/* ---------- Calendar: seasons, weekdays, streaks, storms and campfires ---------- */
+const WEEKDAY_SPECIAL = [
+  'Lazy Sunday: the couch potato bonus is doubled',
+  'Fresh-start Monday: your first 100 taps count double',
+  'Tot Tuesday: golden taters turn into golden tater tots',
+  'Wild Wednesday: random events show up twice as often',
+  'Throwback Thursday: time portals open twice as often',
+  'Fry-day: Fry Factories make twice as much',
+  'Market Saturday: Farm Stands make twice as much',
+];
+const SEASON_SPECIAL = {
+  spring: 'Spring: Backyard Patches ×1.5',
+  summer: 'Summer: +10% in the daytime, more storms',
+  fall: 'Fall: Harvesters ×1.5',
+  winter: 'Winter: the fryer heats 50% faster',
+};
+function weekday() { return typeof live.dowOverride === 'number' ? live.dowOverride : new Date().getDay(); }
+function seasonNow() {
+  if (live.seasonOverride) return live.seasonOverride;
+  const m = new Date().getMonth();
+  return m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'fall' : 'winter';
+}
+const lunchRush = () => { const h = gameHour(); return h >= 11.5 && h < 13.5; };
+const nightMarket = () => { const h = gameHour(); return h >= 23 || h < 1; };
+function dayRoll(salt) {                                 // the same "random" number all day long
+  let x = 0;
+  for (const ch of gameDay() + salt) x = (x * 31 + ch.charCodeAt(0)) >>> 0;
+  return (x % 1000) / 1000;
+}
+const stormDay = () => live.stormOverride || dayRoll('storm') < (seasonNow() === 'summer' ? 0.45 : 0.25);
+const stormNow = () => { const h = gameHour(); return stormDay() && h >= 15 && h < 17; };
+const campfireLit = () => { const h = gameHour(); return h >= 20 && h < 22 && !stormNow(); };
+function calendarMult(id) {
+  const d = weekday(), s = seasonNow();
+  return (d === 5 && id === 'fryline' ? 2 : 1) * (d === 6 && id === 'stand' ? 2 : 1)
+    * (s === 'spring' && id === 'patch' ? 1.5 : 1) * (s === 'fall' && id === 'harvester' ? 1.5 : 1)
+    * (id === 'stand' && lunchRush() ? 3 : 1);
+}
+// Daily streak: +5% for each extra day in a row, up to +35%
+const streakBonus = () => { const st = state.streak || {}; return st.last === new Date().toDateString() ? 1 + 0.05 * Math.min(Math.max((st.count || 1) - 1, 0), 7) : 1; };
+function updateStreak() {
+  const today = new Date().toDateString(), st = state.streak || { last: '', count: 0, best: 0 };
+  if (st.last === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  st.count = st.last === yesterday ? st.count + 1 : 1;
+  st.best = Math.max(st.best || 0, st.count);
+  st.last = today;
+  state.streak = st;
+  if (st.count > 1) setTimeout(() => toast(`Day ${st.count} in a row! +${Math.min(st.count - 1, 7) * 5}% to everything you grow today`), 1500);
+  save();
+}
+
+function fmtClock(h) {
+  const hh = Math.floor(h) % 24, mm = Math.floor((h % 1) * 60);
+  return `${hh % 12 || 12}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'}`;
+}
+const LEAF = c => `<svg viewBox="0 0 24 24"><path d="M12 2l2 5 4-2-1 5 4 1-4 3 2 4-5-1-2 5-2-5-5 1 2-4-4-3 4-1-1-5 4 2z" fill="${c}" stroke="#7a3a12" stroke-width="1" stroke-linejoin="round"/></svg>`;
+const PETAL = '<svg viewBox="0 0 20 20"><path d="M10 2C15 6 15 14 10 18 5 14 5 6 10 2Z" fill="#ffc0d6" stroke="#d97a9a" stroke-width="1"/></svg>';
+const BOLT = '<svg viewBox="0 0 40 90"><path d="M24 0 L6 48 H20 L12 90 L36 36 H22 L32 0Z" fill="#fff36b" stroke="#2f2117" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+const RAINBOW = `<svg viewBox="0 0 200 100"><g fill="none" stroke-width="8"><path d="M10 100 A90 90 0 0 1 190 100" stroke="#e8483b"/><path d="M18 100 A82 82 0 0 1 182 100" stroke="#f39a2b"/>
+  <path d="M26 100 A74 74 0 0 1 174 100" stroke="#f4d03f"/><path d="M34 100 A66 66 0 0 1 166 100" stroke="#5cb85c"/><path d="M42 100 A58 58 0 0 1 158 100" stroke="#3b8ed0"/>
+  <path d="M50 100 A50 50 0 0 1 150 100" stroke="#7b4bb3"/></g></svg>`;
+sfx.thunder = () => { const c = audio(); if (c) { noise(c, { dur: 1.4, f: 160, f1: 50, q: 0.7, vol: 0.9 }); noise(c, { at: 0.05, dur: 0.25, f: 1200, f1: 300, q: 1, vol: 0.4 }); } };
+
+function spawnFalling(kind) {
+  const el = document.createElement('button');
+  el.className = 'leaf';
+  el.setAttribute('aria-label', kind === 'leaf' ? 'A falling leaf. Tap to catch it' : 'A falling blossom. Tap to catch it');
+  el.style.left = (4 + Math.random() * 88) + '%';
+  el.style.setProperty('--t', (7 + Math.random() * 4).toFixed(1) + 's');
+  el.innerHTML = kind === 'leaf' ? LEAF(['#e0782a', '#c8372d', '#f2b136', '#b8551e'][Math.floor(Math.random() * 4)]) : PETAL;
+  el.addEventListener('animationend', e => { if (e.target === el) el.remove(); });
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    if (el.classList.contains('got')) return;
+    el.classList.add('got');
+    if (kind === 'leaf') state.leaves = (state.leaves || 0) + 1; else state.petals = (state.petals || 0) + 1;
+    const g = Math.max(3, baseCps() * 3);
+    grow(g); sfx.chime(); haptic('hit');
+    const fr = $('field').getBoundingClientRect(), er = el.getBoundingClientRect();
+    popText('+' + fmt(g), er.left - fr.left - 10, er.top - fr.top - 10);
+    setTimeout(() => el.remove(), 380);
+  });
+  $('seasonfx').appendChild(el);
+}
+function spawnBolt() {
+  const flash = $('flashfx');
+  flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+  sfx.thunder(); haptic('alarm');
+  const el = document.createElement('button');
+  el.className = 'bolt';
+  el.setAttribute('aria-label', 'Lightning! Tap it quick');
+  el.style.left = (8 + Math.random() * 74) + '%';
+  el.innerHTML = BOLT;
+  const bye = setTimeout(() => el.remove(), 1600);
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation(); clearTimeout(bye); el.remove();
+    state.bolts = (state.bolts || 0) + 1;
+    live.heat = 99; addHeat(5);
+    const g = Math.max(200, baseCps() * 90);
+    grow(g); sfx.gold();
+    toast(`You caught the lightning! Hot Fryer and +${fmt(g)} taters`);
+    save();
+  });
+  $('threats').appendChild(el);
+}
+function spawnRainbow() {
+  if (document.querySelector('.rainbow')) return;
+  const el = document.createElement('button');
+  el.className = 'rainbow';
+  el.setAttribute('aria-label', 'A rainbow. Tap it');
+  el.innerHTML = RAINBOW;
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation(); el.remove();
+    state.rainbows = (state.rainbows || 0) + 1;
+    egg('rainbow');
+    const g = Math.max(1000, baseCps() * 300);
+    grow(g); live.nextLucky = 0; sfx.gold(); haptic('gold');
+    toast(`Pot of gold! +${fmt(g)} taters, and a golden tater is on its way`);
+    save();
+  });
+  $('sky').appendChild(el);
+  toast('The storm passed. Look, a rainbow!');
+}
+$('campfire').addEventListener('pointerdown', e => {
+  e.stopPropagation();
+  const day = gameDay();
+  state.day = state.day || {};
+  if (state.day.camp === day) { toast('You already roasted a potato tonight. Come back tomorrow night.'); return; }
+  state.day.camp = day;
+  state.camp = (state.camp || 0) + 1;
+  live.heat = 99; addHeat(5);
+  const g = Math.max(300, baseCps() * 150);
+  grow(g); sfx.win(); haptic('win');
+  toast(`You roasted a potato over the campfire: Hot Fryer and +${fmt(g)} taters`);
+  save();
+});
+
+function dayExtras(h, ph, day) {
+  const sc = document.querySelector('.scene');
+  // The sun rises at 5 and sets at 8; the moon crosses from 8 PM to 5 AM
+  const t = Math.min(1, Math.max(0, ph === 'night' ? ((h - 20 + 24) % 24) / 9 : (h - 5) / 15));
+  sc.style.setProperty('--cx', (88 - t * 76).toFixed(1) + '%');
+  sc.style.setProperty('--cy', (70 - Math.sin(Math.PI * t) * 60).toFixed(1) + '%');
+  // Clock, weekday special, season and streak
+  const season = seasonNow(), dow = weekday(), st = state.streak || {};
+  sc.dataset.season = season;
+  $('phaseText').textContent = fmtClock(h) + ' · ' + phaseLabel();
+  $('dayText').textContent = WEEKDAY_SPECIAL[dow].split(':')[0] + ' · ' + season[0].toUpperCase() + season.slice(1)
+    + (streakBonus() > 1 ? ` · Day ${st.count} streak +${Math.round((streakBonus() - 1) * 100)}%` : '');
+  state.seasons = state.seasons || {}; state.weekdays = state.weekdays || {};
+  if (!state.seasons[season] || !state.weekdays[dow]) { state.seasons[season] = true; state.weekdays[dow] = true; save(); }
+  updateStreak();
+  if (state.day.dow !== day) { state.day.dow = day; setTimeout(() => toast(WEEKDAY_SPECIAL[dow] + '. ' + SEASON_SPECIAL[season] + '.'), 2500); }
+  // Falling leaves in the fall, blossoms in the spring
+  const falling = season === 'fall' ? 'leaf' : season === 'spring' ? 'petal' : '';
+  if (falling && ph !== 'night' && document.querySelectorAll('.leaf:not(.got)').length < 5 && Math.random() < 0.4) spawnFalling(falling);
+  // Afternoon thunderstorms, then a rainbow
+  const storm = stormNow();
+  sc.classList.toggle('storm', storm);
+  if (storm && Date.now() >= (live.nextBolt || 0)) { live.nextBolt = Date.now() + (12 + Math.random() * 14) * 1000; spawnBolt(); }
+  if (!storm && stormDay() && h >= 17 && h < 17.25 && state.day.rainbow !== day) { state.day.rainbow = day; spawnRainbow(); }
+  if (!(h >= 17 && h < 17.25)) document.querySelectorAll('.rainbow').forEach(r => r.remove());
+  // Campfire from 8 to 10 PM
+  $('campfire').hidden = !campfireLit();
+}
+
+// Howl at the full moon
+document.querySelector('.sun').addEventListener('pointerdown', () => {
+  if (fullMoonNight()) { sfx.howl(); if (egg('howl')) toast('Awooooo! The full moon howls back.'); }
+});
+
 /* ---------- Easter eggs ---------- */
 function egg(id, msg) {
   if (state.eggs[id]) return false;
@@ -2682,6 +3235,7 @@ function noteTap(fidget, count) {
   const now = new Date();
   lastTapAt = now.getTime();
   rhythmTap(fidget, count);
+  timeTap(count);
   if (now.getHours() === 0 && now.getMinutes() < 5) egg('midnight', 'A midnight snack for the potato');
   if (now.getHours() % 12 === 11 && now.getMinutes() === 11) {
     const key = now.toDateString() + now.getHours();
@@ -2847,7 +3401,7 @@ setInterval(() => {
   }
   grow(cps() * dt);
   if (has('onestarch')) state.ringTime = (state.ringTime || 0) + dt;
-  live.heat = Math.max(0, live.heat - 15 * dt);
+  live.heat = Math.max(0, live.heat - 15 * dt * (campfireLit() ? 0.5 : 1));
   luckyTick();
   threatTick();
   wonderTick();
@@ -2855,6 +3409,7 @@ setInterval(() => {
 }, 100);
 setInterval(() => {
   checkAchievements();
+  dayTick();
   renderEggs();
   renderLists();
   if (!$('tab-me').hidden) renderMe();
@@ -2863,6 +3418,7 @@ setInterval(() => {
 setInterval(() => { save(); cloud.pending = true; }, 30000);
 document.addEventListener('visibilitychange', () => { if (document.hidden) { save(); cloud.pending = true; pushCloud(); } });
 
+dayTick();
 scheduleLucky();
 renderLive(); renderLists(true); renderAwards(); renderMe(); renderBoard(null);
 /* =====================================================================
