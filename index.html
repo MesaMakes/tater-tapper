@@ -575,6 +575,57 @@
   .fheart { position: absolute; bottom: -8%; width: 22px; opacity: .7; animation: heartup var(--t, 10s) linear infinite; animation-delay: var(--d, 0s); }
   @keyframes heartup { from { transform: translateY(0) rotate(-10deg); } to { transform: translateY(-460px) rotate(15deg); } }
 
+  /* Opening story */
+  .story { position: fixed; inset: 0; z-index: 70; background: #0b0f1e; color: #fff6e2; display: grid; grid-template-rows: 1fr auto; padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); cursor: pointer; }
+  .story .stage { display: grid; place-items: center; overflow: hidden; padding: 20px; }
+  .story .stage svg { width: min(92vw, 520px); height: auto; border-radius: 22px; box-shadow: 0 0 0 3px rgba(255,246,226,.25); animation: kenburns 9s ease-out both; }
+  @keyframes kenburns { from { transform: scale(1.04); opacity: 0; } 12% { opacity: 1; } to { transform: scale(1); } }
+  .story .stage { max-width: 100vw; }
+  .story .cap { padding: 6px 24px 22px; max-width: 560px; margin: 0 auto; text-align: center; font: 600 1.08rem/1.5 var(--sans); animation: pestIn .5s ease-out both; }
+  .story .dots { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+  .story .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,246,226,.3); }
+  .story .dots i.on { background: #f4c542; }
+  .story .skip { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 14px; border: 1.5px solid rgba(255,246,226,.5); background: none; color: #fff6e2; border-radius: 999px; padding: 4px 14px; font-weight: 700; cursor: pointer; }
+  .story .go { margin-top: 14px; }
+  /* Team picker */
+  .modal { position: fixed; inset: 0; z-index: 65; background: rgba(15,10,6,.6); display: grid; place-items: center; padding: 16px; }
+  .modal-card { width: min(100%, 460px); max-height: 90dvh; overflow: auto; background: var(--paper); border: 2px solid var(--ink); border-radius: 22px; padding: 18px; box-shadow: 0 6px 0 var(--ink); }
+  .modal-card h2 { font: 400 1.4rem var(--slab); margin: 0 0 4px; }
+  .teamgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+  .teamcard { border: 2px solid var(--ink); border-radius: 16px; background: var(--paper-2); padding: 0 0 10px; cursor: pointer; text-align: center; overflow: hidden; }
+  .teamcard .flag { height: 44px; display: grid; place-items: center; }
+  .teamcard .flag svg { width: 40px; height: 40px; }
+  .teamcard strong { display: block; font: 700 .95rem var(--sans); margin: 6px 6px 2px; }
+  .teamcard small { display: block; color: var(--ink-soft); font-size: .76rem; margin: 0 8px; line-height: 1.3; }
+  .teamcard.mine { box-shadow: 0 0 0 3px var(--butter); }
+  .teamdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; border: 1.5px solid var(--outline); }
+  /* Raid */
+  .raidcard { position: relative; z-index: 3; width: min(100%, 380px); margin-top: 8px; background: rgba(20,14,10,.82); color: #fff6e2; border: 2px solid #ff5c3a; border-radius: 16px; padding: 7px 12px 9px; display: grid; gap: 5px; }
+  .raidtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .8rem; font-weight: 700; }
+  .raidtop b { font: 400 1.02rem var(--slab); color: #ffb3a0; }
+  .raidhp { position: relative; height: 14px; border-radius: 999px; background: rgba(255,255,255,.15); overflow: hidden; }
+  .raidhp i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #ff5c3a, #ffb02e); transition: width .3s; }
+  .raidhp span { position: absolute; inset: 0; display: grid; place-items: center; font-size: .68rem; font-weight: 800; text-shadow: 0 1px 2px #000; }
+  .raidteams { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; font-size: .64rem; font-weight: 700; }
+  .raidteams div { display: grid; gap: 2px; }
+  .raidteams i { height: 5px; border-radius: 99px; background: rgba(255,255,255,.15); overflow: hidden; display: block; }
+  .raidteams i b { display: block; height: 100%; }
+  .boss { position: absolute; z-index: 5; left: 2%; top: 0; width: min(34vw, 140px); border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 0 14px rgba(255,60,40,.7)); animation: bossIn .6s cubic-bezier(.3,1.5,.5,1) both; }
+  .boss svg { display: block; width: 100%; height: auto; overflow: visible; animation: hover 1.6s ease-in-out infinite; }
+  .boss.hit svg { animation: hitShake .2s; }
+  @keyframes bossIn { from { transform: scale(0) rotate(-20deg); } }
+  /* Potato Skins */
+  .skinslot { margin: 8px 0; }
+  .skinslot > b { display: block; font-size: .8rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 2px solid var(--line); background: var(--paper); border-radius: 999px; padding: 3px 11px; font: 600 .8rem var(--sans); cursor: pointer; color: var(--ink); }
+  .chip.on { border-color: var(--ink); background: var(--butter); color: #2f2117; }
+  .chip.locked { opacity: .5; border-style: dashed; }
+  .teamrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 6px 2px; border-top: 2px dashed var(--line); }
+  .teamrow:first-child { border-top: 0; }
+  .teamrow .tbar { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--paper-2); overflow: hidden; }
+  .teamrow .tbar b { display: block; height: 100%; }
+
   .root { position: absolute; z-index: 5; left: 3%; bottom: calc(37.5cqw - 34px); width: min(14vw, 56px); border: 0; padding: 0; background: none; cursor: pointer;
           filter: drop-shadow(0 0 10px rgba(155,127,212,.9)); animation: rootPulse 1.8s ease-in-out infinite; }
   .root svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -639,6 +690,7 @@
     .tater-btn.dance svg, .hotpot svg { animation: none; }
     .pet { animation-duration: 60s; } .walker { animation-duration: 25s; }
     .tool svg { animation: none; }
+    .story .stage svg, .story .cap, .boss, .boss svg { animation: none !important; }
     .power svg, .bat, .bat svg, .garland circle, .fheart { animation: none !important; }
     .leaf, .leaf svg, .snowfx, .stormfx, .campfire .fl { animation: none !important; }
     .ledger { transition: none; }
@@ -681,6 +733,9 @@
       <span class="tube"><i id="heatFill"></i></span>
       <small id="heatText">Fryer 250°F</small>
     </div>
+
+    <div class="raidcard" id="raidCard" hidden><div class="raidtop"><b id="raidName"></b><span id="raidTime"></span></div>
+      <div class="raidhp"><i id="raidHp"></i><span id="raidHpText"></span></div><div class="raidteams" id="raidTeams"></div></div>
 
     <div class="field" id="field">
       <div class="sky" id="sky"></div>
@@ -788,6 +843,7 @@
           <path d="M224 39 C234 37 246 38 255 40" fill="none" stroke="#2c5a1c" stroke-width="1" opacity=".6"/>
           <path d="M216 52 C206 40 192 40 188 46 C196 56 208 56 216 52Z" fill="url(#leaf)" stroke="#2c5a1c" stroke-width="2"/>
           <path d="M214 51 C206 47 198 46 190 46" fill="none" stroke="#2c5a1c" stroke-width="1" opacity=".6"/>
+          <g id="potSkins"></g>
           <g id="potFlower" class="acc" stroke="var(--outline)" stroke-width="2.5">
             <g fill="#fff6e2"><circle cx="230" cy="16" r="8"/><circle cx="246" cy="20" r="8"/><circle cx="248" cy="36" r="8"/><circle cx="234" cy="42" r="8"/><circle cx="222" cy="30" r="8"/></g>
             <circle cx="236" cy="29" r="7" fill="#f4c542"/>
@@ -808,6 +864,7 @@
       <div class="walkers" id="walkers"></div>
       <div class="flies" id="flies"></div>
       <div class="seasonfx" id="seasonfx"></div>
+      <button class="boss" id="boss" hidden aria-label="The raid boss. Tap it!"></button>
       <div class="holifx" id="holifx"></div>
       <button class="root" id="rootBtn" hidden aria-label="The Risky Root. Tap to see the gamble"><svg viewBox="0 0 60 72" aria-hidden="true">
         <ellipse cx="30" cy="68" rx="16" ry="4" fill="rgba(0,0,0,.3)"/>
@@ -867,6 +924,9 @@
       </div>
 
       <div class="panel" id="tab-ranks" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Teams</h2><span id="teamMine"></span></div>
+        <p class="note" id="teamNote"></p>
+        <div id="teamStandings"></div>
         <div class="panel-head"><h2>Leaderboard</h2><div class="seg"><button data-sort="allTime" aria-pressed="true">Taters</button><button data-sort="fidgetClicks" aria-pressed="false">Fidget taps</button></div></div>
         <p class="note" id="boardNote"></p>
         <ol class="board" id="board"></ol>
@@ -880,6 +940,9 @@
         </div>
         <div id="accountBox"></div>
         <p class="note" id="cloudStatus"></p>
+        <div class="card" id="teamCard"><h3>Your team</h3><p class="note" id="teamText"></p><button class="btn" id="teamBtn">Choose a team</button></div>
+        <div class="card" id="skinCard"><h3>Potato Skins</h3><p class="note" id="skinCount"></p><div id="skinSlots"></div></div>
+        <div class="card"><h3>The story</h3><p class="note">How a starch comet became the Mother Spud, and why the four teams guard it.</p><button class="btn" id="storyBtn">Watch the story</button></div>
         <div class="fieldset"><label for="nameInput">Leaderboard name</label><input id="nameInput" maxlength="20" autocomplete="nickname"></div>
         <button class="btn" id="profileSave">Save profile</button>
 
@@ -934,6 +997,7 @@
             <button class="btn" data-pt="weekday">Next weekday</button>
             <button class="btn" data-pt="storm">Start a storm</button>
             <button class="btn" data-pt="holiday">Next holiday</button>
+            <button class="btn" data-pt="raid">Start a practice raid</button>
             <button class="btn" data-pt="power">Holiday power-up</button>
             <button class="btn" data-pt="rooster">Rooster</button>
             <button class="btn" data-pt="ghost">Ghost</button>
@@ -956,6 +1020,14 @@
   </svg>
 </button>
 <div class="toasts" id="toasts" role="status"></div>
+<div class="story" id="story" hidden role="dialog" aria-label="The story of Tater Tapper"></div>
+<div class="modal" id="teamPicker" hidden role="dialog" aria-label="Choose your team">
+  <div class="modal-card"><h2>Choose your team</h2>
+    <p class="note">Your team fights raid bosses together with everyone else on it, and each team has its own bonus. You can switch once a week.</p>
+    <div class="teamgrid" id="teamGrid"></div>
+    <button class="btn" id="teamLater">Decide later</button>
+  </div>
+</div>
 <div class="rotate-note" aria-live="polite">
   <svg class="i" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>
   Turn your phone upright to keep tapping
@@ -1394,6 +1466,50 @@ addAch('fair50', 'State fair', 'Earn 50 ribbons.', () => state.achievements.leng
 addAch('fair100', 'Blue ribbon', 'Earn 100 ribbons.', () => state.achievements.length >= 100);
 addAch('fair150', 'Best in show', 'Earn 150 ribbons.', () => state.achievements.length >= 150);
 addAch('fair200', 'Grand champion', 'Earn 200 ribbons.', () => state.achievements.length >= 200);
+
+// More tapping and time milestones
+addAch('tap250k', 'Tap titan', 'Tap the potato 250K times on screen.', () => state.clicks >= 250000);
+addAch('tap1m', 'Million-tap club', 'Tap the potato 1M times on screen.', () => state.clicks >= 1e6);
+addAch('all25k', 'Twenty-five grand', 'Tap 25K times in all (screen plus fidget).', () => totalTaps() >= 25000);
+addAch('all250k', 'Quarter million', 'Tap 250K times in all.', () => totalTaps() >= 250000);
+addAch('all2500k', 'Legendary tapper', 'Tap 2.5M times in all.', () => totalTaps() >= 2.5e6);
+addAch('fidget250k', 'Fidget machine', 'Press your fidget 250K times.', () => state.fidgetClicks >= 250000);
+addAch('fidget1m', 'Fidget for life', 'Press your fidget 1M times.', () => state.fidgetClicks >= 1e6);
+addAch('burst20', 'Ten-finger frenzy', 'Tap 20 times within one second.', () => !!state.eggs.burst);
+addAch('day1k', 'Busy day', 'Tap 1,000 times in one day.', () => (state.bestDayTaps || 0) >= 1000);
+addAch('day10k', 'Harvest frenzy', 'Tap 10,000 times in one day.', () => (state.bestDayTaps || 0) >= 10000);
+addAch('play3h', 'Afternoon on the farm', 'Play for 3 hours in all.', () => (state.playSeconds || 0) >= 3 * 3600);
+addAch('play24h', 'Full day on the farm', 'Play for 24 hours in all.', () => (state.playSeconds || 0) >= 24 * 3600);
+addAch('play50h', 'Seasoned farmer', 'Play for 50 hours in all.', () => (state.playSeconds || 0) >= 50 * 3600);
+addAch('play250h', 'Lifetime farmer', 'Play for 250 hours in all.', () => (state.playSeconds || 0) >= 250 * 3600);
+addAch('play500h', 'Living legend', 'Play for 500 hours in all.', () => (state.playSeconds || 0) >= 500 * 3600);
+addAch('session30', 'In the zone', 'Play for 30 minutes without closing the app.', () => (live.sessionSecs || 0) >= 1800);
+addAch('session120', 'Marathon', 'Play for 2 hours without closing the app.', () => (live.sessionSecs || 0) >= 7200);
+addAch('days7', 'Week on the farm', 'Play on 7 different days.', () => (state.daysPlayed || 0) >= 7);
+addAch('days30', 'Month on the farm', 'Play on 30 different days.', () => (state.daysPlayed || 0) >= 30);
+addAch('days100', 'Hundred days', 'Play on 100 different days.', () => (state.daysPlayed || 0) >= 100);
+addAch('days365', 'Year on the farm', 'Play on 365 different days.', () => (state.daysPlayed || 0) >= 365);
+// Teams and raids
+addAch('team1', 'Pick a side', 'Join one of the four potato teams.', () => !!state.spudTeam);
+addAch('raid100', 'Raid rookie', 'Land 100 hits on raid bosses.', () => (state.raidHits || 0) >= 100);
+addAch('raid1000', 'Raid regular', 'Land 1,000 hits on raid bosses.', () => (state.raidHits || 0) >= 1000);
+addAch('raid10000', 'Raid veteran', 'Land 10,000 hits on raid bosses.', () => (state.raidHits || 0) >= 10000);
+addAch('raidwin1', 'Boss down', 'Help defeat a raid boss.', () => (state.raidsWon || 0) >= 1);
+addAch('raidwin10', 'Boss hunter', 'Help defeat 10 raid bosses.', () => (state.raidsWon || 0) >= 10);
+addAch('boss_blight', 'Blight buster', 'Help defeat The Blight.', () => !!(state.bossesBeaten || {}).blight);
+addAch('boss_beetle', 'Bug zapper', 'Help defeat the Colossal Beetle.', () => !!(state.bossesBeaten || {}).beetle);
+addAch('boss_gopher', 'Dethroned', 'Help defeat King Gopher.', () => !!(state.bossesBeaten || {}).kinggopher);
+addAch('boss_frost', 'Thaw out', 'Help defeat the Frost Giant.', () => !!(state.bossesBeaten || {}).frost);
+addAch('bossall', 'Clean sweep', 'Help defeat all four raid bosses.', () => ['blight', 'beetle', 'kinggopher', 'frost'].every(k => (state.bossesBeaten || {})[k]));
+addAch('crown1', 'Top spud', 'Be on the team that hit hardest in a live raid.', () => (state.raidCrowns || 0) >= 1);
+addAch('crown10', 'Dynasty', 'Be on the top team in 10 live raids.', () => (state.raidCrowns || 0) >= 10);
+// Potato Skins and the story
+addAch('skins5', 'Dress-up', 'Unlock 5 Potato Skins.', () => (state.skinsUnlocked || []).length >= 5);
+addAch('skins15', 'Wardrobe', 'Unlock 15 Potato Skins.', () => (state.skinsUnlocked || []).length >= 15);
+addAch('skinsall', 'Fashion icon', 'Unlock every Potato Skin.', () => (state.skinsUnlocked || []).length >= SKINS.length);
+addAch('outfit', 'Fully dressed', 'Wear something in every Potato Skin slot at once.', () => SKIN_SLOTS.every(sl => (state.skin || {})[sl.id]));
+addAch('story', 'Once upon a spud', 'Watch the story all the way to the end.', () => !!state.eggs.story);
+addSecret('egg_skipstory', 'Spoiler alert', 'Skip the opening story.', eggFound('skipstory'));
 addSecret('egg_insomniac', 'Insomniac', 'Play at 3 AM.', eggFound('insomniac'));
 addSecret('egg_fastday', 'Time flies', 'Turn on fast days.', eggFound('fastday'));
 
@@ -1612,7 +1728,9 @@ function freshState() {
     kitchen: { pot: 0, press: 0, cauldron: 0 }, totemUsed: false, totemSaves: 0, ringTime: 0, idahoRaids: 0, gambleAt: 0,
     day: {}, phasesSeen: {}, roosters: 0, noonGolds: 0, goldenHourGolds: 0, fireflies: 0, stars: 0, dawnTaps: 0, nightTaps: 0, moonTaps: 0,
     seasons: {}, weekdays: {}, leaves: 0, petals: 0, bolts: 0, camp: 0, lunchTaps: 0, marketBuys: 0, rainbows: 0, streak: { last: '', count: 0, best: 0 },
-    holidays: {}, powers: {}, baskets: 0, spent: 0, playSeconds: 0 };
+    holidays: {}, powers: {}, baskets: 0, spent: 0, playSeconds: 0,
+    spudTeam: '', teamChangedAt: 0, raidHits: 0, raidsWon: 0, raidCrowns: 0, raidLog: {}, raidDone: {}, bossesBeaten: {}, localRaid: null,
+    skinsUnlocked: ['buttons'], skin: {}, seenStory: false, daysPlayed: 0, bestDayTaps: 0, teamTapsSent: 0 };
 }
 function loadState() {
   let s = null;
@@ -1638,7 +1756,7 @@ const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1) * pestMult
 const fidgetMult = () => has('bt1') ? 3 : 2;
 function clickValue(allowHot = true) {
   let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult()
-    * (1 + 0.1 * kitLevel('pot')) * (has('potatocam') && state.settings.lowres ? 1.1 : 1);
+    * (1 + 0.1 * kitLevel('pot')) * (has('potatocam') && state.settings.lowres ? 1.1 : 1) * (state.spudTeam === 'red' ? 1.1 : 1);
   v += cps() * ((has('grip1') ? 0.01 : 0) + (has('grip2') ? 0.02 : 0));
   if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
   return v;
@@ -1673,7 +1791,7 @@ function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
   grow(gain);
   if (fidget) state.fidgetClicks += count; else state.clicks += count;
   if (isLive) addHeat(3 * Math.min(count, 10));
-  if (isLive) { noteTap(fidget, count); if (fidget) fidgetHitThreat(count); }
+  if (isLive) { noteTap(fidget, count); if (fidget) { fidgetHitThreat(count); raidHit(count, true); } }
   if (isLive) haptic('tap');
   popText('+' + fmt(gain), x, y, fidget);
   kickDirt(Math.min(3 + count, 9));
@@ -1725,7 +1843,7 @@ function replant() {
 }
 
 // Golden taters are rare: one every 4–10 minutes, a bit sooner with the Lucky Horseshoe
-function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1) / (isGoldenHour() ? 2 : 1) / (Date.now() < (live.cloverUntil || 0) ? 3 : 1); }
+function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1) / (isGoldenHour() ? 2 : 1) / (Date.now() < (live.cloverUntil || 0) ? 3 : 1) / (state.spudTeam === 'yukon' ? 1.15 : 1); }
 function luckyTick() {
   const now = Date.now(), el = $('lucky');
   if (el.hidden && now >= live.nextLucky) {
@@ -2014,7 +2132,8 @@ tabs.forEach(t => t.addEventListener('click', () => {
   }
   tabs.forEach(o => o.setAttribute('aria-selected', o === t));
   document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
-  if (t.dataset.tab === 'me') renderMe();
+  if (t.dataset.tab === 'me') { renderMe(); renderSkinPanel(); renderTeamUI(); }
+  if (t.dataset.tab === 'ranks') renderTeamUI();
 }));
 const showTab = name => tabs.find(t => t.dataset.tab === name).click();
 
@@ -2141,7 +2260,7 @@ async function pushCloud() {
   try {
     await setDoc(doc(cloud.db, 'users', uid), { save: JSON.stringify(state), updatedAt: serverTimestamp() });
     await setDoc(doc(cloud.db, 'leaderboard', uid), {
-      name: state.name || 'Farmer', allTime: Math.floor(state.allTime),
+      name: state.name || 'Farmer', team: state.spudTeam || '', allTime: Math.floor(state.allTime),
       clicks: totalTaps(), fidgetClicks: state.fidgetClicks, achievements: state.achievements.length,
       updatedAt: serverTimestamp(),
     });
@@ -2181,7 +2300,8 @@ function renderBoard(rows) {
     li.innerHTML = '<span class="place"></span><span class="who"><span class="nm"></span><small></small></span><span class="score"></span>';
     const place = li.querySelector('.place');
     if (i < 3) place.innerHTML = ribbon(['#2b5ea8', '#c8372d', '#f3eee2'][i]); else place.textContent = i + 1;
-    li.querySelector('.nm').textContent = r.name;           // textContent keeps typed names from injecting HTML
+    li.querySelector('.nm').textContent = r.name;
+    if (TEAMS[r.team]) { const dot = document.createElement('i'); dot.className = 'teamdot'; dot.style.background = TEAMS[r.team].color; dot.title = TEAMS[r.team].name; li.querySelector('.nm').prepend(dot); }           // textContent keeps typed names from injecting HTML
     li.querySelector('small').textContent = cloud.sort === 'fidgetClicks'
       ? `${fmt(r.allTime || 0)} taters, ${r.achievements || 0} ribbons`
       : `${fmt(r.fidgetClicks || 0)} fidget taps, ${r.achievements || 0} ribbons`;
@@ -2250,6 +2370,7 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
   if (act === 'phase') { const order = [6, 12, 15.5, 17.1, 18, 20.5, 23.5, 3.1]; const cur = order.indexOf(live.hourOverride); live.hourOverride = order[(cur + 1) % order.length]; dayTick(); }
   if (act === 'season') { const order = ['spring', 'summer', 'fall', 'winter']; live.seasonOverride = order[(order.indexOf(seasonNow()) + 1) % 4]; toast('Season: ' + live.seasonOverride); dayTick(); }
   if (act === 'weekday') { live.dowOverride = (weekday() + 1) % 7; toast(WEEKDAY_SPECIAL[live.dowOverride]); dayTick(); }
+  if (act === 'raid') { live.raidOverride = { id: 'practice' + Date.now(), start: Date.now(), end: Date.now() + 15 * 60000, practice: true }; raidTick(); }
   if (act === 'holiday') { const order = [...HOLIDAY_ORDER, '']; live.holidayOverride = order[(order.indexOf(holidayNow()) + 1) % order.length]; toast(live.holidayOverride ? HOLIDAY_NAME[live.holidayOverride] : 'No holiday'); state.day.holiday = ''; dayTick(); }
   if (act === 'power') { const k = HOLIDAY_POWER[holidayNow()]; if (k) spawnPower(k); else toast('Pick a holiday first with Next holiday'); }
   if (act === 'storm') { live.stormOverride = true; live.hourOverride = 15.5; live.nextBolt = 0; dayTick(); }
@@ -2435,7 +2556,7 @@ function hitUnit(unit, dmg) {
   unit.el.classList.remove('hit'); void unit.el.offsetWidth; unit.el.classList.add('hit');
   if (unit.hp <= 0) {
     state.pests[PEST_KEY[a.type]] = (state.pests[PEST_KEY[a.type]] || 0) + 1;
-    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward) * (1 + 0.2 * kitLevel('cauldron'));
+    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward) * (1 + 0.2 * kitLevel('cauldron')) * (state.spudTeam === 'purple' ? 1.25 : 1);
     grow(bonus);
     const fr = $('field').getBoundingClientRect(), er = unit.el.getBoundingClientRect();
     popText('+' + fmt(bonus), er.left - fr.left + er.width / 2 - 20, er.top - fr.top - 10, true);
@@ -2996,7 +3117,7 @@ fillFeel();
 /* ---------- Kitchen, Risky Root, cursed rings and other pop culture ---------- */
 const kitLevel = id => (state.kitchen && state.kitchen[id]) || 0;
 function extraMult() {
-  return streakBonus() * (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
+  return streakBonus() * (state.spudTeam === 'russet' ? 1.05 : 1) * (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
 }
 const couchActive = () => has('couch') && !document.hidden && Date.now() - lastTapAt > 10000;
 const doomLevel = () => has('onestarch') ? Math.min(1, (state.ringTime || 0) / 1800) : 0;   // full lava after 30 minutes of play
@@ -3275,6 +3396,11 @@ function dayTick() {
   dayExtras(h, ph, day);
 }
 function timeTap(count) {
+  state.day = state.day || {};
+  if (state.day.tapKey !== gameDay()) { state.day.tapKey = gameDay(); state.day.taps = 0; }
+  state.day.taps += count;
+  state.bestDayTaps = Math.max(state.bestDayTaps || 0, state.day.taps);
+  { const t = Date.now(); live.burst = [...(live.burst || []).filter(x => t - x < 1000), ...Array(Math.min(count, 20)).fill(t)]; if (live.burst.length >= 20) state.eggs.burst = state.eggs.burst || t; }
   const ph = phaseOf(gameHour());
   if (ph === 'dawn') state.dawnTaps = (state.dawnTaps || 0) + count;
   if (ph === 'night') state.nightTaps = (state.nightTaps || 0) + count;
@@ -3429,6 +3555,7 @@ const streakBonus = () => { const st = state.streak || {}; return st.last === ne
 function updateStreak() {
   const today = new Date().toDateString(), st = state.streak || { last: '', count: 0, best: 0 };
   if (st.last === today) return;
+  state.daysPlayed = (state.daysPlayed || 0) + 1;
   const yesterday = new Date(Date.now() - 86400000).toDateString();
   st.count = st.last === yesterday ? st.count + 1 : 1;
   st.best = Math.max(st.best || 0, st.count);
@@ -3771,7 +3898,7 @@ function holidayTick(day) {
 // and the arrow opens the full list.
 function signItems() {
   const h = holidayNow(), st = state.streak || {};
-  const items = [phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
+  const items = [raidSignLine(), phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
   if (h) items.push(HOLIDAY_NAME[h]);
   if (streakBonus() > 1) items.push(`Day ${st.count} streak: +${Math.round((streakBonus() - 1) * 100)}% to everything`);
   return [...(live.buffList || []), ...items];
@@ -3801,6 +3928,372 @@ $('signMore').addEventListener('click', () => {
 document.querySelector('.sun').addEventListener('pointerdown', () => {
   if (fullMoonNight()) { sfx.howl(); if (egg('howl')) toast('Awooooo! The full moon howls back.'); }
 });
+
+/* ---------- Teams, raids, Potato Skins and the story ---------- */
+const TEAMS = {
+  russet: { name: 'Team Russet', color: '#8a5a2e', perk: 'Sturdy: everything grows 5% faster' },
+  yukon:  { name: 'Team Yukon Gold', color: '#d9a521', perk: 'Lucky: golden taters show up 15% more often' },
+  red:    { name: 'Team Red Bliss', color: '#c8372d', perk: 'Fiery: taps are worth 10% more' },
+  purple: { name: 'Team Purple Majesty', color: '#7b4bb3', perk: 'Mystic: pest rewards are 25% bigger' },
+};
+const TEAM_IDS = ['russet', 'yukon', 'red', 'purple'];
+const flag = c => `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 4v34" stroke="#5a3a1c" stroke-width="3" stroke-linecap="round"/><path d="M9 6h24l-5 7 5 7H9z" fill="${c}" stroke="#2f2117" stroke-width="1.5"/><ellipse cx="19" cy="13" rx="5" ry="3.6" fill="#f0cf9a" stroke="#2f2117" stroke-width="1"/></svg>`;
+
+function openTeamPicker() {
+  const wait = 7 * 864e5 - (Date.now() - (state.teamChangedAt || 0));
+  if (state.spudTeam && wait > 0) { toast(`You can switch teams in ${Math.ceil(wait / 864e5)} days.`); return; }
+  $('teamGrid').replaceChildren(...TEAM_IDS.map(id => {
+    const t = TEAMS[id], b = document.createElement('button');
+    b.className = 'teamcard' + (state.spudTeam === id ? ' mine' : '');
+    b.innerHTML = `<div class="flag" style="background:${t.color}22">${flag(t.color)}</div><strong></strong><small></small>`;
+    b.querySelector('strong').textContent = t.name;
+    b.querySelector('small').textContent = t.perk;
+    b.addEventListener('click', () => {
+      if (state.spudTeam !== id) { state.spudTeam = id; state.teamChangedAt = Date.now(); toast(`Welcome to ${t.name}! ${t.perk}.`); sfx.win(); haptic('win'); }
+      $('teamPicker').hidden = true;
+      save(); renderTeamUI(); renderSkins(); cloud.pending = true;
+    });
+    return b;
+  }));
+  $('teamPicker').hidden = false;
+}
+$('teamLater').addEventListener('click', () => { $('teamPicker').hidden = true; });
+$('teamBtn').addEventListener('click', openTeamPicker);
+
+function renderTeamUI() {
+  const t = TEAMS[state.spudTeam];
+  $('teamText').textContent = t ? `${t.name}. ${t.perk}. You've landed ${fmt(state.raidHits || 0)} raid hits.` : 'Pick a team to join raids and earn its bonus.';
+  $('teamBtn').textContent = t ? 'Switch team' : 'Choose a team';
+  $('teamMine').innerHTML = t ? `<span class="teamdot" style="background:${t.color}"></span>` : '';
+  if (t) $('teamMine').append(t.name);
+  const totals = live.teamTotals || {}, max = Math.max(1, ...TEAM_IDS.map(id => totals[id] || 0));
+  $('teamNote').textContent = cloud.user ? 'Total taps by everyone on each team.' : 'Sign in to see live team standings and join live raids.';
+  $('teamStandings').replaceChildren(...TEAM_IDS.map(id => {
+    const row = document.createElement('div'), n = totals[id] || 0;
+    row.className = 'teamrow';
+    row.innerHTML = `<span><span class="teamdot" style="background:${TEAMS[id].color}"></span><b></b></span><span></span><span class="tbar"><b style="width:${(n / max * 100).toFixed(1)}%;background:${TEAMS[id].color}"></b></span>`;
+    row.querySelector('b').textContent = TEAMS[id].name + (state.spudTeam === id ? ' (you)' : '');
+    row.children[1].textContent = fmt(n);
+    return row;
+  }));
+}
+
+// ---- Raids: twice a day, everyone on every team hits the same boss ----
+const RAID_HP_LIVE = 10000, RAID_HP_PRACTICE = 2500, RAID_LEN = 2 * 3600e3, RAID_UTC_HOURS = [1, 17];
+const BLIGHT = `<svg viewBox="0 0 120 100"><defs><radialGradient id="blightG" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7a8f3a"/><stop offset="1" stop-color="#26330f"/></radialGradient></defs>
+  <path d="M14 70C4 46 20 18 46 14 60 4 84 8 94 22c20 4 26 30 14 48 4 14-8 26-24 20-8 8-24 6-30 0-14 8-32 4-34-6-10 2-14-6-6-14z" fill="url(#blightG)" stroke="#1d2a12" stroke-width="3"/>
+  <g fill="#ff3b30"><ellipse cx="44" cy="44" rx="8" ry="6"/><ellipse cx="76" cy="40" rx="9" ry="6.5"/></g><g fill="#ffd0c0"><circle cx="46" cy="43" r="2"/><circle cx="78" cy="39" r="2"/></g>
+  <path d="M36 64Q60 52 86 62l-6 4-6-6-6 7-6-7-6 7-6-7-6 6z" fill="#1d2a12"/><g fill="#a8c24a" opacity=".7"><circle cx="28" cy="30" r="4"/><circle cx="96" cy="62" r="5"/><circle cx="62" cy="22" r="3"/></g></svg>`;
+const FROST = `<svg viewBox="0 0 100 110"><defs><linearGradient id="frostG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6f7ff"/><stop offset="1" stop-color="#6fa9d6"/></linearGradient></defs>
+  <path d="M30 106 24 70 10 64l6-24 16-6-2-18 20-10 20 10-2 18 16 6 6 24-14 6-6 36z" fill="url(#frostG)" stroke="#2c4a6e" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 16l4-12 6 8 8-10 8 10 6-8 4 12" fill="#cfefff" stroke="#2c4a6e" stroke-width="2" stroke-linejoin="round"/>
+  <g fill="#36e0ff"><ellipse cx="41" cy="26" rx="4" ry="3"/><ellipse cx="59" cy="26" rx="4" ry="3"/></g><path d="M40 38l5-4 5 4 5-4 5 4" fill="none" stroke="#2c4a6e" stroke-width="2.5"/></svg>`;
+const stripSvg = x => x.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+const RAID_BOSSES = [
+  { id: 'blight', name: 'The Blight', art: () => BLIGHT },
+  { id: 'beetle', name: 'Colossal Beetle', art: () => PEST_ART.beetle },
+  { id: 'kinggopher', name: 'King Gopher', art: () => `<svg viewBox="0 -16 60 72">${stripSvg(PEST_ART.gopher)}<path d="M17 6 21-10l9 9 9-9 4 16z" fill="url(#gl-gold)" stroke="#2f2117" stroke-width="2" stroke-linejoin="round"/><circle cx="30" cy="1" r="2.4" fill="#e2574a"/></svg>` },
+  { id: 'frost', name: 'Frost Giant', art: () => FROST },
+];
+function bossFor(id) { let n = 0; for (const ch of String(id)) n = (n * 31 + ch.charCodeAt(0)) % 9973; return RAID_BOSSES[n % 4]; }
+function raidWindow(now = Date.now()) {
+  if (live.raidOverride && now < live.raidOverride.end) return live.raidOverride;
+  const d = new Date(now), day0 = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  for (const off of [0, -864e5]) for (const hr of RAID_UTC_HOURS) {
+    const start = day0 + off + hr * 3600e3;
+    if (now >= start && now < start + RAID_LEN) return { id: new Date(start).toISOString().slice(0, 13).replace(/[-T]/g, ''), start, end: start + RAID_LEN };
+  }
+  return null;
+}
+function nextRaidStart(now = Date.now()) {
+  const d = new Date(now), day0 = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  const starts = [0, 864e5].flatMap(off => RAID_UTC_HOURS.map(hr => day0 + off + hr * 3600e3)).filter(t => t > now);
+  return Math.min(...starts);
+}
+const fmtLeft = ms => { const m = Math.max(0, Math.ceil(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+const raid = { info: null, doc: null, unsub: null, pending: 0, lastSend: 0, creating: false };
+const raidIsLive = () => !!(raid.info && !raid.info.practice && cloud.user && cloud.db);
+function raidHp() {
+  if (!raid.info) return 0;
+  if (raidIsLive()) return raid.doc ? raid.doc.hp - raid.pending : RAID_HP_LIVE;
+  return state.localRaid && state.localRaid.id === raid.info.id ? state.localRaid.hp : RAID_HP_PRACTICE;
+}
+const raidMax = () => raidIsLive() ? (raid.doc ? raid.doc.maxHp : RAID_HP_LIVE) : RAID_HP_PRACTICE;
+function raidTeams() {
+  const t = raidIsLive() ? { ...((raid.doc || {}).teams || {}) } : { ...((state.localRaid || {}).teams || {}) };
+  if (raidIsLive() && state.spudTeam) t[state.spudTeam] = (t[state.spudTeam] || 0) + raid.pending;
+  return t;
+}
+function startRaid(w) {
+  stopRaid();
+  raid.info = w;
+  const boss = bossFor(w.id);
+  if (raidIsLive()) {
+    const F = cloud.F, ref = F.doc(cloud.db, 'raids', w.id);
+    raid.creating = false;
+    raid.unsub = F.onSnapshot(ref, snap => {
+      if (snap.exists()) raid.doc = snap.data();
+      else if (!raid.creating) {
+        raid.creating = true;
+        F.setDoc(ref, { boss: boss.id, maxHp: RAID_HP_LIVE, hp: RAID_HP_LIVE, starts: w.start, ends: w.end, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } }).catch(() => {});
+      }
+    }, err => cloudProblem('load the raid', err));
+  } else if (!state.localRaid || state.localRaid.id !== w.id) {
+    state.localRaid = { id: w.id, hp: RAID_HP_PRACTICE, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } };
+  }
+  $('boss').innerHTML = boss.art();
+  $('boss').setAttribute('aria-label', `${boss.name}, the raid boss. Tap it!`);
+  if (!(state.raidDone || {})[w.id]) {
+    $('boss').hidden = false;
+    sfx.alarm('dragon'); haptic('alarm');
+    toast(`Raid! ${boss.name} is attacking the Mother Spud. Tap it with your team!`);
+    if (!state.spudTeam) setTimeout(openTeamPicker, 1200);
+  }
+}
+function stopRaid() { raid.unsub?.(); raid.unsub = null; raid.doc = null; raid.pending = 0; raid.info = null; $('boss').hidden = true; $('raidCard').hidden = true; }
+function raidHit(n, fromFidget) {
+  if (!raid.info || (state.raidDone || {})[raid.info.id] || raidHp() <= 0) return;
+  if (!state.spudTeam) { if (!fromFidget) openTeamPicker(); return; }
+  state.raidHits = (state.raidHits || 0) + n;
+  state.raidLog = { ...(state.raidLog || {}), [raid.info.id]: ((state.raidLog || {})[raid.info.id] || 0) + n };
+  if (raidIsLive()) raid.pending += n;
+  else { state.localRaid.hp -= n; state.localRaid.teams[state.spudTeam] = (state.localRaid.teams[state.spudTeam] || 0) + n; }
+  grow(Math.max(1, baseCps()) * n);
+  const b = $('boss');
+  b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
+  if (!fromFidget) { sfx.hit(); haptic('hit'); }
+  renderRaid();
+}
+$('boss').addEventListener('pointerdown', e => {
+  e.stopPropagation();
+  const fr = $('field').getBoundingClientRect();
+  popText('-1', e.clientX - fr.left - 8, e.clientY - fr.top - 24);
+  raidHit(1, false);
+});
+function flushRaid() {
+  if (!raidIsLive() || raid.pending <= 0 || Date.now() - raid.lastSend < 5000 || !state.spudTeam) return;
+  const F = cloud.F, dmg = Math.min(raid.pending, 400);
+  raid.lastSend = Date.now();
+  raid.pending -= dmg;
+  F.updateDoc(F.doc(cloud.db, 'raids', raid.info.id), { hp: F.increment(-dmg), ['teams.' + state.spudTeam]: F.increment(dmg) })
+    .catch(err => { raid.pending += dmg; cloudProblem('send your raid hits', err); });
+}
+function finishRaid(defeated) {
+  const w = raid.info;
+  if (!w || (state.raidDone || {})[w.id]) return;
+  state.raidDone = { ...(state.raidDone || {}), [w.id]: true };
+  $('boss').hidden = true;
+  const boss = bossFor(w.id), mine = (state.raidLog || {})[w.id] || 0;
+  if (!mine) { toast(defeated ? `${boss.name} was defeated by the other farmers.` : `${boss.name} slipped away.`); save(); return; }
+  if (defeated) {
+    const g = Math.max(5000, baseCps() * 1800);
+    grow(g);
+    state.raidsWon = (state.raidsWon || 0) + 1;
+    state.bossesBeaten = { ...(state.bossesBeaten || {}), [boss.id]: true };
+    const t = raidTeams(), top = TEAM_IDS.reduce((a, b) => (t[b] || 0) > (t[a] || 0) ? b : a, TEAM_IDS[0]);
+    let msg = `${boss.name} is down! Your share: +${fmt(g)} taters.`;
+    if (raidIsLive() && top === state.spudTeam) { state.raidCrowns = (state.raidCrowns || 0) + 1; msg += ` ${TEAMS[top].name} hit hardest!`; }
+    sfx.win(); haptic('win');
+    toast(msg);
+  } else {
+    const g = Math.max(500, baseCps() * 120);
+    grow(g);
+    toast(`${boss.name} escaped, but you earned ${fmt(g)} taters for fighting.`);
+  }
+  save();
+}
+function renderRaid() {
+  const w = raid.info, card = $('raidCard');
+  if (!w || (state.raidDone || {})[w.id]) { card.hidden = true; return; }
+  card.hidden = false;
+  const boss = bossFor(w.id), hp = Math.max(0, raidHp()), max = raidMax();
+  $('raidName').textContent = (w.practice || !cloud.user ? 'Practice raid: ' : 'Raid: ') + boss.name;
+  $('raidTime').textContent = fmtLeft(w.end - Date.now()) + ' left';
+  $('raidHp').style.width = (hp / max * 100).toFixed(1) + '%';
+  $('raidHpText').textContent = `${fmt(hp)} / ${fmt(max)} HP`;
+  const t = raidTeams(), total = Math.max(1, TEAM_IDS.reduce((a, id) => a + (t[id] || 0), 0));
+  $('raidTeams').replaceChildren(...TEAM_IDS.map(id => {
+    const d = document.createElement('div');
+    d.innerHTML = `<span></span><i><b style="width:${((t[id] || 0) / total * 100).toFixed(1)}%;background:${TEAMS[id].color}"></b></i>`;
+    d.firstChild.textContent = TEAMS[id].name.replace('Team ', '') + (state.spudTeam === id ? ' ★' : '');
+    return d;
+  }));
+}
+function raidTick() {
+  const w = raidWindow();
+  if (raid.info && (!w || w.id !== raid.info.id)) { if (!(state.raidDone || {})[raid.info.id]) finishRaid(raidHp() <= 0); stopRaid(); }
+  if (w && !raid.info && !document.hidden) startRaid(w);
+  if (!raid.info) return;
+  flushRaid();
+  if (raidHp() <= 0 && !(state.raidDone || {})[raid.info.id]) finishRaid(true);
+  renderRaid();
+}
+function raidSignLine() {
+  const w = raidWindow();
+  if (w && !(state.raidDone || {})[w.id]) return `Raid: ${bossFor(w.id).name}, ${Math.round(Math.max(0, raidHp()) / raidMax() * 100)}% HP left`;
+  return `Next team raid in ${fmtLeft(nextRaidStart() - Date.now())}`;
+}
+// Team taps and live standings (signed in only)
+function teamCloudTick() {
+  if (!cloud.user || !cloud.db) return;
+  const F = cloud.F;
+  if (!live.teamUnsub) live.teamUnsub = F.onSnapshot(F.collection(cloud.db, 'teams'), snap => {
+    live.teamTotals = {};
+    snap.forEach(d => { live.teamTotals[d.id] = d.data().taps || 0; });
+    renderTeamUI();
+  }, () => {});
+  const unsent = totalTaps() - (state.teamTapsSent || 0);
+  if (state.spudTeam && unsent > 0 && Date.now() - (live.teamSentAt || 0) > 15000) {
+    const n = Math.min(unsent, 2000);
+    live.teamSentAt = Date.now();
+    F.setDoc(F.doc(cloud.db, 'teams', state.spudTeam), { taps: F.increment(n) }, { merge: true })
+      .then(() => { state.teamTapsSent = (state.teamTapsSent || 0) + n; })
+      .catch(() => {});
+  }
+}
+
+// ---- Potato Skins: put-on-the-potato cosmetics you unlock and keep ----
+const SKIN_SLOTS = [
+  { id: 'hat', name: 'Hats' }, { id: 'eyes', name: 'Eyes' }, { id: 'glasses', name: 'Glasses' }, { id: 'nose', name: 'Noses' },
+  { id: 'mouth', name: 'Mouths' }, { id: 'stache', name: 'Mustaches' }, { id: 'ears', name: 'Ears' }, { id: 'shoes', name: 'Shoes' }, { id: 'extra', name: 'Extras' },
+];
+const O = 'stroke="#2f2117" stroke-width="2.5" stroke-linejoin="round"';
+const teamColor = () => (TEAMS[state.spudTeam] || { color: '#3b8ed0' }).color;
+const SKINS = [
+  { id: 'buttons', slot: 'eyes', name: 'Button eyes', hint: 'Free to start', test: () => true,
+    svg: () => `<g fill="#2a2420"><circle cx="122" cy="96" r="7"/><circle cx="182" cy="92" r="7"/></g><g fill="#fff"><circle cx="119.5" cy="93.5" r="2"/><circle cx="179.5" cy="89.5" r="2"/></g>` },
+  { id: 'googly', slot: 'eyes', name: 'Googly eyes', hint: 'Tap the potato 1,000 times', test: () => state.clicks >= 1000,
+    svg: () => `<circle cx="122" cy="96" r="14" fill="#fff" ${O}/><circle cx="182" cy="92" r="14" fill="#fff" ${O}/><circle cx="125" cy="101" r="6.5" fill="#1a1a1a"/><circle cx="178" cy="97" r="6.5" fill="#1a1a1a"/>` },
+  { id: 'sleepy', slot: 'eyes', name: 'Sleepy eyes', hint: 'Tap 100 times at night', test: () => (state.nightTaps || 0) >= 100,
+    svg: () => `<path d="M108 96q14 10 28 0M168 92q14 10 28 0" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/><path d="M112 101l-3 5M122 104v6M132 101l3 5M172 97l-3 5M182 100v6M192 97l3 5" stroke="#2a2420" stroke-width="2" stroke-linecap="round"/>` },
+  { id: 'starry', slot: 'eyes', name: 'Starry eyes', hint: 'Tap 10 shooting stars', test: () => (state.stars || 0) >= 10,
+    svg: () => [[122, 96], [182, 92]].map(([x, y]) => `<path d="M${x} ${y - 13}l4 9 10 1-7.5 6.5 2.5 10-9-5.5-9 5.5 2.5-10-7.5-6.5 10-1z" fill="url(#gl-gold)" ${O}/>`).join('') },
+  { id: 'round', slot: 'glasses', name: 'Round glasses', hint: 'Play for 1 hour in all', test: () => (state.playSeconds || 0) >= 3600,
+    svg: () => `<g fill="rgba(200,230,255,.25)" stroke="#2a2420" stroke-width="4"><circle cx="122" cy="96" r="17"/><circle cx="182" cy="92" r="17"/></g><path d="M139 94q13-6 26-4M105 94l-40-6M199 89l42-10" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/>` },
+  { id: 'monocle', slot: 'glasses', name: 'Monocle', hint: 'Spend 1T taters', test: () => (state.spent || 0) >= 1e12,
+    svg: () => `<circle cx="182" cy="92" r="16" fill="rgba(200,230,255,.3)" stroke="url(#gl-gold)" stroke-width="4.5"/><path d="M196 102q8 26-6 48" fill="none" stroke="url(#gl-gold)" stroke-width="2" stroke-dasharray="3 2"/>` },
+  { id: 'goggles', slot: 'glasses', name: 'Welding goggles', hint: 'Own 25 Tractors', test: () => owned('tractor') >= 25,
+    svg: () => `<path d="M60 86q90-14 186-6" fill="none" stroke="#3a3440" stroke-width="7"/><rect x="104" y="80" width="38" height="30" rx="12" fill="#2d6b4a" ${O}/><rect x="164" y="76" width="38" height="30" rx="12" fill="#2d6b4a" ${O}/><path d="M110 86h14M170 82h14" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>` },
+  { id: 'rednose', slot: 'nose', name: 'Clown nose', hint: 'Earn 25 ribbons', test: () => state.achievements.length >= 25,
+    svg: () => `<circle cx="152" cy="120" r="12" fill="url(#gl-red)" ${O}/><circle cx="148" cy="115" r="3.5" fill="#fff" opacity=".7"/>` },
+  { id: 'carrot', slot: 'nose', name: 'Carrot nose', hint: 'Own 25 Backyard Patches', test: () => owned('patch') >= 25,
+    svg: () => `<path d="M146 112 L190 122 L146 128 Z" fill="url(#gl-orange)" ${O}/><path d="M158 116v8M170 118v6" stroke="#b5521a" stroke-width="1.5"/>` },
+  { id: 'smile', slot: 'mouth', name: 'Big smile', hint: 'Earn 10 ribbons', test: () => state.achievements.length >= 10,
+    svg: () => `<path d="M126 138q26 24 52 0" fill="none" stroke="#2a2420" stroke-width="5" stroke-linecap="round"/>` },
+  { id: 'grin', slot: 'mouth', name: 'Toothy grin', hint: 'Chase off 50 pests', test: () => Object.values(state.pests || {}).reduce((a, b) => a + b, 0) >= 50,
+    svg: () => `<path d="M124 136q28 4 56 0q-6 26-28 26t-28-26z" fill="#7a1e16" ${O}/><path d="M130 138h44v7c-8 2-36 2-44 0z" fill="#fff"/>` },
+  { id: 'tongue', slot: 'mouth', name: 'Silly tongue', hint: 'Throw a party for the potato', test: () => !!state.eggs.party,
+    svg: () => `<path d="M126 138q26 22 52 0" fill="none" stroke="#2a2420" stroke-width="5" stroke-linecap="round"/><path d="M146 148q8 18 18 2" fill="#ff7a9a" ${O}/>` },
+  { id: 'handlebar', slot: 'stache', name: 'Handlebar mustache', hint: 'Own 50 Garden Hoes', test: () => owned('hoe') >= 50,
+    svg: () => `<path d="M152 130c-10-8-26-8-34 2-4 6-10 6-12 0 0 12 14 16 24 10 8-4 16-6 22-8 6 2 14 4 22 8 10 6 24 2 24-10-2 6-8 6-12 0-8-10-24-10-34-2z" fill="#3a2614" ${O}/>` },
+  { id: 'beard', slot: 'stache', name: 'Bushy beard', hint: 'Play for 10 hours in all', test: () => (state.playSeconds || 0) >= 36000,
+    svg: () => `<path d="M100 132q52 22 104 0q4 40-24 52q-28 10-56 0q-28-12-24-52z" fill="#5e3c20" ${O}/><path d="M132 140q20 10 40 0" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/>` },
+  { id: 'ears', slot: 'ears', name: 'Big ears', hint: 'Connect your fidget', test: () => !!state.fidgetConnected, back: true,
+    svg: () => `<ellipse cx="38" cy="112" rx="16" ry="24" fill="url(#gl-spud)" ${O}/><ellipse cx="40" cy="112" rx="7" ry="13" fill="#e8a088"/><ellipse cx="274" cy="106" rx="16" ry="24" fill="url(#gl-spud)" ${O}/><ellipse cx="272" cy="106" rx="7" ry="13" fill="#e8a088"/>` },
+  { id: 'boots', slot: 'shoes', name: 'Rubber boots', hint: 'Catch a lightning bolt', test: () => (state.bolts || 0) >= 1,
+    svg: () => `<path d="M86 176h28v20h12v12H80z" fill="url(#gl-yellow)" ${O}/><path d="M188 176h28v32h-46v-12h18z" fill="url(#gl-yellow)" ${O}/>` },
+  { id: 'sneakers', slot: 'shoes', name: 'Sneakers', hint: 'Press your fidget 10,000 times', test: () => state.fidgetClicks >= 10000,
+    svg: () => `<path d="M80 194q0-16 18-16h14q8 8 20 10v14H80z" fill="url(#gl-red)" ${O}/><path d="M80 202h52" stroke="#fff" stroke-width="5"/><path d="M174 188q12-2 20-10h14q18 0 18 16v8h-52z" fill="url(#gl-red)" ${O}/><path d="M174 202h52" stroke="#fff" stroke-width="5"/>` },
+  { id: 'straw', slot: 'hat', name: 'Straw farm hat', hint: 'Own 10 Potato Farms', test: () => owned('farm') >= 10,
+    svg: () => `<ellipse cx="140" cy="40" rx="74" ry="13" fill="url(#gl-straw)" ${O}/><path d="M102 38c0-26 16-36 38-36s38 10 38 36z" fill="url(#gl-straw)" ${O}/><path d="M103 30h74v8h-74z" fill="#c8372d"/>` },
+  { id: 'cowboy', slot: 'hat', name: 'Cowboy hat', hint: 'Catch 10 golden taters', test: () => state.goldenTaters >= 10,
+    svg: () => `<path d="M62 34q78 26 156 0q-10 18-78 18t-78-18z" fill="url(#gl-felt)" ${O}/><path d="M106 38c-4-30 10-40 34-40 8 4 12 6 16 0 22 2 26 14 22 40z" fill="url(#gl-felt)" ${O}/><path d="M106 30h72v6h-72z" fill="#3a2614"/>` },
+  { id: 'tophat', slot: 'hat', name: 'Top hat', hint: 'Grow 1B taters all-time', test: () => state.allTime >= 1e9,
+    svg: () => `<ellipse cx="140" cy="38" rx="52" ry="9" fill="#1d1a20" ${O}/><path d="M112 36V-24h56v60z" fill="url(#gl-dark)" ${O}/><path d="M112 22h56v10h-56z" fill="#c8372d"/>` },
+  { id: 'hardhat', slot: 'hat', name: 'Hard hat', hint: 'Buy a Masterwork upgrade', test: () => state.upgrades.some(id => id.endsWith('_3')),
+    svg: () => `<path d="M96 40c0-32 20-42 44-42s44 10 44 42z" fill="url(#gl-yellow)" ${O}/><path d="M84 38h112v8H84z" fill="url(#gl-yellow)" ${O}/><path d="M140-2v40" stroke="#c99010" stroke-width="5"/>` },
+  { id: 'beanie', slot: 'hat', name: 'Knit beanie', hint: 'Play in winter', test: () => !!(state.seasons || {}).winter,
+    svg: () => `<path d="M100 42c0-30 18-40 40-40s40 10 40 40z" fill="${teamColor()}" ${O}/><path d="M98 34h84v10H98z" fill="#fff6e2" ${O}/><circle cx="140" cy="-4" r="9" fill="#fff6e2" ${O}/>` },
+  { id: 'teamcap', slot: 'hat', name: 'Team cap', hint: 'Join a team', test: () => !!state.spudTeam,
+    svg: () => `<path d="M100 40c0-28 18-38 40-38s40 10 40 38z" fill="${teamColor()}" ${O}/><path d="M176 38q34 2 44 12-30 4-48-2z" fill="${teamColor()}" ${O}/><circle cx="140" cy="4" r="4" fill="#fff6e2"/>` },
+  { id: 'crown', slot: 'hat', name: 'Spud crown', hint: 'Be on the top team in a live raid', test: () => (state.raidCrowns || 0) >= 1,
+    svg: () => `<path d="M104 40 98 0l22 18 20-26 20 26 22-18-6 40z" fill="url(#gl-gold)" ${O}/><circle cx="140" cy="26" r="5" fill="#e2574a" ${O}/><circle cx="118" cy="30" r="3.5" fill="#3b8ed0"/><circle cx="162" cy="30" r="3.5" fill="#5cb85c"/>` },
+  { id: 'bowtie', slot: 'extra', name: 'Bow tie', hint: 'Play 7 days in a row', test: () => ((state.streak || {}).best || 0) >= 7,
+    svg: () => `<path d="M152 170l-24-12v24zM152 170l24-12v24z" fill="url(#gl-red)" ${O}/><circle cx="152" cy="170" r="5" fill="#9a281e" ${O}/>` },
+  { id: 'scarf', slot: 'extra', name: 'Cozy scarf', hint: 'Play in fall or winter', test: () => !!((state.seasons || {}).fall || (state.seasons || {}).winter),
+    svg: () => `<path d="M58 150q94 22 186 0v14q-94 22-186 0z" fill="${teamColor()}" ${O}/><path d="M206 160l10 40h-16l-6-38z" fill="${teamColor()}" ${O}/><path d="M80 154v14M110 159v14M140 161v14M170 160v14M200 156v14" stroke="#fff6e2" stroke-width="3" opacity=".6"/>` },
+  { id: 'cape', slot: 'extra', name: 'Hero cape', hint: 'Help defeat a raid boss', test: () => (state.raidsWon || 0) >= 1, back: true,
+    svg: () => `<path d="M70 60Q156 40 244 60L282 206Q156 222 30 206Z" fill="url(#gl-red)" ${O}/>` },
+  { id: 'badge', slot: 'extra', name: 'Team badge', hint: 'Land 1,000 raid hits', test: () => (state.raidHits || 0) >= 1000,
+    svg: () => `<circle cx="92" cy="150" r="15" fill="${teamColor()}" ${O}/><path d="M92 140l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="url(#gl-gold)"/>` },
+];
+function renderSkins() {
+  const eq = state.skin || {}, items = SKIN_SLOTS.map(sl => SKINS.find(k => k.id === eq[sl.id])).filter(Boolean);
+  // the cape and ears go behind the potato, everything else on top
+  const back = items.filter(k => k.back).map(k => k.svg()).join(''), front = items.filter(k => !k.back).map(k => k.svg()).join('');
+  $('potSkins').innerHTML = front;
+  let bg = document.getElementById('potSkinsBack');
+  if (!bg) { bg = document.createElementNS('http://www.w3.org/2000/svg', 'g'); bg.id = 'potSkinsBack'; const svg = $('tater').querySelector('svg'); svg.insertBefore(bg, svg.querySelector('ellipse').nextSibling); }
+  bg.innerHTML = back;
+  $('tater').classList.toggle('hatted', !!eq.hat);
+}
+function renderSkinPanel() {
+  const have = state.skinsUnlocked || [];
+  $('skinCount').textContent = `${have.length} of ${SKINS.length} unlocked. Tap one to put it on, or tap a locked one to see how to get it.`;
+  $('skinSlots').replaceChildren(...SKIN_SLOTS.map(sl => {
+    const box = document.createElement('div'); box.className = 'skinslot';
+    box.innerHTML = '<b></b><div class="chips"></div>';
+    box.firstChild.textContent = sl.name;
+    const none = document.createElement('button'); none.className = 'chip' + (!(state.skin || {})[sl.id] ? ' on' : ''); none.textContent = 'None';
+    none.addEventListener('click', () => { state.skin = { ...(state.skin || {}), [sl.id]: '' }; save(); renderSkins(); renderSkinPanel(); });
+    box.lastChild.append(none, ...SKINS.filter(k => k.slot === sl.id).map(k => {
+      const b = document.createElement('button'), got = have.includes(k.id);
+      b.className = 'chip' + (got ? '' : ' locked') + ((state.skin || {})[sl.id] === k.id ? ' on' : '');
+      b.textContent = (got ? '' : '🔒 ') + k.name;
+      b.addEventListener('click', () => {
+        if (!got) { toast(`${k.name}: ${k.hint}.`); return; }
+        state.skin = { ...(state.skin || {}), [sl.id]: k.id }; save(); renderSkins(); renderSkinPanel(); sfx.chime();
+      });
+      return b;
+    }));
+    return box;
+  }));
+}
+function checkSkins() {
+  const have = state.skinsUnlocked || (state.skinsUnlocked = ['buttons']);
+  let changed = false;
+  SKINS.forEach(k => { if (!have.includes(k.id) && k.test()) { have.push(k.id); changed = true; toast(`New Potato Skin: ${k.name}! Put it on from the Me tab.`, 'award'); } });
+  if (changed) { save(); if (!$('tab-me').hidden) renderSkinPanel(); }
+}
+// The holiday hat steps aside when you wear your own hat
+const hatStyle = document.createElement('style');
+hatStyle.textContent = '.tater-btn.hatted #potHat { display: none !important; }';
+document.head.appendChild(hatStyle);
+
+// ---- The opening story ----
+const STORY = [
+  { cap: 'Long ago, a comet made of pure starch streaked across the night sky…',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#0d1838"/><g fill="#fff">${[[30,30],[80,70],[140,24],[210,60],[260,20],[330,44],[370,90],[50,120],[300,110],[180,110]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6"/>`).join('')}</g><path d="M80 40 L300 170" stroke="url(#cometTail)" stroke-width="16" stroke-linecap="round"/><defs><linearGradient id="cometTail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4c542" stop-opacity="0"/><stop offset="1" stop-color="#ffe9a8"/></linearGradient></defs><ellipse cx="304" cy="172" rx="16" ry="12" fill="url(#gl-spud)" stroke="#ffe9a8" stroke-width="3"/><path d="M0 210 C120 190 280 196 400 214V240H0Z" fill="#14253e"/></svg>` },
+  { cap: '…and a single glowing seed potato landed on a dusty little farm.',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#1a2a4a"/><path d="M0 150 C120 128 280 130 400 150V240H0Z" fill="#3e5a2a"/><path d="M0 182 C120 170 280 170 400 182V240H0Z" fill="#5a3a20"/><circle cx="200" cy="170" r="40" fill="#ffe9a8" opacity=".25"/><ellipse cx="200" cy="172" rx="14" ry="10" fill="url(#gl-spud)" stroke="#3d2a1a" stroke-width="2"/><path d="M200 162c0-10 4-16 10-18" fill="none" stroke="#7ed957" stroke-width="3"/><rect x="40" y="118" width="40" height="34" fill="#8f241b"/><path d="M36 120 60 100 84 120z" fill="#5a3a28"/></svg>` },
+  { cap: 'It grew. And grew. Until it was the biggest spud anyone had ever seen, and every tap shook loose a fresh tater.',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#8fcbe0"/><circle cx="340" cy="44" r="26" fill="#ffd45c"/><path d="M0 170 C120 150 280 150 400 170V240H0Z" fill="#6f9a44"/><path d="M80 150 C64 96 120 50 200 48 C290 46 340 96 320 150 C304 196 100 200 80 150Z" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="4"/><g fill="#6e4520"><ellipse cx="150" cy="100" rx="8" ry="5"/><ellipse cx="250" cy="96" rx="8" ry="5"/><ellipse cx="200" cy="140" rx="7" ry="4"/></g><g transform="translate(60 168)"><circle cx="0" cy="-26" r="6" fill="#f0c7a0"/><path d="M-6 -20h12v16h-12z" fill="#3b6ea8"/><path d="M-5 -4v12M5 -4v12" stroke="#5a3a1c" stroke-width="3"/><path d="M-8 -30h16l-2-4h-12z" fill="url(#gl-straw)"/></g></svg>` },
+  { cap: 'But word spread fast. Gophers. Crows. Even things from beyond the stars came hungry for the Mother Spud.',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#0b1020"/><path d="M120 150 C108 110 150 76 200 74 C258 72 290 110 278 150 C268 182 132 184 120 150Z" fill="url(#gl-spud)" opacity=".55"/>${[[50,190],[90,200],[330,196],[360,180],[60,60],[340,70]].map(([x, y]) => `<g fill="#ffd45c"><ellipse cx="${x}" cy="${y}" rx="5" ry="3.5"/><ellipse cx="${x + 14}" cy="${y}" rx="5" ry="3.5"/></g>`).join('')}<ellipse cx="200" cy="34" rx="40" ry="9" fill="#b9c3c8"/><path d="M182 32c2-14 34-14 36 0z" fill="#8ce6aa"/><path d="M180 40 160 90h80l-20-50z" fill="#a0ff8c" opacity=".2"/></svg>` },
+  { cap: 'So the farmers formed four teams to guard it: Russet, Yukon Gold, Red Bliss and Purple Majesty.',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#e7d6b5"/><path d="M0 190 C120 176 280 176 400 190V240H0Z" fill="#6f9a44"/>${TEAM_IDS.map((id, i) => `<g transform="translate(${60 + i * 90} 60)"><path d="M0 0v140" stroke="#5a3a1c" stroke-width="5"/><path d="M2 4h56l-12 18 12 18H2z" fill="${TEAMS[id].color}" stroke="#2f2117" stroke-width="2"/><ellipse cx="26" cy="22" rx="10" ry="7" fill="#f0cf9a" stroke="#2f2117" stroke-width="1.5"/></g>`).join('')}</svg>` },
+  { cap: 'Now, twice a day, the great raid bosses rise, and every team fights them together. The team that hits hardest earns the crown. Grab your hoe, farmer. The Mother Spud needs you.',
+    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#2a1030"/><path d="M0 190 C120 176 280 176 400 190V240H0Z" fill="#3a2a1a"/><g transform="translate(200 30) scale(1.6)">${stripSvg(BLIGHT).replace(/blightG/g, 'blightG2')}</g><defs><radialGradient id="blightG2" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7a8f3a"/><stop offset="1" stop-color="#26330f"/></radialGradient></defs><path d="M60 200 C50 160 80 130 120 130 C160 130 180 160 170 200Z" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="3"/></svg>` },
+];
+let storyStep = 0;
+function showStory(step) {
+  storyStep = step;
+  const box = $('story'), sc = STORY.at(step), last = step === STORY.length - 1;
+  box.innerHTML = `<button class="skip" id="storySkip">Skip</button><div class="stage">${sc.svg}</div><div class="cap"><span></span><div class="dots">${STORY.map((_, i) => `<i class="${i === step ? 'on' : ''}"></i>`).join('')}</div>${last ? '<button class="btn go" id="storyGo">Let’s farm</button>' : ''}</div>`;
+  box.querySelector('.cap span').textContent = sc.cap;
+  box.hidden = false;
+  $('storySkip').addEventListener('click', e => { e.stopPropagation(); endStory(true); });
+  if (last) $('storyGo').addEventListener('click', e => { e.stopPropagation(); endStory(false); });
+}
+function endStory(skipped) {
+  $('story').hidden = true;
+  state.seenStory = true;
+  if (skipped) egg('skipstory'); else state.eggs.story = state.eggs.story || Date.now();
+  save();
+  if (!state.spudTeam) setTimeout(openTeamPicker, 400);
+}
+$('story').addEventListener('click', () => { if (storyStep < STORY.length - 1) showStory(storyStep + 1); });
+$('storyBtn').addEventListener('click', () => showStory(0));
 
 /* ---------- Easter eggs ---------- */
 function egg(id, msg) {
@@ -3986,6 +4479,7 @@ setInterval(() => {
   }
   grow(cps() * dt);
   state.playSeconds = (state.playSeconds || 0) + dt;
+  live.sessionSecs = (live.sessionSecs || 0) + dt;
   if (has('onestarch')) state.ringTime = (state.ringTime || 0) + dt;
   live.heat = Math.max(0, live.heat - 15 * dt * (campfireLit() ? 0.5 : 1));
   luckyTick();
@@ -3995,6 +4489,9 @@ setInterval(() => {
 }, 100);
 setInterval(() => {
   checkAchievements();
+  checkSkins();
+  raidTick();
+  teamCloudTick();
   dayTick();
   renderEggs();
   renderLists();
@@ -4051,6 +4548,8 @@ if (isIOS && !standalone && topLevel && location.protocol === 'https:') {
   $('installText').textContent = 'In Safari, tap the Share button, then Add to Home Screen. The home screen app can’t connect to the fidget on iPhone, so use the Bluefy browser for fidget play.';
 }
 
+renderSkins(); renderTeamUI();
+if (!state.seenStory) setTimeout(() => showStory(0), 700);
 initCloud();
 </script>
 </body>
