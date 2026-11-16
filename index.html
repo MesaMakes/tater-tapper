@@ -97,7 +97,23 @@
 
   .topbar { width: 100%; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 2px 0 10px; }
   span.pill { cursor: default; }
-  .ledger .ticker { width: calc(100% - 24px); margin: 8px auto 0; }
+  /* News ticker pinned to the very bottom of the screen */
+  .ticker.bottomticker { position: fixed; z-index: 16; left: 0; right: 0; bottom: 0; width: auto; margin: 0; border-radius: 0; border-width: 2px 0 0;
+                  height: calc(28px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .app { padding-bottom: 64px; }
+  /* The sign: count, taters per second and time, with everything else in a scrolling line and a drop-down */
+  .sign .clock { font-weight: 700; font-size: .78rem; opacity: .9; }
+  .sign { width: min(88vw, 330px); }
+  .signmore { display: flex; align-items: center; gap: 4px; width: 100%; min-width: 0; border: 0; color: inherit; cursor: pointer; margin-top: 4px;
+              background: rgba(0,0,0,.2); border-radius: 999px; padding: 2px 4px 2px 10px; font: 600 .72rem var(--sans); }
+  .signmore svg { width: 16px; height: 16px; flex: none; transition: transform .2s; }
+  .signmore[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .sticker { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .sticker span { display: inline-block; padding-left: 100%; animation: tick var(--dur, 16s) linear infinite; }
+  .signmore[aria-expanded="true"] .sticker span { animation: none; padding-left: 0; opacity: 0; }
+  .signdetails { display: grid; gap: 3px; margin-top: 6px; width: 100%; text-align: left; font-size: .76rem; font-weight: 600; }
+  .signdetails div { padding: 3px 9px; background: rgba(0,0,0,.18); border-radius: 8px; }
+  .buffs { display: none !important; }   /* bonuses now live in the sign */
   .pill {
     display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--ink); border-radius: 999px;
     padding: 5px 12px 5px 10px; background: var(--paper); font-weight: 600; font-size: .9rem; cursor: pointer;
@@ -290,11 +306,11 @@
   /* Phones: the menu becomes a sheet that slides up from the bottom */
   .grabber { display: none; }
   @media (max-width: 879px) {
-    :root { --peek: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    :root { --peek: 62px; --tick: calc(28px + env(safe-area-inset-bottom, 0px)); }
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-    .app { padding-bottom: calc(var(--peek) + 10px); }
+    .app { padding-bottom: calc(var(--peek) + var(--tick) + 10px); }
     .scene { display: flex; flex-direction: column; align-items: center;
-             height: calc(100dvh - var(--peek) - 34px - env(safe-area-inset-top, 0px)); }
+             height: calc(100dvh - var(--peek) - var(--tick) - 34px - env(safe-area-inset-top, 0px)); }
     /* The field fills whatever room is left, and the potato shrinks to fit so the farm below always shows */
     .field { flex: 1 1 auto; min-height: 0; height: auto; margin-top: 6px; container-type: size; }
     .tater-btn { width: max(190px, min(86cqw, 380px, calc((100cqh - 37.5cqw - 24px) * 1.4))); }
@@ -303,7 +319,7 @@
     .sign b { font-size: clamp(2rem, 9vw, 3rem); }
     .fryer { margin-top: 8px; }
     .ledger {
-      position: fixed; z-index: 15; left: 0; right: 0; bottom: 0; height: min(74dvh, 700px); display: flex; flex-direction: column;
+      position: fixed; z-index: 15; left: 0; right: 0; bottom: var(--tick); height: min(74dvh, 700px); display: flex; flex-direction: column;
       background: var(--kraft); border-top: 2px solid var(--ink); border-radius: 22px 22px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.2);
       transform: translateY(calc(100% - var(--peek))); transition: transform .34s cubic-bezier(.2,.8,.2,1);
     }
@@ -315,8 +331,8 @@
     .grabber i { display: block; width: 44px; height: 5px; border-radius: 99px; background: var(--ink-soft); margin: 0 auto; }
     .ledger .tabs { justify-content: center; }
     .ledger .sheet { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin: 0 6px;
-                     border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: none; padding-bottom: env(safe-area-inset-bottom, 0px); }
-    .toasts { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 60px); }   /* keep the field clear for things to tap */
+                     border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: none; padding-bottom: 0; }
+    .toasts { bottom: calc(var(--peek) + var(--tick) + 10px); top: auto; }   /* messages pop up just above the menu, so the sign stays readable */
   }
 
   /* Pests and aliens */
@@ -654,7 +670,11 @@
     </svg>
     <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
-    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span><small id="phaseText"></small><small class="daytext" id="dayText"></small></div>
+    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span><small class="clock" id="clockText"></small>
+      <button class="signmore" id="signMore" aria-expanded="false" aria-label="Show farm details"><span class="sticker"><span id="signTicker"></span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="signdetails" id="signDetails" hidden></div>
+      <small id="phaseText" hidden></small><small class="daytext" id="dayText" hidden></small></div>
 
     <div class="fryer" id="fryer" role="progressbar" aria-label="Fryer heat" aria-valuemin="0" aria-valuemax="100">
       <span class="bulb"><svg class="i" viewBox="0 0 24 24"><path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/></svg></span>
@@ -811,7 +831,6 @@
 
   <section class="ledger" id="ledger">
     <div class="sheet-top">
-    <div class="ticker" aria-hidden="true"><b>NEWS</b><div class="lane"><span id="tickerText"></span></div></div>
     <button class="grabber" id="grabber" aria-label="Show menu" aria-expanded="false"><i></i></button>
     <nav class="tabs" role="tablist">
       <button role="tab" data-tab="shop" aria-selected="true" aria-label="Farm"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-6 9 6v9H3z"/><path d="M9 20v-6h6v6"/></svg><span class="lbl">Farm</span></button>
@@ -926,6 +945,7 @@
     </div>
   </section>
 </div>
+<div class="ticker bottomticker" aria-hidden="true"><b>NEWS</b><div class="lane"><span id="tickerText"></span></div></div>
 
 <button class="lucky" id="lucky" hidden aria-label="Golden tater, tap it">
   <svg viewBox="0 0 120 90" aria-hidden="true">
@@ -1769,7 +1789,7 @@ function toast(msg, kind = '') {
   if (kind === 'award') t.innerHTML = ribbon(toast.color || RIBBON_COLORS.grow);
   t.append(document.createTextNode(msg));
   box.appendChild(t);
-  while (box.children.length > 3) box.firstChild.remove();
+  while (box.children.length > 2) box.firstChild.remove();
   setTimeout(() => t.remove(), 3600);
 }
 
@@ -1824,6 +1844,7 @@ function renderLive() {
   if (now < (live.frozenUntil || 0)) buffs.push(`Fryer frozen, ${Math.ceil((live.frozenUntil - now) / 1000)}s`);
   if (fidget.connected) buffs.push(`Fidget taps ×${fidgetMult()}`);
   const key = buffs.join('|');
+  live.buffList = buffs;
   if ($('buffs').dataset.key !== key) {
     $('buffs').dataset.key = key;
     $('buffs').replaceChildren(...buffs.slice(0, 2).map(t => Object.assign(document.createElement('span'), { className: 'buff', textContent: t })));
@@ -3531,6 +3552,7 @@ function dayExtras(h, ph, day) {
   // Campfire from 8 to 10 PM
   $('campfire').hidden = !campfireLit() || (state.day || {}).camp === day;   // gone once you've roasted, back tomorrow night
   holidayTick(day);
+  renderSignInfo();
 }
 
 /* ---------- Holidays: power-ups, decorations and the holiday pests above ---------- */
@@ -3744,6 +3766,36 @@ function holidayTick(day) {
     if (state.day.holiday !== day + h) { state.day.holiday = day + h; setTimeout(() => toast(HOLIDAY_HELLO[h]), 4000); }
   }
 }
+
+// The sign shows the count, taters per second and the time. Everything else scrolls in one line,
+// and the arrow opens the full list.
+function signItems() {
+  const h = holidayNow(), st = state.streak || {};
+  const items = [phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
+  if (h) items.push(HOLIDAY_NAME[h]);
+  if (streakBonus() > 1) items.push(`Day ${st.count} streak: +${Math.round((streakBonus() - 1) * 100)}% to everything`);
+  return [...(live.buffList || []), ...items];
+}
+let signKey = '';
+function renderSignInfo() {
+  $('clockText').textContent = fmtClock(gameHour());
+  const items = signItems();
+  const line = items.map(t => t.replace(/,?\s*\d+s$/, '')).join('   ·   ');
+  if (line !== signKey) {
+    signKey = line;
+    const sp = $('signTicker');
+    sp.textContent = line;
+    sp.style.setProperty('--dur', Math.max(10, line.length * 0.16).toFixed(1) + 's');
+  }
+  if (!$('signDetails').hidden) $('signDetails').replaceChildren(...items.map(t => Object.assign(document.createElement('div'), { textContent: t })));
+}
+$('signMore').addEventListener('click', () => {
+  const open = $('signDetails').hidden;
+  $('signDetails').hidden = !open;
+  $('signMore').setAttribute('aria-expanded', open);
+  $('signMore').setAttribute('aria-label', open ? 'Hide farm details' : 'Show farm details');
+  renderSignInfo();
+});
 
 // Howl at the full moon
 document.querySelector('.sun').addEventListener('pointerdown', () => {
@@ -3965,7 +4017,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
 // In the game area, quick taps must never turn into a double-tap zoom. Taps there are handled on
 // pointerdown, so cancelling the browser's own touch handling loses nothing.
 document.addEventListener('touchend', e => {
-  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard')) e.preventDefault();
+  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard, .signmore')) e.preventDefault();
 }, { passive: false });
 document.addEventListener('dblclick', e => e.preventDefault());
 // Double-tap zoom is turned off by touch-action: manipulation in the CSS, so every fast tap still counts
