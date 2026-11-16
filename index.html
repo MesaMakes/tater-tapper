@@ -144,7 +144,7 @@
   @keyframes drive { from { transform: translateX(-70px); } to { transform: translateX(470px); } }
   .land .smoke { transform-box: fill-box; transform-origin: center; animation: puff 3.2s ease-out infinite; opacity: 0; }
   @keyframes puff { 0% { opacity: .8; transform: translate(0, 0) scale(.6); } 100% { opacity: 0; transform: translate(6px, -22px) scale(1.6); } }
-  .mars { position: absolute; z-index: 0; top: 62px; left: 16px; width: clamp(48px, 13cqw, 74px); height: auto; overflow: visible; }
+  .mars { position: absolute; z-index: 1; top: 3%; left: 4%; width: clamp(44px, 12cqw, 68px); height: auto; overflow: visible; }   /* sits in the sky of the field, clear of the sign */
   .mars .count { font: 400 13px var(--slab); fill: var(--sign-text); stroke: var(--outline); stroke-width: 3px; paint-order: stroke; }
   .tater-btn { position: relative; z-index: 2; border: 0; background: none; padding: 0; cursor: pointer; width: min(72vw, 320px);
                margin-bottom: calc(37.5cqw - 22px); -webkit-tap-highlight-color: transparent; touch-action: manipulation; border-radius: 40%; }
@@ -313,7 +313,7 @@
              height: calc(100dvh - var(--peek) - var(--tick) - 34px - env(safe-area-inset-top, 0px)); }
     /* The field fills whatever room is left, and the potato shrinks to fit so the farm below always shows */
     .field { flex: 1 1 auto; min-height: 0; height: auto; margin-top: 6px; container-type: size; }
-    .tater-btn { width: max(190px, min(86cqw, 380px, calc((100cqh - 37.5cqw - 24px) * 1.4))); }
+    .tater-btn { width: max(180px, min(76cqw, 330px, calc((100cqh - 37.5cqw - 40px) * 1.25))); }
     .logo { font-size: clamp(1.5rem, 6.5vw, 2.1rem); margin: 8px 0 6px; }
     .sign { padding: 4px 22px 6px; }
     .sign b { font-size: clamp(2rem, 9vw, 3rem); }
@@ -591,13 +591,16 @@
   .modal { position: fixed; inset: 0; z-index: 65; background: rgba(15,10,6,.6); display: grid; place-items: center; padding: 16px; }
   .modal-card { width: min(100%, 460px); max-height: 90dvh; overflow: auto; background: var(--paper); border: 2px solid var(--ink); border-radius: 22px; padding: 18px; box-shadow: 0 6px 0 var(--ink); }
   .modal-card h2 { font: 400 1.4rem var(--slab); margin: 0 0 4px; }
-  .teamgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
-  .teamcard { border: 2px solid var(--ink); border-radius: 16px; background: var(--paper-2); padding: 0 0 10px; cursor: pointer; text-align: center; overflow: hidden; }
-  .teamcard .flag { height: 44px; display: grid; place-items: center; }
-  .teamcard .flag svg { width: 40px; height: 40px; }
-  .teamcard strong { display: block; font: 700 .95rem var(--sans); margin: 6px 6px 2px; }
-  .teamcard small { display: block; color: var(--ink-soft); font-size: .76rem; margin: 0 8px; line-height: 1.3; }
+  .teamgrid { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 12px 0; }
+  .teamcard { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper-2); padding: 8px 12px 8px 6px; cursor: pointer; text-align: left; }
+  .teamcard .flag { display: grid; place-items: center; border-radius: 12px; height: 74px; }
+  .teamcard .flag svg { width: 66px; height: 66px; filter: drop-shadow(0 3px 2px rgba(40,25,10,.3)); }
+  .teamcard em { display: block; font-style: italic; color: var(--ink-soft); font-size: .76rem; line-height: 1.35; margin-top: 3px; }
+  .teamcard strong { display: block; font: 700 1rem var(--sans); margin: 0 0 2px; }
+  .teamcard small { display: block; color: var(--ink); font-size: .8rem; font-weight: 600; line-height: 1.3; }
   .teamcard.mine { box-shadow: 0 0 0 3px var(--butter); }
+  #potSkins [stroke="#2f2117"], #potSkinsBack [stroke="#2f2117"] { stroke: #3d2a1a; stroke-opacity: .7; }
+  .story .stage svg { filter: saturate(1.05); }
   .teamdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; border: 1.5px solid var(--outline); }
   /* Raid */
   .raidcard { position: relative; z-index: 3; width: min(100%, 380px); margin-top: 8px; background: rgba(20,14,10,.82); color: #fff6e2; border: 2px solid #ff5c3a; border-radius: 16px; padding: 7px 12px 9px; display: grid; gap: 5px; }
@@ -713,13 +716,6 @@
     <div class="flashfx" id="flashfx" aria-hidden="true"></div>
     <div class="clouds" aria-hidden="true"><i style="top:14%;--t:120s;--d:-30s"></i><i style="top:30%;--t:160s;--d:-95s;scale:.7"></i><i style="top:6%;--t:95s;--d:-60s;scale:.85"></i></div>
     <div class="doom" aria-hidden="true"></div>
-    <svg class="mars" id="mars" viewBox="0 0 64 64" hidden aria-hidden="true">
-      <circle cx="32" cy="38" r="22" fill="#c4502f" stroke="var(--outline)" stroke-width="2.5"/>
-      <circle cx="22" cy="44" r="4" fill="#9e3b22"/><circle cx="40" cy="50" r="3" fill="#9e3b22"/><circle cx="44" cy="36" r="2.4" fill="#9e3b22"/>
-      <path d="M20 19a12 12 0 0 1 24 0z" fill="rgba(191,227,239,.75)" stroke="var(--outline)" stroke-width="2"/>
-      <path d="M32 19v-5" stroke="#2f6b25" stroke-width="2"/><path d="M32 15c-3 0-4.5-2-4.5-4 3 0 4.5 2 4.5 4 0-2 1.5-4 4.5-4 0 2-1.5 4-4.5 4z" fill="#5fa83d"/>
-      <text class="count" id="marsCount" x="50" y="62"></text>
-    </svg>
     <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
     <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span><small class="clock" id="clockText"></small>
@@ -739,6 +735,13 @@
 
     <div class="field" id="field">
       <div class="sky" id="sky"></div>
+      <svg class="mars" id="mars" viewBox="0 0 64 64" hidden aria-hidden="true">
+        <circle cx="32" cy="38" r="22" fill="#c4502f" stroke="var(--outline)" stroke-width="2.5"/>
+        <circle cx="22" cy="44" r="4" fill="#9e3b22"/><circle cx="40" cy="50" r="3" fill="#9e3b22"/><circle cx="44" cy="36" r="2.4" fill="#9e3b22"/>
+        <path d="M20 19a12 12 0 0 1 24 0z" fill="rgba(191,227,239,.75)" stroke="var(--outline)" stroke-width="2"/>
+        <path d="M32 19v-5" stroke="#2f6b25" stroke-width="2"/><path d="M32 15c-3 0-4.5-2-4.5-4 3 0 4.5 2 4.5 4 0-2 1.5-4 4.5-4 0 2-1.5 4-4.5 4z" fill="#5fa83d"/>
+        <text class="count" id="marsCount" x="50" y="62"></text>
+      </svg>
       <div class="eye" id="eye" hidden aria-hidden="true"><svg viewBox="0 0 120 90">
         <path class="flames" d="M20 62 C10 42 22 32 26 20 C30 32 36 36 36 46 C40 32 48 24 52 8 C58 26 64 32 66 46 C70 34 78 28 84 16 C88 32 96 40 100 62Z" fill="#ff7a1f" stroke="#2f2117" stroke-width="3"/>
         <path d="M14 66 C14 50 30 40 60 40 C90 40 106 50 106 66 C106 80 88 86 60 86 C32 86 14 80 14 66Z" fill="#fbf7ee" stroke="#2f2117" stroke-width="3.5"/>
@@ -825,6 +828,8 @@
               <feBlend in="clip" in2="SourceGraphic" mode="multiply"/>
             </filter>
             <filter id="softShadow" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="6"/></filter>
+            <filter id="skinShade" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.4" flood-color="#2a1708" flood-opacity=".38"/></filter>
+            <linearGradient id="gHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a3c"/><stop offset=".45" stop-color="#161618"/><stop offset="1" stop-color="#050506"/></linearGradient>
             <clipPath id="potClip"><path d="M38 112 C26 72 62 36 120 32 C150 30 168 42 196 36 C246 28 284 64 274 114 C266 160 228 190 168 188 C140 187 128 196 100 190 C62 182 44 150 38 112Z"/></clipPath>
           </defs>
           <ellipse cx="152" cy="201" rx="124" ry="15" fill="rgba(45,28,12,.42)" filter="url(#softShadow)"/>
@@ -843,7 +848,7 @@
           <path d="M224 39 C234 37 246 38 255 40" fill="none" stroke="#2c5a1c" stroke-width="1" opacity=".6"/>
           <path d="M216 52 C206 40 192 40 188 46 C196 56 208 56 216 52Z" fill="url(#leaf)" stroke="#2c5a1c" stroke-width="2"/>
           <path d="M214 51 C206 47 198 46 190 46" fill="none" stroke="#2c5a1c" stroke-width="1" opacity=".6"/>
-          <g id="potSkins"></g>
+          <g id="potSkins" filter="url(#skinShade)"></g>
           <g id="potFlower" class="acc" stroke="var(--outline)" stroke-width="2.5">
             <g fill="#fff6e2"><circle cx="230" cy="16" r="8"/><circle cx="246" cy="20" r="8"/><circle cx="248" cy="36" r="8"/><circle cx="234" cy="42" r="8"/><circle cx="222" cy="30" r="8"/></g>
             <circle cx="236" cy="29" r="7" fill="#f4c542"/>
@@ -969,7 +974,7 @@
 
         <h2 style="font: 400 1.2rem var(--slab); margin: 16px 0 4px;">Stats</h2>
         <dl class="stats" id="stats"></dl>
-        <p class="credits">Tater Tapper by Mesa Makes
+        <p class="credits">Tater Tapper by <span id="creditName">Mesa Makes</span>
           <button id="cake" aria-label="A slice of cake"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-8H4z"/><path d="M4 15c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0M12 12V8M12 6.5c-1-1 0-2.5 0-2.5s1 1.5 0 2.5"/></svg></button></p>
 
         <div class="card" id="playtest" hidden>
@@ -1282,7 +1287,7 @@ addAch('rain25', 'Bucket brigade', 'Catch 25 taters falling from the sky.', () =
 addAch('feast1', 'Harvest feast', 'Greet every Spudling in a parade.', () => (state.feasts || 0) >= 1);
 addAch('feast10', 'Party planner', 'Throw 10 harvest feasts.', () => (state.feasts || 0) >= 10);
 addSecret('egg_potaytoes', 'Po-tay-toes', 'Tap the potato three times, slow and steady: po… tay… toes.', eggFound('potaytoes'));
-addSecret('egg_gravity', 'Gravity check', 'Tap so fast that gravity breaks (80 taps in 10 seconds).', eggFound('gravity'));
+addSecret('egg_gravity', 'Gravity check', 'Tap so fast that gravity breaks: 200 taps in 10 seconds, auto-clicker speed.', eggFound('gravity'));
 addSecret('egg_nado', 'Spudnado rider', 'Tap the Spudnado 10 times while it spins through.', eggFound('nado'));
 
 // Potato pop culture
@@ -1510,6 +1515,7 @@ addAch('skinsall', 'Fashion icon', 'Unlock every Potato Skin.', () => (state.ski
 addAch('outfit', 'Fully dressed', 'Wear something in every Potato Skin slot at once.', () => SKIN_SLOTS.every(sl => (state.skin || {})[sl.id]));
 addAch('story', 'Once upon a spud', 'Watch the story all the way to the end.', () => !!state.eggs.story);
 addSecret('egg_skipstory', 'Spoiler alert', 'Skip the opening story.', eggFound('skipstory'));
+addSecret('egg_mesamakes', 'Made by Mesa Makes', 'Tap the maker’s name in the credits 5 times.', eggFound('mesamakes'));
 addSecret('egg_insomniac', 'Insomniac', 'Play at 3 AM.', eggFound('insomniac'));
 addSecret('egg_fastday', 'Time flies', 'Turn on fast days.', eggFound('fastday'));
 
@@ -2895,13 +2901,13 @@ function spawnNado() {
   toast('Spudnado! Every tap is worth double while it spins through');
 }
 
-// Tap rhythm secrets: three slow, even taps, or 80 taps in 10 seconds
+// Tap rhythm secrets: three slow, even taps, or 200 taps in 10 seconds (auto-clicker speed)
 let slowTaps = [], beatTaps = [], tapLog = [], lastFlip = 0;
 function rhythmTap(fidget, count) {
   const t = Date.now();
   for (let i = 0; i < count; i++) tapLog.push(t);
   tapLog = tapLog.filter(x => t - x < 10000);
-  if (tapLog.length >= 80 && t - lastFlip > 120000) {
+  if (tapLog.length >= 200 && t - lastFlip > 300000) {
     lastFlip = t;
     tapLog = [];
     egg('gravity');
@@ -3931,13 +3937,32 @@ document.querySelector('.sun').addEventListener('pointerdown', () => {
 
 /* ---------- Teams, raids, Potato Skins and the story ---------- */
 const TEAMS = {
-  russet: { name: 'Team Russet', color: '#8a5a2e', perk: 'Sturdy: everything grows 5% faster' },
-  yukon:  { name: 'Team Yukon Gold', color: '#d9a521', perk: 'Lucky: golden taters show up 15% more often' },
-  red:    { name: 'Team Red Bliss', color: '#c8372d', perk: 'Fiery: taps are worth 10% more' },
-  purple: { name: 'Team Purple Majesty', color: '#7b4bb3', perk: 'Mystic: pest rewards are 25% bigger' },
+  russet: { name: 'Team Russet', color: '#8a5a2e', perk: 'Sturdy: everything grows 5% faster', emblem: 'plow', lore: 'Descended from the farmer who first found the Mother Spud. Stubborn, steady, and never late for a harvest.' },
+  yukon:  { name: 'Team Yukon Gold', color: '#d9a521', perk: 'Lucky: golden taters show up 15% more often', emblem: 'sun', lore: 'Prospectors who swear the comet left veins of gold in the soil. Strangely, they keep finding it.' },
+  red:    { name: 'Team Red Bliss', color: '#c8372d', perk: 'Fiery: taps are worth 10% more', emblem: 'flame', lore: 'Fryer cooks and market hollerers. They tap faster than anyone and argue even faster.' },
+  purple: { name: 'Team Purple Majesty', color: '#7b4bb3', perk: 'Mystic: pest rewards are 25% bigger', emblem: 'moon', lore: 'Moonlight mystics who read potato eyes like stars, and see the critters coming before anyone else.' },
 };
 const TEAM_IDS = ['russet', 'yukon', 'red', 'purple'];
-const flag = c => `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 4v34" stroke="#5a3a1c" stroke-width="3" stroke-linecap="round"/><path d="M9 6h24l-5 7 5 7H9z" fill="${c}" stroke="#2f2117" stroke-width="1.5"/><ellipse cx="19" cy="13" rx="5" ry="3.6" fill="#f0cf9a" stroke="#2f2117" stroke-width="1"/></svg>`;
+// A cloth banner on a wooden pole, shaded, with each team's emblem
+const EMBLEMS = {
+  plow: '<path d="M26 30h14l4 6H24z" fill="#f3eee2"/><path d="M30 30l-4-8h6l3 8" fill="none" stroke="#f3eee2" stroke-width="2.2" stroke-linecap="round"/><circle cx="41" cy="38" r="3" fill="none" stroke="#f3eee2" stroke-width="2"/>',
+  sun: '<circle cx="33" cy="31" r="6" fill="#fff6c8"/><g stroke="#fff6c8" stroke-width="2" stroke-linecap="round"><path d="M33 20v3M33 39v3M22 31h3M41 31h3M25 23l2 2M39 37l2 2M41 23l-2 2M25 39l2-2"/></g>',
+  flame: '<path d="M33 20c6 6 8 10 6 15 3-1 4-3 4-5 3 5 1 12-6 14h-8c-6-2-8-8-5-13 0 3 2 4 3 5-1-7 3-11 6-16z" fill="#ffd45c"/><path d="M33 31c3 3 4 6 2 9h-4c-2-3-1-6 2-9z" fill="#fff6c8"/>',
+  moon: '<path d="M37 21a10 10 0 1 0 6 16 8 8 0 1 1-6-16z" fill="#f3eee2"/><path d="M27 24l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.4 2-.3z" fill="#fff6c8"/>',
+};
+function flag(id) {
+  const t = TEAMS[id] || { color: '#3b8ed0', emblem: 'sun' }, gid = 'fl' + id;
+  return `<svg viewBox="0 0 64 64" aria-hidden="true"><defs>
+    <linearGradient id="${gid}c" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${t.color}"/><stop offset=".35" stop-color="${t.color}" stop-opacity=".82"/><stop offset=".55" stop-color="${t.color}"/><stop offset=".8" stop-color="${t.color}" stop-opacity=".78"/><stop offset="1" stop-color="${t.color}"/></linearGradient>
+    <linearGradient id="${gid}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>
+    <rect x="9" y="6" width="4.2" height="56" rx="2" fill="url(#gl-wood)"/><circle cx="11.1" cy="5.5" r="3.4" fill="url(#gl-gold)"/>
+    <path d="M13 10 C22 7 30 13 40 10 C48 8 54 11 58 12 L54 27 L58 42 C52 41 46 38 38 41 C28 44 22 39 13 42 Z" fill="#000" opacity=".22" transform="translate(1.5 2)"/>
+    <path d="M13 10 C22 7 30 13 40 10 C48 8 54 11 58 12 L54 27 L58 42 C52 41 46 38 38 41 C28 44 22 39 13 42 Z" fill="url(#${gid}c)"/>
+    <path d="M13 10 C22 7 30 13 40 10 C48 8 54 11 58 12 L54 27 L58 42 C52 41 46 38 38 41 C28 44 22 39 13 42 Z" fill="url(#${gid}s)"/>
+    <path d="M13 13 C22 10 30 16 40 13 C48 11 53 14 56 15" fill="none" stroke="#fff6e2" stroke-opacity=".45" stroke-width="1.2"/>
+    <g transform="translate(-1 -3)">${EMBLEMS[t.emblem]}</g>
+    <path d="M13 10v32" stroke="#000" stroke-opacity=".25" stroke-width="1"/></svg>`;
+}
 
 function openTeamPicker() {
   const wait = 7 * 864e5 - (Date.now() - (state.teamChangedAt || 0));
@@ -3945,9 +3970,10 @@ function openTeamPicker() {
   $('teamGrid').replaceChildren(...TEAM_IDS.map(id => {
     const t = TEAMS[id], b = document.createElement('button');
     b.className = 'teamcard' + (state.spudTeam === id ? ' mine' : '');
-    b.innerHTML = `<div class="flag" style="background:${t.color}22">${flag(t.color)}</div><strong></strong><small></small>`;
+    b.innerHTML = `<div class="flag" style="background:${t.color}22">${flag(id)}</div><span><strong></strong><small></small><em></em></span>`;
     b.querySelector('strong').textContent = t.name;
     b.querySelector('small').textContent = t.perk;
+    b.querySelector('em').textContent = t.lore;
     b.addEventListener('click', () => {
       if (state.spudTeam !== id) { state.spudTeam = id; state.teamChangedAt = Date.now(); toast(`Welcome to ${t.name}! ${t.perk}.`); sfx.win(); haptic('win'); }
       $('teamPicker').hidden = true;
@@ -3962,7 +3988,7 @@ $('teamBtn').addEventListener('click', openTeamPicker);
 
 function renderTeamUI() {
   const t = TEAMS[state.spudTeam];
-  $('teamText').textContent = t ? `${t.name}. ${t.perk}. You've landed ${fmt(state.raidHits || 0)} raid hits.` : 'Pick a team to join raids and earn its bonus.';
+  $('teamText').textContent = t ? `${t.name}. ${t.perk}. ${t.lore} You've landed ${fmt(state.raidHits || 0)} raid hits.` : 'Pick a team to join raids and earn its bonus.';
   $('teamBtn').textContent = t ? 'Switch team' : 'Choose a team';
   $('teamMine').innerHTML = t ? `<span class="teamdot" style="background:${t.color}"></span>` : '';
   if (t) $('teamMine').append(t.name);
@@ -4154,22 +4180,35 @@ function teamCloudTick() {
 
 // ---- Potato Skins: put-on-the-potato cosmetics you unlock and keep ----
 const SKIN_SLOTS = [
-  { id: 'hat', name: 'Hats' }, { id: 'eyes', name: 'Eyes' }, { id: 'glasses', name: 'Glasses' }, { id: 'nose', name: 'Noses' },
+  { id: 'hair', name: 'Hair' }, { id: 'hat', name: 'Hats' }, { id: 'eyes', name: 'Eyes' }, { id: 'glasses', name: 'Glasses' }, { id: 'nose', name: 'Noses' },
   { id: 'mouth', name: 'Mouths' }, { id: 'stache', name: 'Mustaches' }, { id: 'ears', name: 'Ears' }, { id: 'shoes', name: 'Shoes' }, { id: 'extra', name: 'Extras' },
 ];
 const O = 'stroke="#2f2117" stroke-width="2.5" stroke-linejoin="round"';
 const teamColor = () => (TEAMS[state.spudTeam] || { color: '#3b8ed0' }).color;
 const SKINS = [
+  { id: 'fauxhawk', slot: 'hair', name: 'Mesa Makes faux hawk', hint: 'Find the secret in the credits at the bottom of the Me tab', test: () => !!state.eggs.mesamakes,
+    svg: () => `<g clip-path="url(#potClip)"><path d="M0 -20H300V100C286 86 266 74 240 68C214 63 186 62 160 64C130 62 100 64 80 70C58 78 44 92 30 112L0 118Z" fill="url(#gHair)"/>
+      <path d="M34 104C50 84 72 72 100 66" fill="none" stroke="#6a6a70" stroke-width="1.6" opacity=".4" stroke-linecap="round"/></g>
+      <path d="M108 50 C108 36 114 26 120 16 L126 30 L134 6 L140 24 L150 -6 L156 18 L166 -12 L169 14 L182 -2 L180 22 L196 12 C192 26 192 38 196 52 C170 40 134 40 108 50Z" fill="url(#gHair)" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M134 42 L140 12 M148 40 L153 2 M160 40 L166 -4 M172 42 L178 8" stroke="#6a6a70" stroke-width="1.3" stroke-linecap="round" opacity=".6"/>` },
+  { id: 'mesaglasses', slot: 'glasses', name: 'Mesa Makes glasses', hint: 'Watch the opening story to the end', test: () => !!state.eggs.story,
+    svg: () => `<g filter="url(#skinShade)"><rect x="98" y="80" width="48" height="28" rx="4" fill="rgba(210,235,255,.2)" stroke="#0c0c0e" stroke-width="4.5"/>
+      <rect x="158" y="76" width="48" height="28" rx="4" fill="rgba(210,235,255,.2)" stroke="#0c0c0e" stroke-width="4.5"/>
+      <path d="M96 78h52v7H96zM156 74h52v7h-52z" fill="#0c0c0e"/>
+      <path d="M146 87 h12" stroke="#0c0c0e" stroke-width="5"/>
+      <path d="M97 82 L60 76 M207 78 L246 68" stroke="#0c0c0e" stroke-width="5" stroke-linecap="round"/>
+      <path d="M104 89 l11 0 M164 85 l11 0" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>
+      <path d="M108 103 l15-15 M168 99 l15-15" stroke="#fff" stroke-width="1.6" opacity=".22"/></g>` },
   { id: 'buttons', slot: 'eyes', name: 'Button eyes', hint: 'Free to start', test: () => true,
     svg: () => `<g fill="#2a2420"><circle cx="122" cy="96" r="7"/><circle cx="182" cy="92" r="7"/></g><g fill="#fff"><circle cx="119.5" cy="93.5" r="2"/><circle cx="179.5" cy="89.5" r="2"/></g>` },
   { id: 'googly', slot: 'eyes', name: 'Googly eyes', hint: 'Tap the potato 1,000 times', test: () => state.clicks >= 1000,
-    svg: () => `<circle cx="122" cy="96" r="14" fill="#fff" ${O}/><circle cx="182" cy="92" r="14" fill="#fff" ${O}/><circle cx="125" cy="101" r="6.5" fill="#1a1a1a"/><circle cx="178" cy="97" r="6.5" fill="#1a1a1a"/>` },
+    svg: () => `<circle cx="122" cy="96" r="14" fill="#fff" ${O}/><circle cx="182" cy="92" r="14" fill="#fff" ${O}/><circle cx="125" cy="101" r="6.5" fill="#1a1a1a"/><circle cx="178" cy="97" r="6.5" fill="#1a1a1a"/><circle cx="117" cy="90" r="3.5" fill="#fff"/><circle cx="177" cy="86" r="3.5" fill="#fff"/>` },
   { id: 'sleepy', slot: 'eyes', name: 'Sleepy eyes', hint: 'Tap 100 times at night', test: () => (state.nightTaps || 0) >= 100,
     svg: () => `<path d="M108 96q14 10 28 0M168 92q14 10 28 0" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/><path d="M112 101l-3 5M122 104v6M132 101l3 5M172 97l-3 5M182 100v6M192 97l3 5" stroke="#2a2420" stroke-width="2" stroke-linecap="round"/>` },
   { id: 'starry', slot: 'eyes', name: 'Starry eyes', hint: 'Tap 10 shooting stars', test: () => (state.stars || 0) >= 10,
     svg: () => [[122, 96], [182, 92]].map(([x, y]) => `<path d="M${x} ${y - 13}l4 9 10 1-7.5 6.5 2.5 10-9-5.5-9 5.5 2.5-10-7.5-6.5 10-1z" fill="url(#gl-gold)" ${O}/>`).join('') },
   { id: 'round', slot: 'glasses', name: 'Round glasses', hint: 'Play for 1 hour in all', test: () => (state.playSeconds || 0) >= 3600,
-    svg: () => `<g fill="rgba(200,230,255,.25)" stroke="#2a2420" stroke-width="4"><circle cx="122" cy="96" r="17"/><circle cx="182" cy="92" r="17"/></g><path d="M139 94q13-6 26-4M105 94l-40-6M199 89l42-10" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/>` },
+    svg: () => `<g fill="rgba(200,230,255,.25)" stroke="#2a2420" stroke-width="4"><circle cx="122" cy="96" r="17"/><circle cx="182" cy="92" r="17"/></g><path d="M139 94q13-6 26-4M105 94l-40-6M199 89l42-10" fill="none" stroke="#2a2420" stroke-width="4" stroke-linecap="round"/><path d="M112 86l8-6M172 82l8-6" stroke="#fff" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>` },
   { id: 'monocle', slot: 'glasses', name: 'Monocle', hint: 'Spend 1T taters', test: () => (state.spent || 0) >= 1e12,
     svg: () => `<circle cx="182" cy="92" r="16" fill="rgba(200,230,255,.3)" stroke="url(#gl-gold)" stroke-width="4.5"/><path d="M196 102q8 26-6 48" fill="none" stroke="url(#gl-gold)" stroke-width="2" stroke-dasharray="3 2"/>` },
   { id: 'goggles', slot: 'glasses', name: 'Welding goggles', hint: 'Own 25 Tractors', test: () => owned('tractor') >= 25,
@@ -4195,19 +4234,19 @@ const SKINS = [
   { id: 'sneakers', slot: 'shoes', name: 'Sneakers', hint: 'Press your fidget 10,000 times', test: () => state.fidgetClicks >= 10000,
     svg: () => `<path d="M80 194q0-16 18-16h14q8 8 20 10v14H80z" fill="url(#gl-red)" ${O}/><path d="M80 202h52" stroke="#fff" stroke-width="5"/><path d="M174 188q12-2 20-10h14q18 0 18 16v8h-52z" fill="url(#gl-red)" ${O}/><path d="M174 202h52" stroke="#fff" stroke-width="5"/>` },
   { id: 'straw', slot: 'hat', name: 'Straw farm hat', hint: 'Own 10 Potato Farms', test: () => owned('farm') >= 10,
-    svg: () => `<ellipse cx="140" cy="40" rx="74" ry="13" fill="url(#gl-straw)" ${O}/><path d="M102 38c0-26 16-36 38-36s38 10 38 36z" fill="url(#gl-straw)" ${O}/><path d="M103 30h74v8h-74z" fill="#c8372d"/>` },
+    svg: () => `<ellipse cx="140" cy="40" rx="74" ry="13" fill="url(#gl-straw)" ${O}/><path d="M102 38c0-26 16-36 38-36s38 10 38 36z" fill="url(#gl-straw)" ${O}/><path d="M103 30h74v8h-74z" fill="#c8372d"/><path d="M110 22c4-12 14-17 26-18" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>` },
   { id: 'cowboy', slot: 'hat', name: 'Cowboy hat', hint: 'Catch 10 golden taters', test: () => state.goldenTaters >= 10,
-    svg: () => `<path d="M62 34q78 26 156 0q-10 18-78 18t-78-18z" fill="url(#gl-felt)" ${O}/><path d="M106 38c-4-30 10-40 34-40 8 4 12 6 16 0 22 2 26 14 22 40z" fill="url(#gl-felt)" ${O}/><path d="M106 30h72v6h-72z" fill="#3a2614"/>` },
+    svg: () => `<path d="M62 34q78 26 156 0q-10 18-78 18t-78-18z" fill="url(#gl-felt)" ${O}/><path d="M106 38c-4-30 10-40 34-40 8 4 12 6 16 0 22 2 26 14 22 40z" fill="url(#gl-felt)" ${O}/><path d="M106 30h72v6h-72z" fill="#3a2614"/><path d="M114 26c0-12 8-20 22-22" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="3" stroke-linecap="round"/>` },
   { id: 'tophat', slot: 'hat', name: 'Top hat', hint: 'Grow 1B taters all-time', test: () => state.allTime >= 1e9,
-    svg: () => `<ellipse cx="140" cy="38" rx="52" ry="9" fill="#1d1a20" ${O}/><path d="M112 36V-24h56v60z" fill="url(#gl-dark)" ${O}/><path d="M112 22h56v10h-56z" fill="#c8372d"/>` },
+    svg: () => `<ellipse cx="140" cy="38" rx="52" ry="9" fill="#1d1a20" ${O}/><path d="M112 36V-24h56v60z" fill="url(#gl-dark)" ${O}/><path d="M112 22h56v10h-56z" fill="#c8372d"/><path d="M118-18v48" stroke="#fff" stroke-opacity=".22" stroke-width="5"/>` },
   { id: 'hardhat', slot: 'hat', name: 'Hard hat', hint: 'Buy a Masterwork upgrade', test: () => state.upgrades.some(id => id.endsWith('_3')),
-    svg: () => `<path d="M96 40c0-32 20-42 44-42s44 10 44 42z" fill="url(#gl-yellow)" ${O}/><path d="M84 38h112v8H84z" fill="url(#gl-yellow)" ${O}/><path d="M140-2v40" stroke="#c99010" stroke-width="5"/>` },
+    svg: () => `<path d="M96 40c0-32 20-42 44-42s44 10 44 42z" fill="url(#gl-yellow)" ${O}/><path d="M84 38h112v8H84z" fill="url(#gl-yellow)" ${O}/><path d="M140-2v40" stroke="#c99010" stroke-width="5"/><path d="M106 26c2-14 12-22 26-24" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>` },
   { id: 'beanie', slot: 'hat', name: 'Knit beanie', hint: 'Play in winter', test: () => !!(state.seasons || {}).winter,
     svg: () => `<path d="M100 42c0-30 18-40 40-40s40 10 40 40z" fill="${teamColor()}" ${O}/><path d="M98 34h84v10H98z" fill="#fff6e2" ${O}/><circle cx="140" cy="-4" r="9" fill="#fff6e2" ${O}/>` },
   { id: 'teamcap', slot: 'hat', name: 'Team cap', hint: 'Join a team', test: () => !!state.spudTeam,
     svg: () => `<path d="M100 40c0-28 18-38 40-38s40 10 40 38z" fill="${teamColor()}" ${O}/><path d="M176 38q34 2 44 12-30 4-48-2z" fill="${teamColor()}" ${O}/><circle cx="140" cy="4" r="4" fill="#fff6e2"/>` },
   { id: 'crown', slot: 'hat', name: 'Spud crown', hint: 'Be on the top team in a live raid', test: () => (state.raidCrowns || 0) >= 1,
-    svg: () => `<path d="M104 40 98 0l22 18 20-26 20 26 22-18-6 40z" fill="url(#gl-gold)" ${O}/><circle cx="140" cy="26" r="5" fill="#e2574a" ${O}/><circle cx="118" cy="30" r="3.5" fill="#3b8ed0"/><circle cx="162" cy="30" r="3.5" fill="#5cb85c"/>` },
+    svg: () => `<path d="M104 40 98 0l22 18 20-26 20 26 22-18-6 40z" fill="url(#gl-gold)" ${O}/><circle cx="140" cy="26" r="5" fill="#e2574a" ${O}/><circle cx="118" cy="30" r="3.5" fill="#3b8ed0"/><circle cx="162" cy="30" r="3.5" fill="#5cb85c"/><path d="M108 34l-3-24" stroke="#fff" stroke-opacity=".5" stroke-width="2.5" stroke-linecap="round"/>` },
   { id: 'bowtie', slot: 'extra', name: 'Bow tie', hint: 'Play 7 days in a row', test: () => ((state.streak || {}).best || 0) >= 7,
     svg: () => `<path d="M152 170l-24-12v24zM152 170l24-12v24z" fill="url(#gl-red)" ${O}/><circle cx="152" cy="170" r="5" fill="#9a281e" ${O}/>` },
   { id: 'scarf', slot: 'extra', name: 'Cozy scarf', hint: 'Play in fall or winter', test: () => !!((state.seasons || {}).fall || (state.seasons || {}).winter),
@@ -4261,19 +4300,28 @@ hatStyle.textContent = '.tater-btn.hatted #potHat { display: none !important; }'
 document.head.appendChild(hatStyle);
 
 // ---- The opening story ----
+const SKY = (a, b) => `<defs><linearGradient id="sky${a.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="400" height="240" fill="url(#sky${a.slice(1)})"/>`;
+const STARS = (n, seed) => Array.from({ length: n }, (_, i) => { const x = (i * 97 + seed * 31) % 400, y = (i * 53 + seed * 17) % 150, r = 0.6 + ((i * 7) % 5) / 4; return `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="#fff" opacity="${(0.4 + ((i * 13) % 6) / 10).toFixed(2)}"/>`; }).join('');
+const BIG_SPUD = (x, y, sc, glow) => `<g transform="translate(${x} ${y}) scale(${sc})">${glow ? '<ellipse cx="0" cy="0" rx="150" ry="110" fill="#ffe9a8" opacity=".18"/>' : ''}<ellipse cx="0" cy="92" rx="118" ry="14" fill="#000" opacity=".3"/><path d="M-114 2C-126-38-90-74-32-78-2-80 16-68 44-74 94-82 132-46 122 4 114 50 76 80 16 78-12 77-24 86-52 80-90 72-108 40-114 2Z" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="3.5"/><path d="M-92-22C-78-50-48-64-12-66" fill="none" stroke="#fff6e2" stroke-opacity=".5" stroke-width="5" stroke-linecap="round"/><g fill="#6e4520" opacity=".8"><ellipse cx="-56" cy="-22" rx="7" ry="4.5"/><ellipse cx="54" cy="-30" rx="7.5" ry="4.5"/><ellipse cx="4" cy="36" rx="6.5" ry="4"/></g><path d="M54-30C52-48 58-62 70-70" fill="none" stroke="#3c7628" stroke-width="4" stroke-linecap="round"/><path d="M70-72C84-82 100-78 104-70 92-60 78-62 70-72Z" fill="url(#gl-leaf)"/></g>`;
+const FARMER = (x, y, sc) => `<g transform="translate(${x} ${y}) scale(${sc})"><ellipse cx="0" cy="12" rx="12" ry="3" fill="#000" opacity=".3"/><path d="M-5 0v12M5 0v12" stroke="#4a3220" stroke-width="4" stroke-linecap="round"/><path d="M-8-22h16l2 22h-20z" fill="#3b6ea8"/><path d="M-8-22h16v6h-16z" fill="#2c5585"/><circle cx="0" cy="-30" r="7.5" fill="#f0c7a0"/><path d="M-13-33h26l-4-5h-18z" fill="url(#gl-straw)"/><path d="M-6-36c0-8 12-8 12 0" fill="url(#gl-straw)"/><path d="M9-18l12-14" stroke="url(#gl-wood)" stroke-width="2.5"/><path d="M19-34l6-2 2 5-6 2z" fill="#b8c1c7"/></g>`;
+const HILLS = (c1, c2, soil) => `<path d="M0 168C90 146 190 150 260 160 330 170 370 156 400 160V240H0Z" fill="${c1}"/><path d="M0 168C90 146 190 150 260 160 330 170 370 156 400 160V240H0Z" fill="url(#gl-hillshade)"/><path d="M0 196C120 182 280 182 400 196V240H0Z" fill="${soil}"/><path d="M0 196C120 182 280 182 400 196V240H0Z" fill="url(#gl-soilshade)"/>`;
 const STORY = [
-  { cap: 'Long ago, a comet made of pure starch streaked across the night sky…',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#0d1838"/><g fill="#fff">${[[30,30],[80,70],[140,24],[210,60],[260,20],[330,44],[370,90],[50,120],[300,110],[180,110]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6"/>`).join('')}</g><path d="M80 40 L300 170" stroke="url(#cometTail)" stroke-width="16" stroke-linecap="round"/><defs><linearGradient id="cometTail" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4c542" stop-opacity="0"/><stop offset="1" stop-color="#ffe9a8"/></linearGradient></defs><ellipse cx="304" cy="172" rx="16" ry="12" fill="url(#gl-spud)" stroke="#ffe9a8" stroke-width="3"/><path d="M0 210 C120 190 280 196 400 214V240H0Z" fill="#14253e"/></svg>` },
-  { cap: '…and a single glowing seed potato landed on a dusty little farm.',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#1a2a4a"/><path d="M0 150 C120 128 280 130 400 150V240H0Z" fill="#3e5a2a"/><path d="M0 182 C120 170 280 170 400 182V240H0Z" fill="#5a3a20"/><circle cx="200" cy="170" r="40" fill="#ffe9a8" opacity=".25"/><ellipse cx="200" cy="172" rx="14" ry="10" fill="url(#gl-spud)" stroke="#3d2a1a" stroke-width="2"/><path d="M200 162c0-10 4-16 10-18" fill="none" stroke="#7ed957" stroke-width="3"/><rect x="40" y="118" width="40" height="34" fill="#8f241b"/><path d="M36 120 60 100 84 120z" fill="#5a3a28"/></svg>` },
-  { cap: 'It grew. And grew. Until it was the biggest spud anyone had ever seen, and every tap shook loose a fresh tater.',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#8fcbe0"/><circle cx="340" cy="44" r="26" fill="#ffd45c"/><path d="M0 170 C120 150 280 150 400 170V240H0Z" fill="#6f9a44"/><path d="M80 150 C64 96 120 50 200 48 C290 46 340 96 320 150 C304 196 100 200 80 150Z" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="4"/><g fill="#6e4520"><ellipse cx="150" cy="100" rx="8" ry="5"/><ellipse cx="250" cy="96" rx="8" ry="5"/><ellipse cx="200" cy="140" rx="7" ry="4"/></g><g transform="translate(60 168)"><circle cx="0" cy="-26" r="6" fill="#f0c7a0"/><path d="M-6 -20h12v16h-12z" fill="#3b6ea8"/><path d="M-5 -4v12M5 -4v12" stroke="#5a3a1c" stroke-width="3"/><path d="M-8 -30h16l-2-4h-12z" fill="url(#gl-straw)"/></g></svg>` },
-  { cap: 'But word spread fast. Gophers. Crows. Even things from beyond the stars came hungry for the Mother Spud.',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#0b1020"/><path d="M120 150 C108 110 150 76 200 74 C258 72 290 110 278 150 C268 182 132 184 120 150Z" fill="url(#gl-spud)" opacity=".55"/>${[[50,190],[90,200],[330,196],[360,180],[60,60],[340,70]].map(([x, y]) => `<g fill="#ffd45c"><ellipse cx="${x}" cy="${y}" rx="5" ry="3.5"/><ellipse cx="${x + 14}" cy="${y}" rx="5" ry="3.5"/></g>`).join('')}<ellipse cx="200" cy="34" rx="40" ry="9" fill="#b9c3c8"/><path d="M182 32c2-14 34-14 36 0z" fill="#8ce6aa"/><path d="M180 40 160 90h80l-20-50z" fill="#a0ff8c" opacity=".2"/></svg>` },
-  { cap: 'So the farmers formed four teams to guard it: Russet, Yukon Gold, Red Bliss and Purple Majesty.',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#e7d6b5"/><path d="M0 190 C120 176 280 176 400 190V240H0Z" fill="#6f9a44"/>${TEAM_IDS.map((id, i) => `<g transform="translate(${60 + i * 90} 60)"><path d="M0 0v140" stroke="#5a3a1c" stroke-width="5"/><path d="M2 4h56l-12 18 12 18H2z" fill="${TEAMS[id].color}" stroke="#2f2117" stroke-width="2"/><ellipse cx="26" cy="22" rx="10" ry="7" fill="#f0cf9a" stroke="#2f2117" stroke-width="1.5"/></g>`).join('')}</svg>` },
-  { cap: 'Now, twice a day, the great raid bosses rise, and every team fights them together. The team that hits hardest earns the crown. Grab your hoe, farmer. The Mother Spud needs you.',
-    svg: `<svg viewBox="0 0 400 240"><rect width="400" height="240" fill="#2a1030"/><path d="M0 190 C120 176 280 176 400 190V240H0Z" fill="#3a2a1a"/><g transform="translate(200 30) scale(1.6)">${stripSvg(BLIGHT).replace(/blightG/g, 'blightG2')}</g><defs><radialGradient id="blightG2" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7a8f3a"/><stop offset="1" stop-color="#26330f"/></radialGradient></defs><path d="M60 200 C50 160 80 130 120 130 C160 130 180 160 170 200Z" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="3"/></svg>` },
+  { cap: 'Long ago, on the far side of the sky, a comet made of pure starch broke loose and began to fall…',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#050a24', '#1b2b5a')}${STARS(60, 1)}<defs><linearGradient id="tail1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a8" stop-opacity="0"/><stop offset=".7" stop-color="#ffd27a" stop-opacity=".7"/><stop offset="1" stop-color="#fffbe8"/></linearGradient><radialGradient id="cglow"><stop offset="0" stop-color="#fffbe8"/><stop offset=".4" stop-color="#ffd27a" stop-opacity=".7"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs><path d="M40 20L300 164" stroke="url(#tail1)" stroke-width="22" stroke-linecap="round"/><path d="M70 30L300 164" stroke="url(#tail1)" stroke-width="7" stroke-linecap="round" opacity=".8"/><circle cx="302" cy="166" r="34" fill="url(#cglow)"/><ellipse cx="302" cy="166" rx="13" ry="10" fill="url(#gl-spud)" stroke="#fffbe8" stroke-width="2"/><path d="M0 214C120 200 280 204 400 218V240H0Z" fill="#0a1328"/></svg>` },
+  { cap: '…and a single glowing seed potato landed in a dusty little field at the edge of nowhere.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#1b2b5a', '#5a4a78')}${STARS(30, 2)}${HILLS('#3e5a2a', '', '#4e321c')}<defs><radialGradient id="seedglow"><stop offset="0" stop-color="#fff3c0"/><stop offset=".5" stop-color="#ffd27a" stop-opacity=".45"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs><circle cx="210" cy="196" r="60" fill="url(#seedglow)"/><ellipse cx="210" cy="198" rx="15" ry="11" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="2"/><path d="M212 188c0-10 4-16 11-19" fill="none" stroke="#7ed957" stroke-width="3" stroke-linecap="round"/><path d="M223 169c6-4 12-3 14 0-4 4-10 4-14 0z" fill="url(#gl-leaf)"/><g transform="translate(60 150) scale(.8)"><use href="#s-barn" width="70" height="56"/></g></svg>` },
+  { cap: 'The farmer who owned that field had never grown much of anything. Then the sprout came up, and it grew… and grew…',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#ffb27a', '#ffe2b0')}<circle cx="330" cy="150" r="34" fill="#ffd45c" opacity=".9"/>${HILLS('#6f9a44', '', '#5a3a20')}${BIG_SPUD(200, 150, 0.42, true)}${FARMER(110, 188, 1.6)}</svg>` },
+  { cap: '…until it was the biggest spud anyone had ever seen. The Mother Spud. And every time someone tapped it, a fresh tater tumbled out.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#7fc3dc', '#d6eef0')}<circle cx="348" cy="40" r="22" fill="#ffd45c"/><circle cx="348" cy="40" r="36" fill="#ffd45c" opacity=".25"/>${HILLS('#6f9a44', '', '#5a3a20')}${BIG_SPUD(200, 116, 0.9, false)}${FARMER(56, 200, 1.4)}${[[316, 196], [334, 204], [300, 206], [350, 192]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="8" ry="6" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="1.5"/>`).join('')}</svg>` },
+  { cap: 'But the comet had a dark side. Its rot seeped into the ground, and hungry things came for the Mother Spud: gophers from below, crows from above, and lights from beyond the stars.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#060912', '#1a1430')}${STARS(25, 3)}${HILLS('#1d2a18', '', '#24170e')}<g opacity=".55">${BIG_SPUD(200, 130, 0.62, false)}</g>${[[46, 206], [96, 214], [318, 210], [356, 196], [30, 120], [366, 116]].map(([x, y]) => `<g><circle cx="${x + 7}" cy="${y}" r="14" fill="#ffd45c" opacity=".12"/><ellipse cx="${x}" cy="${y}" rx="4.5" ry="3.2" fill="#ffe680"/><ellipse cx="${x + 14}" cy="${y}" rx="4.5" ry="3.2" fill="#ffe680"/></g>`).join('')}<defs><linearGradient id="beam5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0ff8c" stop-opacity=".45"/><stop offset="1" stop-color="#a0ff8c" stop-opacity="0"/></linearGradient></defs><path d="M180 40 154 130h92l-26-90z" fill="url(#beam5)"/><ellipse cx="200" cy="36" rx="44" ry="10" fill="url(#gl-metal)"/><path d="M180 33c2-15 38-15 40 0z" fill="#8ce6aa" opacity=".85"/><g fill="#ffd45c"><circle cx="172" cy="38" r="2.4"/><circle cx="200" cy="42" r="2.4"/><circle cx="228" cy="38" r="2.4"/></g></svg>` },
+  { cap: 'So the farmers banded together into four teams, each sworn to guard the Mother Spud in its own way.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#f6d9a8', '#fbeed6')}${HILLS('#6f9a44', '', '#5a3a20')}${TEAM_IDS.map((id, i) => `<g transform="translate(${10 + i * 96} 62) scale(1.42)">${stripSvg(flag(id)).replace(/id="fl/g, 'id="sfl').replace(/url\(#fl/g, 'url(#sfl')}</g>`).join('')}</svg>` },
+  { cap: 'Russet, the stubborn first family. Yukon Gold, the lucky prospectors. Red Bliss, the fiery fryer cooks. Purple Majesty, the moonlight mystics. Each team carries a gift into battle.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#2a1a12', '#4a2e1c')}<g opacity=".25">${STARS(20, 5)}</g>${TEAM_IDS.map((id, i) => `<g transform="translate(${20 + i * 95} 70)"><rect x="0" y="0" width="80" height="110" rx="12" fill="${TEAMS[id].color}" opacity=".9"/><rect x="0" y="0" width="80" height="110" rx="12" fill="url(#gl-hillshade)"/><g transform="translate(8 6) scale(1)">${stripSvg(flag(id)).replace(/id="fl/g, 'id="tfl').replace(/url\(#fl/g, 'url(#tfl')}</g><circle cx="40" cy="92" r="9" fill="url(#gl-spud)" stroke="#4e3015" stroke-width="1.5"/></g>`).join('')}</svg>` },
+  { cap: 'Now, twice every day, the rot gathers into a raid boss: The Blight, the Colossal Beetle, King Gopher or the Frost Giant. Every team fights it together, and the team that hits hardest wears the crown. Grab your hoe, farmer. The Mother Spud needs you.',
+    svg: `<svg viewBox="0 0 400 240">${SKY('#1a0a20', '#3a1a2a')}<defs><radialGradient id="rotglow"><stop offset="0" stop-color="#b8ff4a" stop-opacity=".35"/><stop offset="1" stop-color="#b8ff4a" stop-opacity="0"/></radialGradient><radialGradient id="blightG2" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#7a8f3a"/><stop offset="1" stop-color="#26330f"/></radialGradient></defs><circle cx="290" cy="90" r="120" fill="url(#rotglow)"/>${HILLS('#2a2418', '', '#24170e')}<g transform="translate(215 10) scale(1.5)">${stripSvg(BLIGHT).replace(/blightG/g, 'blightG2')}</g>${BIG_SPUD(110, 150, 0.42, true)}${FARMER(44, 200, 1.3)}</svg>` },
 ];
 let storyStep = 0;
 function showStory(step) {
@@ -4342,6 +4390,9 @@ tapCounter(document.querySelector('.logo'), 7, 1200, () => {
   toast('Party potato!');
   $('tater').classList.add('disco');
   setTimeout(() => $('tater').classList.remove('disco'), 15000);
+});
+tapCounter($('creditName'), 5, 1500, () => {
+  if (egg('mesamakes', 'You found the maker! The Mesa Makes faux hawk is unlocked.')) checkSkins();
 });
 tapCounter($('mars'), 5, 1500, () => {
   egg('mars');
