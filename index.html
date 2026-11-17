@@ -613,6 +613,16 @@
   .raidteams div { display: grid; gap: 2px; }
   .raidteams i { height: 5px; border-radius: 99px; background: rgba(255,255,255,.15); overflow: hidden; display: block; }
   .raidteams i b { display: block; height: 100%; }
+  .raiditems { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 2px; }
+  .ritem { position: relative; display: grid; justify-items: center; gap: 1px; padding: 5px 2px 4px; border-radius: 12px; border: 1.5px solid rgba(255,246,226,.35); background: rgba(255,255,255,.08); color: #fff6e2; font: 700 .64rem var(--sans); cursor: pointer; }
+  .ritem .ic { font-size: 1.25rem; line-height: 1; }
+  .ritem small { font-weight: 600; opacity: .85; font-size: .6rem; }
+  .ritem.on { border-color: #ffd45c; background: rgba(255,212,92,.22); box-shadow: 0 0 10px rgba(255,212,92,.5); }
+  .ritem.poor { opacity: .5; }
+  .ritem .ct { position: absolute; top: -6px; right: -4px; min-width: 18px; padding: 0 4px; border-radius: 99px; background: #ffd45c; color: #2f2117; font-size: .64rem; }
+  .crate { position: absolute; z-index: 6; width: clamp(40px, 11cqw, 56px); border: 0; padding: 0; background: none; cursor: pointer; animation: crateDrop .9s cubic-bezier(.3,1.4,.5,1) both; filter: drop-shadow(0 4px 3px rgba(0,0,0,.35)); }
+  .crate svg { display: block; width: 100%; height: auto; animation: hover 1.4s ease-in-out infinite; }
+  @keyframes crateDrop { from { transform: translateY(-120px) rotate(-12deg); opacity: 0; } }
   .boss { position: absolute; z-index: 5; left: 2%; top: 0; width: min(34vw, 140px); border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 0 14px rgba(255,60,40,.7)); animation: bossIn .6s cubic-bezier(.3,1.5,.5,1) both; }
   .boss svg { display: block; width: 100%; height: auto; overflow: visible; animation: hover 1.6s ease-in-out infinite; }
   .boss.hit svg { animation: hitShake .2s; }
@@ -731,7 +741,7 @@
     </div>
 
     <div class="raidcard" id="raidCard" hidden><div class="raidtop"><b id="raidName"></b><span id="raidTime"></span></div>
-      <div class="raidhp"><i id="raidHp"></i><span id="raidHpText"></span></div><div class="raidteams" id="raidTeams"></div></div>
+      <div class="raidhp"><i id="raidHp"></i><span id="raidHpText"></span></div><div class="raidteams" id="raidTeams"></div><div class="raiditems" id="raidItems"></div></div>
 
     <div class="field" id="field">
       <div class="sky" id="sky"></div>
@@ -1508,6 +1518,29 @@ addAch('boss_frost', 'Thaw out', 'Help defeat the Frost Giant.', () => !!(state.
 addAch('bossall', 'Clean sweep', 'Help defeat all four raid bosses.', () => ['blight', 'beetle', 'kinggopher', 'frost'].every(k => (state.bossesBeaten || {})[k]));
 addAch('crown1', 'Top spud', 'Be on the team that hit hardest in a live raid.', () => (state.raidCrowns || 0) >= 1);
 addAch('crown10', 'Dynasty', 'Be on the top team in 10 live raids.', () => (state.raidCrowns || 0) >= 10);
+addAch('rpower1', 'Power play', 'Use a raid power-up.', () => (state.raidPowerUsed || 0) >= 1);
+addAch('rpower25', 'Arsenal', 'Use 25 raid power-ups.', () => (state.raidPowerUsed || 0) >= 25);
+addAch('rcrate10', 'Supply run', 'Open 10 raid supply crates.', () => (state.raidCrates || 0) >= 10);
+addAch('rcrate50', 'Quartermaster', 'Open 50 raid supply crates.', () => (state.raidCrates || 0) >= 50);
+addAch('rpower100', 'Armory', 'Use 100 raid power-ups.', () => (state.raidPowerUsed || 0) >= 100);
+addAch('raidwin25', 'Boss slayer', 'Help defeat 25 raid bosses.', () => (state.raidsWon || 0) >= 25);
+addAch('raidwin50', 'Legend of the field', 'Help defeat 50 raid bosses.', () => (state.raidsWon || 0) >= 50);
+addAch('raid50k', 'Raid machine', 'Land 50,000 raid hits.', () => (state.raidHits || 0) >= 50000);
+addAch('raid100k', 'Boss breaker', 'Land 100,000 raid hits.', () => (state.raidHits || 0) >= 100000);
+addAch('raidfidget', 'Fidget warrior', 'Land 1,000 raid hits with your fidget.', () => (state.raidFidgetHits || 0) >= 1000);
+addAch('raidsolo', 'One-farmer army', 'Defeat a practice raid boss all by yourself.', () => (state.practiceWins || 0) >= 1);
+addAch('finalblow', 'Final blow', 'Land the hit that finishes off a raid boss.', () => !!state.eggs.finalblow);
+addAch('raidfast', 'Speed run', 'Help defeat a raid boss within 20 minutes of it appearing.', () => !!state.eggs.raidfast);
+addAch('crown25', 'Royal family', 'Be on the top team in 25 live raids.', () => (state.raidCrowns || 0) >= 25);
+addAch('skins25', 'Closet full', 'Unlock 25 Potato Skins.', () => (state.skinsUnlocked || []).length >= 25);
+addAch('teamspirit', 'Team spirit', 'Wear the team cap and the cozy scarf together, both in your team’s colors.', () => (state.skin || {}).hat === 'teamcap' && (state.skin || {}).extra === 'scarf' && !!state.spudTeam);
+addAch('macspud', 'Old MacSpud', 'Wear the straw farm hat, handlebar mustache and rubber boots together.', () => { const k = state.skin || {}; return k.hat === 'straw' && k.stache === 'handlebar' && k.shoes === 'boots'; });
+addAch('slinger', 'Spudslinger', 'Wear the cowboy hat, bushy beard and rubber boots together.', () => { const k = state.skin || {}; return k.hat === 'cowboy' && k.stache === 'beard' && k.shoes === 'boots'; });
+addAch('all10m', 'Ten-million taps', 'Tap 10M times in all (screen plus fidget).', () => totalTaps() >= 1e7);
+addAch('day25k', 'Tap-a-thon', 'Tap 25,000 times in one day.', () => (state.bestDayTaps || 0) >= 25000);
+addAch('play1000h', 'Spud immortal', 'Play for 1,000 hours in all.', () => (state.playSeconds || 0) >= 1000 * 3600);
+addAch('session240', 'Ultramarathon', 'Play for 4 hours without closing the app.', () => (live.sessionSecs || 0) >= 4 * 3600);
+addAch('story3', 'Lore master', 'Watch the whole story 3 times.', () => (state.storyViews || 0) >= 3);
 // Potato Skins and the story
 addAch('skins5', 'Dress-up', 'Unlock 5 Potato Skins.', () => (state.skinsUnlocked || []).length >= 5);
 addAch('skins15', 'Wardrobe', 'Unlock 15 Potato Skins.', () => (state.skinsUnlocked || []).length >= 15);
@@ -1516,6 +1549,9 @@ addAch('outfit', 'Fully dressed', 'Wear something in every Potato Skin slot at o
 addAch('story', 'Once upon a spud', 'Watch the story all the way to the end.', () => !!state.eggs.story);
 addSecret('egg_skipstory', 'Spoiler alert', 'Skip the opening story.', eggFound('skipstory'));
 addSecret('egg_mesamakes', 'Made by Mesa Makes', 'Tap the maker’s name in the credits 5 times.', eggFound('mesamakes'));
+addSecret('egg_makerlook', 'The maker’s look', 'Wear the Mesa Makes faux hawk and glasses together.', () => (state.skin || {}).hair === 'fauxhawk' && (state.skin || {}).glasses === 'mesaglasses');
+addSecret('egg_overkill', 'Overkill', 'Throw a Fry Bomb while a Pitchfork Strike and a Rally Horn are both running.', eggFound('overkill'));
+addSecret('egg_turncoat', 'Turncoat', 'Switch to a different team.', eggFound('turncoat'));
 addSecret('egg_insomniac', 'Insomniac', 'Play at 3 AM.', eggFound('insomniac'));
 addSecret('egg_fastday', 'Time flies', 'Turn on fast days.', eggFound('fastday'));
 
@@ -1736,7 +1772,7 @@ function freshState() {
     seasons: {}, weekdays: {}, leaves: 0, petals: 0, bolts: 0, camp: 0, lunchTaps: 0, marketBuys: 0, rainbows: 0, streak: { last: '', count: 0, best: 0 },
     holidays: {}, powers: {}, baskets: 0, spent: 0, playSeconds: 0,
     spudTeam: '', teamChangedAt: 0, raidHits: 0, raidsWon: 0, raidCrowns: 0, raidLog: {}, raidDone: {}, bossesBeaten: {}, localRaid: null,
-    skinsUnlocked: ['buttons'], skin: {}, seenStory: false, daysPlayed: 0, bestDayTaps: 0, teamTapsSent: 0 };
+    skinsUnlocked: ['buttons'], skin: {}, raidItems: {}, raidPowerUsed: 0, raidCrates: 0, seenStory: false, daysPlayed: 0, bestDayTaps: 0, teamTapsSent: 0 };
 }
 function loadState() {
   let s = null;
@@ -1754,7 +1790,7 @@ const owned = id => state.buildings[id] || 0;
 const totalOwned = () => BUILDINGS.reduce((a, b) => a + owned(b.id), 0);
 const totalTaps = () => state.clicks + state.fidgetClicks;
 const isHot = () => Date.now() < live.hotUntil;
-const globalMult = () => (1 + 0.01 * state.achievements.length) * (1 + 0.02 * state.seeds) * extraMult();
+const globalMult = () => (1 + 0.005 * state.achievements.length) * (1 + 0.02 * state.seeds) * extraMult();
 const buildingMult = b => TIERS.reduce((m, _, i) => has(`${b.id}_${i}`) ? m * 2 : m, 1)
   * (has('redsoil') && (b.id === 'patch' || b.id === 'mars') ? 3 : 1) * (has('selfaware') && b.id === 'fryline' ? 10 : 1) * calendarMult(b.id);
 const baseCps = () => BUILDINGS.reduce((a, b) => a + b.cps * owned(b.id) * buildingMult(b), 0) * globalMult();
@@ -1767,7 +1803,7 @@ function clickValue(allowHot = true) {
   if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
   return v;
 }
-function costOf(b, n = 1) { const r = 1.15; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1) * (nightMarket() ? 0.9 : 1); }
+function costOf(b, n = 1) { const r = 1.17; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1) * (nightMarket() ? 0.9 : 1); }   // each one costs 17% more than the last
 function grow(n) { state.taters += n; state.run += n; state.allTime += n; }
 const seedGain = () => Math.floor(Math.cbrt(state.run / 1e6));
 
@@ -2035,7 +2071,7 @@ function renderAwards() {
   const n = state.achievements.length;
   $('achCount').textContent = `${n} of ${ACH.length}`;
   $('achBar').style.width = (n / ACH.length * 100) + '%';
-  $('achSummary').textContent = `Each ribbon adds 1% to everything you grow. You’re at +${n}%.`;
+  $('achSummary').textContent = `Each ribbon adds 0.5% to everything you grow. You’re at +${(n / 2).toFixed(n % 2 ? 1 : 0)}%.`;
   $('achGrid').replaceChildren(...ACH.map(a => {
     const d = document.createElement('div');
     const got = state.achievements.includes(a.id), hidden = a.secret && !got;
@@ -3975,6 +4011,7 @@ function openTeamPicker() {
     b.querySelector('small').textContent = t.perk;
     b.querySelector('em').textContent = t.lore;
     b.addEventListener('click', () => {
+      if (state.spudTeam && state.spudTeam !== id) egg('turncoat', 'Turncoat! New team, new colors.');
       if (state.spudTeam !== id) { state.spudTeam = id; state.teamChangedAt = Date.now(); toast(`Welcome to ${t.name}! ${t.perk}.`); sfx.win(); haptic('win'); }
       $('teamPicker').hidden = true;
       save(); renderTeamUI(); renderSkins(); cloud.pending = true;
@@ -4076,15 +4113,18 @@ function startRaid(w) {
     if (!state.spudTeam) setTimeout(openTeamPicker, 1200);
   }
 }
-function stopRaid() { raid.unsub?.(); raid.unsub = null; raid.doc = null; raid.pending = 0; raid.info = null; $('boss').hidden = true; $('raidCard').hidden = true; }
-function raidHit(n, fromFidget) {
+function stopRaid() { document.querySelectorAll('.crate').forEach(c => c.remove()); raid.unsub?.(); raid.unsub = null; raid.doc = null; raid.pending = 0; raid.info = null; $('boss').hidden = true; $('raidCard').hidden = true; }
+function raidHit(n, fromFidget, raw) {
   if (!raid.info || (state.raidDone || {})[raid.info.id] || raidHp() <= 0) return;
   if (!state.spudTeam) { if (!fromFidget) openTeamPicker(); return; }
+  if (!raw) n = Math.round(n * raidMult() * (fromFidget === true ? 2 : 1));   // fidget presses hit twice as hard in raids
   state.raidHits = (state.raidHits || 0) + n;
   state.raidLog = { ...(state.raidLog || {}), [raid.info.id]: ((state.raidLog || {})[raid.info.id] || 0) + n };
+  if (fromFidget === true) state.raidFidgetHits = (state.raidFidgetHits || 0) + n;
   if (raidIsLive()) raid.pending += n;
   else { state.localRaid.hp -= n; state.localRaid.teams[state.spudTeam] = (state.localRaid.teams[state.spudTeam] || 0) + n; }
   grow(Math.max(1, baseCps()) * n);
+  if (raidHp() <= 0) state.eggs.finalblow = state.eggs.finalblow || Date.now();   // you landed the finishing hit
   const b = $('boss');
   b.classList.remove('hit'); void b.offsetWidth; b.classList.add('hit');
   if (!fromFidget) { sfx.hit(); haptic('hit'); }
@@ -4093,7 +4133,7 @@ function raidHit(n, fromFidget) {
 $('boss').addEventListener('pointerdown', e => {
   e.stopPropagation();
   const fr = $('field').getBoundingClientRect();
-  popText('-1', e.clientX - fr.left - 8, e.clientY - fr.top - 24);
+  popText('-' + raidMult(), e.clientX - fr.left - 8, e.clientY - fr.top - 24);
   raidHit(1, false);
 });
 function flushRaid() {
@@ -4116,6 +4156,8 @@ function finishRaid(defeated) {
     grow(g);
     state.raidsWon = (state.raidsWon || 0) + 1;
     state.bossesBeaten = { ...(state.bossesBeaten || {}), [boss.id]: true };
+    if (!raidIsLive()) state.practiceWins = (state.practiceWins || 0) + 1;
+    if (Date.now() - w.start < 20 * 60000) state.eggs.raidfast = state.eggs.raidfast || Date.now();
     const t = raidTeams(), top = TEAM_IDS.reduce((a, b) => (t[b] || 0) > (t[a] || 0) ? b : a, TEAM_IDS[0]);
     let msg = `${boss.name} is down! Your share: +${fmt(g)} taters.`;
     if (raidIsLive() && top === state.spudTeam) { state.raidCrowns = (state.raidCrowns || 0) + 1; msg += ` ${TEAMS[top].name} hit hardest!`; }
@@ -4128,6 +4170,92 @@ function finishRaid(defeated) {
   }
   save();
 }
+// ---- Raid power-ups: buy them with taters or find them in supply crates during a raid ----
+const RAID_ITEMS = [
+  { id: 'fork', icon: '🔱', name: 'Pitchfork Strike', desc: 'Your hits do 2× damage for 30 seconds', price: 120, secs: 30 },
+  { id: 'bomb', icon: '🍟', name: 'Fry Bomb', desc: 'Blast the boss for 40 hits at once', price: 60 },
+  { id: 'horn', icon: '📯', name: 'Rally Horn', desc: 'Your hits do 3× damage for 20 seconds', price: 240, secs: 20 },
+  { id: 'auto', icon: '🤖', name: 'Robo-Hoe', desc: 'Hits the boss 3 times a second for 30 seconds', price: 180, secs: 30 },
+];
+const itemPrice = it => Math.max(5000, Math.ceil(baseCps() * it.price));
+const raidMult = () => (Date.now() < (live.forkUntil || 0) ? 2 : 1) * (Date.now() < (live.hornUntil || 0) ? 3 : 1);
+function raidActive() { return !!(raid.info && !(state.raidDone || {})[raid.info.id] && raidHp() > 0); }
+function useRaidItem(it) {
+  if (!raidActive()) { toast('Power-ups only work while a raid boss is up.'); return; }
+  if (!state.spudTeam) { openTeamPicker(); return; }
+  const inv = state.raidItems || (state.raidItems = {});
+  if (!(inv[it.id] > 0)) {
+    const cost = itemPrice(it);
+    if (state.taters < cost) { toast(`${it.name} costs ${fmt(cost)} taters.`); return; }
+    state.taters -= cost; state.spent = (state.spent || 0) + cost;
+  } else inv[it.id]--;
+  state.raidPowerUsed = (state.raidPowerUsed || 0) + 1;
+  const now = Date.now();
+  if (it.id === 'fork') live.forkUntil = Math.max(now, live.forkUntil || 0) + it.secs * 1000;
+  if (it.id === 'horn') live.hornUntil = Math.max(now, live.hornUntil || 0) + it.secs * 1000;
+  if (it.id === 'auto') live.autoUntil = Math.max(now, live.autoUntil || 0) + it.secs * 1000;
+  if (it.id === 'bomb') {
+    const dmg = 40 * raidMult();
+    raidHit(dmg, 'item', true);
+    if (dmg >= 240) egg('overkill', 'Overkill! A six-times Fry Bomb.');
+    const b = $('boss').getBoundingClientRect(), fr = $('field').getBoundingClientRect();
+    popText('-' + dmg, b.left - fr.left + b.width / 2 - 14, b.top - fr.top + 10);
+    sfx.boom ? sfx.boom() : sfx.hit();
+  } else sfx.win();
+  haptic('win');
+  toast(`${it.icon} ${it.name}! ${it.desc}.`);
+  save(); renderRaidItems();
+}
+function renderRaidItems() {
+  const box = $('raidItems');
+  if (!box.children.length) RAID_ITEMS.forEach(it => {
+    const b = document.createElement('button');
+    b.className = 'ritem'; b.dataset.id = it.id;
+    b.innerHTML = `<span class="ic"></span><span class="nm"></span><small></small><span class="ct" hidden></span>`;
+    b.querySelector('.ic').textContent = it.icon;
+    b.querySelector('.nm').textContent = it.name.split(' ')[0];
+    b.setAttribute('aria-label', `${it.name}: ${it.desc}`);
+    b.addEventListener('click', e => { e.stopPropagation(); useRaidItem(it); });
+    box.append(b);
+  });
+  const now = Date.now(), inv = state.raidItems || {};
+  RAID_ITEMS.forEach(it => {
+    const b = box.querySelector(`[data-id="${it.id}"]`), have = inv[it.id] || 0;
+    const until = it.id === 'fork' ? live.forkUntil : it.id === 'horn' ? live.hornUntil : it.id === 'auto' ? live.autoUntil : 0;
+    const left = Math.ceil(((until || 0) - now) / 1000);
+    b.classList.toggle('on', left > 0);
+    b.classList.toggle('poor', !have && state.taters < itemPrice(it));
+    b.querySelector('small').textContent = left > 0 ? `${left}s` : have ? 'Use' : fmt(itemPrice(it));
+    const ct = b.querySelector('.ct'); ct.hidden = !have; ct.textContent = have;
+  });
+}
+const CRATE_SVG = `<svg viewBox="0 0 60 60"><path d="M30 2 L22 12 M30 2 L38 12" stroke="#d9d4c7" stroke-width="2"/><path d="M14 10h32l-4 4H18z" fill="#f3eee2" stroke="#2f2117" stroke-width="2"/><rect x="8" y="16" width="44" height="38" rx="4" fill="url(#gl-wood)" stroke="#2f2117" stroke-width="2.5"/><path d="M8 28h44M8 42h44" stroke="#5a3a1c" stroke-width="2"/><path d="M12 20 48 50M48 20 12 50" stroke="#5a3a1c" stroke-width="2.5" opacity=".7"/><circle cx="30" cy="35" r="8" fill="url(#gl-gold)" stroke="#2f2117" stroke-width="2"/><text x="30" y="39.5" text-anchor="middle" font-size="11" font-weight="800" fill="#2f2117">?</text></svg>`;
+function dropCrate() {
+  const c = document.createElement('button');
+  c.className = 'crate';
+  c.setAttribute('aria-label', 'Raid supply crate. Tap to open');
+  c.innerHTML = CRATE_SVG;
+  c.style.left = (12 + Math.random() * 70) + '%';
+  c.style.top = (30 + Math.random() * 35) + '%';
+  c.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    const roll = Math.random(), it = RAID_ITEMS[roll < 0.35 ? 1 : roll < 0.65 ? 0 : roll < 0.85 ? 3 : 2];
+    state.raidItems = state.raidItems || {};
+    state.raidItems[it.id] = (state.raidItems[it.id] || 0) + 1;
+    state.raidCrates = (state.raidCrates || 0) + 1;
+    toast(`Supply crate: ${it.icon} ${it.name}! Use it from the raid bar.`);
+    sfx.chime(); haptic('win');
+    c.remove(); save(); renderRaidItems();
+  }, { once: true });
+  $('field').append(c);
+  setTimeout(() => c.remove(), 14000);
+}
+function raidPowerTick() {
+  if (!raidActive()) return;
+  if (Date.now() < (live.autoUntil || 0)) raidHit(3, 'item');
+  live.nextCrate = live.nextCrate || Date.now() + 20000;
+  if (Date.now() > live.nextCrate) { live.nextCrate = Date.now() + 40000 + Math.random() * 30000; if (!document.querySelector('.crate')) dropCrate(); }
+}
 function renderRaid() {
   const w = raid.info, card = $('raidCard');
   if (!w || (state.raidDone || {})[w.id]) { card.hidden = true; return; }
@@ -4138,6 +4266,7 @@ function renderRaid() {
   $('raidHp').style.width = (hp / max * 100).toFixed(1) + '%';
   $('raidHpText').textContent = `${fmt(hp)} / ${fmt(max)} HP`;
   const t = raidTeams(), total = Math.max(1, TEAM_IDS.reduce((a, id) => a + (t[id] || 0), 0));
+  renderRaidItems();
   $('raidTeams').replaceChildren(...TEAM_IDS.map(id => {
     const d = document.createElement('div');
     d.innerHTML = `<span></span><i><b style="width:${((t[id] || 0) / total * 100).toFixed(1)}%;background:${TEAMS[id].color}"></b></i>`;
@@ -4151,6 +4280,7 @@ function raidTick() {
   if (w && !raid.info && !document.hidden) startRaid(w);
   if (!raid.info) return;
   flushRaid();
+  raidPowerTick();
   if (raidHp() <= 0 && !(state.raidDone || {})[raid.info.id]) finishRaid(true);
   renderRaid();
 }
@@ -4336,7 +4466,7 @@ function showStory(step) {
 function endStory(skipped) {
   $('story').hidden = true;
   state.seenStory = true;
-  if (skipped) egg('skipstory'); else state.eggs.story = state.eggs.story || Date.now();
+  if (skipped) egg('skipstory'); else { state.eggs.story = state.eggs.story || Date.now(); state.storyViews = (state.storyViews || 0) + 1; }
   save();
   if (!state.spudTeam) setTimeout(openTeamPicker, 400);
 }
