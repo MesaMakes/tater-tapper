@@ -4120,7 +4120,7 @@ function startRaid(w) {
     const F = cloud.F, ref = F.doc(cloud.db, 'raids', w.id);
     raid.creating = false;
     raid.unsub = F.onSnapshot(ref, snap => {
-      if (snap.exists()) raid.doc = snap.data();
+      if (snap.exists()) { raid.doc = snap.data(); raid.inflight = 0; }   // Firebase already counts hits we just sent, so stop counting them ourselves
       else if (!raid.creating) {
         raid.creating = true;
         F.setDoc(ref, { boss: boss.id, maxHp: RAID_HP_LIVE, hp: RAID_HP_LIVE, starts: w.start, ends: w.end, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } }).catch(goPractice);
@@ -4185,7 +4185,7 @@ function flushRaid() {
   raid.pending -= dmg;
   raid.inflight += dmg;
   F.updateDoc(F.doc(cloud.db, 'raids', raid.info.id), { hp: F.increment(-dmg), ['teams.' + state.spudTeam]: F.increment(dmg) })
-    .then(() => { raid.inflight = Math.max(0, raid.inflight - dmg); })
+    .then(() => {})
     .catch(err => { raid.inflight = Math.max(0, raid.inflight - dmg); raid.pending += dmg; goPractice(err); });
 }
 function finishRaid(defeated) {
