@@ -652,6 +652,86 @@
   .teamrow .tbar { grid-column: 1 / -1; height: 8px; border-radius: 99px; background: var(--paper-2); overflow: hidden; }
   .teamrow .tbar b { display: block; height: 100%; }
 
+  /* Chaos meter */
+  .chaosbar { position: relative; z-index: 3; width: min(100%, 380px); margin-top: 6px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px;
+              background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 3px 12px 3px 6px; }
+  .cbulb { font-size: 1rem; line-height: 1; }
+  .ctube { position: relative; height: 9px; border-radius: 999px; background: var(--paper-2); border: 2px solid var(--ink); overflow: hidden; }
+  .ctube i { position: absolute; inset: 0 auto 0 0; width: 0%; background: linear-gradient(90deg, #7b4bb3, #ff4fa8, #ffb02e); transition: width .3s; }
+  .chaosbar small { font-weight: 700; font-size: .76rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .chaosbar.on { background: #2a1040; color: #fff; border-color: #ff4fa8; box-shadow: 0 0 14px #ff4fa8; animation: chaosPulse .8s ease-in-out infinite alternate; }
+  .chaosbar.on .ctube i { animation: chaosShift 1s linear infinite; background-size: 200% 100%; background-image: linear-gradient(90deg, #7b4bb3, #ff4fa8, #ffb02e, #7ed957, #7b4bb3); }
+  @keyframes chaosPulse { to { box-shadow: 0 0 22px #ffb02e; } }
+  @keyframes chaosShift { to { background-position: 200% 0; } }
+  .scene.chaos::after { content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: inherit;
+                        box-shadow: inset 0 0 50px 10px rgba(255,79,168,.55); animation: chaosEdge 1.2s ease-in-out infinite alternate; }
+  @keyframes chaosEdge { to { box-shadow: inset 0 0 70px 16px rgba(123,75,179,.65); } }
+  @media (max-width: 879px) { .chaosbar { margin-top: 5px; } }
+  /* Evolutions: an aura behind the Mother Spud */
+  .tater-btn { --evof: saturate(1); }
+  .tater-btn svg { filter: var(--evof); }
+  .tater-btn.hot svg { filter: var(--evof) drop-shadow(0 0 18px var(--heat)) drop-shadow(0 0 4px var(--heat)); }
+  .tater-btn::before { content: ""; position: absolute; inset: -14% -10% -6%; z-index: -1; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity 1s; }
+  .tater-btn[class*="evo"]::before { opacity: 1; animation: aura 2.4s ease-in-out infinite alternate; }
+  @keyframes aura { from { transform: scale(.94); } to { transform: scale(1.04); } }
+  .tater-btn.evo1::before { background: radial-gradient(closest-side, rgba(126,217,87,.55), transparent); }
+  .tater-btn.evo2 { --evof: saturate(1.25) contrast(1.06); }
+  .tater-btn.evo2::before { background: radial-gradient(closest-side, rgba(201,146,88,.7), transparent); }
+  .tater-btn.evo3 { --evof: sepia(.35) saturate(1.9) hue-rotate(-8deg) brightness(1.1); }
+  .tater-btn.evo3::before { background: radial-gradient(closest-side, rgba(255,212,92,.85), transparent); }
+  .tater-btn.evo4 { --evof: hue-rotate(205deg) saturate(1.35) brightness(1.05); }
+  .tater-btn.evo4::before { background: radial-gradient(closest-side, rgba(150,110,255,.8), rgba(40,20,90,.3) 70%, transparent); }
+  .tater-btn.evo5 { --evof: sepia(.2) saturate(1.6) brightness(1.15); }
+  .tater-btn.evo5::before { background: conic-gradient(from 0deg, rgba(255,79,168,.6), rgba(255,212,92,.6), rgba(126,217,87,.6), rgba(80,160,255,.6), rgba(255,79,168,.6));
+                            -webkit-mask: radial-gradient(closest-side, #000 55%, transparent); mask: radial-gradient(closest-side, #000 55%, transparent); animation: spin 6s linear infinite; }
+  .tater-btn.evo6 svg { animation: infinite 6s linear infinite; }
+  .tater-btn.evo6::before { background: conic-gradient(from 0deg, #ff4fa8, #ffd45c, #7ed957, #50a0ff, #b07bff, #ff4fa8);
+                            -webkit-mask: radial-gradient(closest-side, #000 50%, transparent); mask: radial-gradient(closest-side, #000 50%, transparent); animation: spin 3s linear infinite; }
+  @keyframes infinite { from { filter: hue-rotate(0deg) saturate(1.5) brightness(1.1); } to { filter: hue-rotate(360deg) saturate(1.5) brightness(1.1); } }
+  .evocard .evotop { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; }
+  .evostage { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font: 400 1.5rem var(--slab); color: #2f2117; border: 2px solid var(--ink); background: radial-gradient(#fff6c8, #f4c542); }
+  .evoladder { display: flex; gap: 4px; margin: 10px 0 4px; }
+  .evoladder i { flex: 1; height: 8px; border-radius: 99px; background: var(--paper); border: 2px solid var(--ink); }
+  .evoladder i.on { background: linear-gradient(90deg, #7ed957, #f4c542); }
+  .evomodal { text-align: center; }
+  .evomodal .kick { font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .08em; font-size: .8rem; margin: 0; }
+  .evomodal h2 { font: 400 1.7rem var(--slab); margin: 4px 0 8px; }
+  .evomodal p { margin: 0 0 10px; }
+  /* Farm power-ups */
+  .pwrgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-top: 6px; }
+  .pwr { position: relative; display: grid; grid-template-columns: 30px 1fr; gap: 2px 8px; align-items: center; text-align: left; padding: 8px 10px; border-radius: 14px; border: 2px solid var(--ink); background: var(--paper); cursor: pointer; }
+  .pwr .ic { grid-row: span 2; font-size: 1.4rem; }
+  .pwr b { font-size: .86rem; line-height: 1.2; }
+  .pwr small { color: var(--ink-soft); font-size: .74rem; line-height: 1.25; }
+  .pwr .ct { position: absolute; top: -8px; right: -6px; min-width: 20px; padding: 0 5px; border-radius: 99px; background: var(--butter); border: 2px solid var(--ink); font-size: .7rem; font-weight: 800; text-align: center; }
+  .pwr.on { background: color-mix(in srgb, var(--butter) 40%, var(--paper)); box-shadow: 0 0 0 3px var(--butter); }
+  .pwr.poor { opacity: .55; }
+  /* Almanac */
+  .lore { border-top: 2px dashed var(--line); padding: 8px 2px; }
+  .lore:first-child { border-top: 0; }
+  .lore summary { font-weight: 700; cursor: pointer; }
+  .lore p { margin: 6px 0 2px; font-size: .9rem; line-height: 1.5; }
+  .lore.locked { color: var(--ink-soft); }
+  /* Cosmic sky extras */
+  .sreactor, .shole { position: absolute; width: 34px; height: 34px; border-radius: 50%; }
+  .sreactor { top: 16%; right: 5%; background: radial-gradient(#e8ffb0 0 20%, #7ed957 30%, transparent 62%); box-shadow: 0 0 16px #7ed957; animation: aura 1.4s ease-in-out infinite alternate; }
+  .shole { top: 16%; left: 22%; background: radial-gradient(#000 0 34%, #ffb02e 38%, rgba(255,120,30,.4) 50%, transparent 70%); box-shadow: 0 0 22px rgba(255,140,40,.6); animation: spin 4s linear infinite; }
+  .smoon { position: absolute; top: 4%; left: 40%; font-size: 1.4rem; filter: drop-shadow(0 0 6px #fff6c8); }
+  /* Quests */
+  .questcard { margin: 6px 0 4px; padding: 10px 12px; }
+  .qhead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .qhead small { color: var(--ink-soft); font-size: .78rem; font-weight: 600; }
+  .quest { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 6px 0; border-top: 2px dashed var(--line); }
+  .quest:first-child { border-top: 0; }
+  .quest b { font-size: .9rem; line-height: 1.25; }
+  .quest b em { font-style: normal; font-size: .68rem; font-weight: 800; letter-spacing: .06em; color: #fff; background: var(--blue); border-radius: 99px; padding: 1px 7px; margin-right: 5px; vertical-align: 2px; }
+  .quest small { color: var(--ink-soft); font-size: .76rem; }
+  .quest .qbar { grid-column: 1; height: 8px; border-radius: 99px; background: var(--paper); border: 2px solid var(--ink); overflow: hidden; }
+  .quest .qbar i { display: block; height: 100%; background: linear-gradient(90deg, #7ed957, #3f6b2a); }
+  .quest .btn { grid-row: 1 / span 3; grid-column: 2; padding: 5px 12px; font-size: .82rem; }
+  .quest.claimed { opacity: .55; }
+  .qbonus { margin-top: 6px; font-size: .8rem; font-weight: 600; color: var(--ink-soft); }
+  .qdot { position: absolute; top: 3px; right: 4px; width: 10px; height: 10px; border-radius: 50%; background: #3f9b2a; border: 2px solid var(--paper); }
   .root { position: absolute; z-index: 5; left: 3%; bottom: calc(37.5cqw - 34px); width: min(14vw, 56px); border: 0; padding: 0; background: none; cursor: pointer;
           filter: drop-shadow(0 0 10px rgba(155,127,212,.9)); animation: rootPulse 1.8s ease-in-out infinite; }
   .root svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -717,6 +797,7 @@
     .pet { animation-duration: 60s; } .walker { animation-duration: 25s; }
     .tool svg { animation: none; }
     .story .stage svg, .story .cap, .boss, .boss svg { animation: none !important; }
+    .tater-btn::before, .tater-btn.evo6 svg, .chaosbar.on, .scene.chaos::after, .sreactor, .shole { animation: none !important; }
     .power svg, .bat, .bat svg, .garland circle, .fheart { animation: none !important; }
     .leaf, .leaf svg, .snowfx, .stormfx, .campfire .fl { animation: none !important; }
     .ledger { transition: none; }
@@ -751,6 +832,9 @@
       <span class="bulb"><svg class="i" viewBox="0 0 24 24"><path d="M12 21c-4 0-6-3-6-6 0-4 4-6 4-10 3 2 4 5 4 7 1-1 1.5-2 1.5-3 2 2 2.5 4 2.5 6 0 3-2 6-6 6z"/></svg></span>
       <span class="tube"><i id="heatFill"></i></span>
       <small id="heatText">Fryer 250°F</small>
+    </div>
+    <div class="chaosbar" id="chaosBar" role="progressbar" aria-label="Chaos meter" aria-valuemin="0" aria-valuemax="100">
+      <span class="cbulb">🌀</span><span class="ctube"><i id="chaosFill"></i></span><small id="chaosText">Chaos 0%</small>
     </div>
 
     <div class="field" id="field">
@@ -915,7 +999,7 @@
     <div class="sheet-top">
     <button class="grabber" id="grabber" aria-label="Show menu" aria-expanded="false"><i></i></button>
     <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="shop" aria-selected="true" aria-label="Farm"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-6 9 6v9H3z"/><path d="M9 20v-6h6v6"/></svg><span class="lbl">Farm</span></button>
+      <button role="tab" data-tab="shop" aria-selected="true" aria-label="Farm"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-6 9 6v9H3z"/><path d="M9 20v-6h6v6"/></svg><i class="qdot" id="questDot" hidden></i><span class="lbl">Farm</span></button>
       <button role="tab" data-tab="upgrades" aria-selected="false" aria-label="Upgrades"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 5.5a4 4 0 0 0 4.9 4.9l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8a4 4 0 0 0-1.9-1.9z"/></svg><span class="lbl">Upgrades</span><span class="badge" id="upBadge" hidden></span></button>
       <button role="tab" data-tab="awards" aria-selected="false" aria-label="Ribbons"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M9 14l-1.5 7 2.5-1.5 2 1.5M15 14l1.5 7-2.5-1.5-2 1.5"/></svg><span class="lbl">Ribbons</span></button>
       <button role="tab" data-tab="ranks" aria-selected="false" aria-label="Ranks"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V13h5v7M9 20V8h6v12M15 20v-9h5v9M3 20h18"/></svg><span class="lbl">Ranks</span></button>
@@ -925,12 +1009,23 @@
     </div>
     <div class="sheet">
       <div class="panel" id="tab-shop" role="tabpanel">
+        <div class="card questcard" id="questCard"><div class="qhead"><h3>Quests</h3><small id="questReset"></small></div><div id="questList"></div></div>
         <div class="panel-head"><h2>Your farm</h2><div class="seg"><button data-qty="1" aria-pressed="true">Buy 1</button><button data-qty="10" aria-pressed="false">Buy 10</button></div></div>
         <div id="shopList"></div>
       </div>
 
       <div class="panel" id="tab-upgrades" role="tabpanel" hidden>
         <div class="panel-head"><h2>Upgrades</h2></div>
+        <div class="card evocard" id="evoCard">
+          <div class="evotop"><span class="evostage" id="evoStage"></span><div><h3 id="evoName"></h3><p class="note" id="evoBonus"></p></div></div>
+          <div class="evoladder" id="evoLadder"></div>
+          <p class="note" id="evoNext"></p>
+          <button class="btn go" id="evoBtn">Evolve</button>
+        </div>
+        <div class="card" id="pwrCard" hidden>
+          <h3>Farm power-ups</h3><p class="note">Use them any time. Golden taters sometimes drop one for free.</p>
+          <div class="pwrgrid" id="pwrGrid"></div>
+        </div>
         <div id="kitchen" hidden><p class="kicker">Kitchen</p><div id="kitchenRows"></div></div>
         <div class="card" id="ringCard" hidden>
           <h3>The One Starch</h3>
@@ -980,6 +1075,7 @@
         <p class="note" id="cloudStatus"></p>
         <div class="card" id="teamCard"><h3>Your team</h3><p class="note" id="teamText"></p><button class="btn" id="teamBtn">Choose a team</button></div>
         <div class="card" id="skinCard"><h3>Potato Skins</h3><p class="note" id="skinCount"></p><div id="skinSlots"></div></div>
+        <div class="card" id="loreCard"><h3>The Farmer’s Almanac</h3><p class="note" id="loreCount"></p><div id="loreList"></div></div>
         <div class="card"><h3>The story</h3><p class="note">How a starch comet became the Mother Spud, and why the four teams guard it.</p><button class="btn" id="storyBtn">Watch the story</button></div>
         <div class="fieldset"><label for="nameInput">Leaderboard name</label><input id="nameInput" maxlength="20" autocomplete="nickname"></div>
         <button class="btn" id="profileSave">Save profile</button>
@@ -1036,6 +1132,8 @@
             <button class="btn" data-pt="storm">Start a storm</button>
             <button class="btn" data-pt="holiday">Next holiday</button>
             <button class="btn" data-pt="raid">Start a practice raid</button>
+            <button class="btn" data-pt="chaos">Fill the Chaos meter</button>
+            <button class="btn" data-pt="evo">Grant evolution taters</button>
             <button class="btn" data-pt="power">Holiday power-up</button>
             <button class="btn" data-pt="rooster">Rooster</button>
             <button class="btn" data-pt="ghost">Ghost</button>
@@ -1058,6 +1156,9 @@
   </svg>
 </button>
 <div class="toasts" id="toasts" role="status"></div>
+<div class="modal" id="evoModal" hidden role="dialog" aria-label="Evolution">
+  <div class="modal-card evomodal"><p class="kick">The Mother Spud evolved!</p><h2 id="evoMTitle"></h2><p id="evoMLore"></p><p class="note" id="evoMBonus"></p><button class="btn go" id="evoMOk">Onward</button></div>
+</div>
 <div class="story" id="story" hidden role="dialog" aria-label="The story of Tater Tapper"></div>
 <div class="modal" id="teamPicker" hidden role="dialog" aria-label="Choose your team">
   <div class="modal-card"><h2>Choose your team</h2>
@@ -1180,6 +1281,10 @@ const BUILDINGS = [
   { id: 'spudnik',   name: 'Spudnik',           desc: 'A rocket that ships taters across the solar system.', base: 5.1e9, cps: 2.6e5 },
   { id: 'portal',    name: 'Time Portal',       desc: 'Pulls taters out of potato history.', base: 7.5e10, cps: 1.6e6 },
   { id: 'dragon',    name: 'Dragon Ranch',      desc: 'Tame dragons fry a whole field in one breath.', base: 1e12, cps: 1e7 },
+  { id: 'moonbase',  name: 'Spud Moon Base',    desc: 'The craters were full of mash all along.', base: 1.4e13, cps: 6.5e7 },
+  { id: 'reactor',   name: 'Starch Reactor',    desc: 'Splits starch molecules into pure tater power.', base: 2e14, cps: 4.3e8 },
+  { id: 'multiverse',name: 'Potato Multiverse', desc: 'Borrows taters from every universe where you planted one more.', base: 3.3e15, cps: 2.9e9 },
+  { id: 'singularity',name: 'Spud Singularity', desc: 'All potatoes, everywhere, all at once.', base: 5e16, cps: 2.1e10 },
 ];
 const TIERS = [
   { own: 1,  cost: 10,   label: 'Tune-up' },
@@ -1228,6 +1333,16 @@ UPGRADES.push(
 UPGRADES.push(
   { id: 'growlights', icon: 'sun',  name: 'Grow Lights', desc: 'No more slow nights: crops grow 25% faster at night instead of 25% slower.', cost: 7.5e4, unlock: () => !!(state.phasesSeen || {}).night },
   { id: 'firejar',    icon: 'jar',  name: 'Firefly Jar', desc: 'Fireflies are worth 5× more, and an extra one comes out each evening.', cost: 2.5e5, unlock: () => (state.fireflies || 0) >= 10 },
+);
+UPGRADES.push(
+  { id: 'chaos1', icon: 'chaos', name: 'Chaos Theory', desc: 'The Chaos meter fills 50% faster.', cost: 5e6, unlock: () => (state.chaosCount || 0) >= 1 },
+  { id: 'chaos2', icon: 'chaos', name: 'Butterfly Effect', desc: 'Chaos modes last twice as long.', cost: 5e9, unlock: () => (state.chaosCount || 0) >= 5 },
+  { id: 'evo1', icon: 'evo', name: 'Selective Breeding', desc: 'Each evolution gives 1.75× growth instead of 1.5×.', cost: 1e10, unlock: () => (state.evo || 0) >= 2 },
+  { id: 'evo2', icon: 'evo', name: 'Genetic Spud-ifier', desc: 'Evolving costs half as many taters.', cost: 1e13, unlock: () => (state.evo || 0) >= 3 },
+  { id: 'pwr1', icon: 'power', name: 'Bigger Thermos', desc: 'Farmer’s Coffee and Rain Dance last twice as long.', cost: 2e6, unlock: () => (state.powerUsed || 0) >= 3 },
+  { id: 'pwr2', icon: 'power', name: 'Bulk Buying', desc: 'Farm power-ups cost 40% less.', cost: 2e9, unlock: () => (state.powerUsed || 0) >= 15 },
+  { id: 'multi1', icon: 'multiverse', name: 'Infinite Interns', desc: 'An intern from every universe: everything grows 25% faster.', cost: 5e16, unlock: () => owned('multiverse') >= 1 },
+  { id: 'sing1', icon: 'singularity', name: 'Event Horizon', desc: 'Each tap also adds 5% of your taters per second.', cost: 1e18, unlock: () => owned('singularity') >= 1 },
 );
 BUILDINGS.forEach(b => TIERS.forEach((t, i) => UPGRADES.push({
   id: `${b.id}_${i}`, icon: b.id, name: `${b.name} ${t.label}`, desc: `Doubles what each ${b.name} makes.`,
@@ -1442,6 +1557,10 @@ const FARM_RIBBONS = {
   spudnik:   [[10, 'Mission control'], [25, 'Space program'], [100, 'Orbital farm']],
   portal:    [[10, 'Time farmer'], [25, 'History buff'], [100, 'Every potato, ever']],
   dragon:    [[10, 'Dragon herd'], [25, 'Dragon drive'], [100, 'Dragon empire']],
+  moonbase:  [[1, 'One small step'], [10, 'Lunar co-op'], [25, 'Moon mash mogul'], [100, 'Dark side of the spud']],
+  reactor:   [[1, 'Critical mash'], [10, 'Power plant'], [25, 'Meltdown-proof'], [100, 'Starch sun']],
+  multiverse:[[1, 'Hello, other me'], [10, 'Infinite farms'], [25, 'Every possible potato'], [100, 'The spud-verse']],
+  singularity:[[1, 'Event horizon'], [10, 'Gravity well'], [25, 'Spaghettified'], [100, 'All is potato']],
 };
 Object.entries(FARM_RIBBONS).forEach(([id, list]) => list.forEach(([n, name]) => {
   const b = BUILDINGS.find(x => x.id === id);
@@ -1564,6 +1683,41 @@ addAch('day25k', 'Tap-a-thon', 'Tap 25,000 times in one day.', () => (state.best
 addAch('play1000h', 'Spud immortal', 'Play for 1,000 hours in all.', () => (state.playSeconds || 0) >= 1000 * 3600);
 addAch('session240', 'Ultramarathon', 'Play for 4 hours without closing the app.', () => (live.sessionSecs || 0) >= 4 * 3600);
 addAch('story3', 'Lore master', 'Watch the whole story 3 times.', () => (state.storyViews || 0) >= 3);
+// Evolutions
+[['Sprouted', 1], ['Titan tamer', 2], ['Heart of gold', 3], ['Starstruck', 4], ['Ascended', 5], ['Infinite', 6]]
+  .forEach(([name, n]) => addAch('evolve' + n, name, `Evolve the Mother Spud ${n} time${n > 1 ? 's' : ''}.`, () => (state.evo || 0) >= n));
+// Chaos
+addAch('chaos_1', 'Agent of chaos', 'Fill the Chaos meter and unleash Chaos.', () => (state.chaosCount || 0) >= 1);
+addAch('chaos_10', 'Chaos regular', 'Unleash Chaos 10 times.', () => (state.chaosCount || 0) >= 10);
+addAch('chaos_50', 'Chaos incarnate', 'Unleash Chaos 50 times.', () => (state.chaosCount || 0) >= 50);
+addAch('chaos_all', 'Seen it all', 'Live through every one of the 8 Chaos modes.', () => Object.keys(state.chaosSeen || {}).length >= 8);
+// Farm power-ups
+addAch('pwr_1', 'Powered up', 'Use a farm power-up.', () => (state.powerUsed || 0) >= 1);
+addAch('pwr_25', 'Caffeinated', 'Use 25 farm power-ups.', () => (state.powerUsed || 0) >= 25);
+addAch('pwr_100', 'Overclocked', 'Use 100 farm power-ups.', () => (state.powerUsed || 0) >= 100);
+addAch('pwr_all', 'Full toolbox', 'Use every kind of farm power-up.', () => Object.keys(state.powerKinds || {}).length >= 5);
+// The Almanac
+addAch('lore_8', 'Bookworm', 'Find 8 Almanac pages.', () => (state.lore || []).length >= 8);
+addAch('lore_all', 'Keeper of the Almanac', 'Find every Almanac page.', () => (state.lore || []).length >= LORE.length);
+// Bigger numbers
+[[1e13, 'Spud superpower'], [1e16, 'Cosmic crop'], [1e19, 'Starch eternal'], [1e22, 'Beyond counting']]
+  .forEach(([n, name]) => addAch('grow' + n, name, `Grow ${fmt(n)} taters all-time.`, () => state.allTime >= n));
+[[1e7, 'Tater tycoon'], [1e10, 'Planetary harvest'], [1e13, 'Galactic granary']]
+  .forEach(([n, name]) => addAch('cps' + n, name, `Grow ${fmt(n)} taters per second.`, () => baseCps() >= n));
+addAch('own500', 'Megafarm', 'Own 500 buildings.', () => totalOwned() >= 500);
+addAch('own1000', 'Planet farm', 'Own 1,000 buildings.', () => totalOwned() >= 1000);
+addAch('cosmic', 'Cosmic lineup', 'Own a Moon Base, Reactor, Multiverse and Singularity together.', () => ['moonbase', 'reactor', 'multiverse', 'singularity'].every(id => owned(id) > 0));
+addSecret('egg_chaosraid', 'Double trouble', 'Unleash Chaos while a raid boss is up.', eggFound('chaosraid'));
+addSecret('egg_evomidnight', 'Witching-hour sprout', 'Evolve the Mother Spud between midnight and 1 AM.', eggFound('evomidnight'));
+addAch('quest_1', 'Odd jobs', 'Finish a quest.', () => (state.questsDone || 0) >= 1);
+addAch('quest_25', 'Hired hand', 'Finish 25 quests.', () => (state.questsDone || 0) >= 25);
+addAch('quest_100', 'Farm foreman', 'Finish 100 quests.', () => (state.questsDone || 0) >= 100);
+addAch('quest_day', 'Full day’s work', 'Finish all 3 daily quests in one day.', () => (state.questFullDays || 0) >= 1);
+addAch('quest_day7', 'Week of hard work', 'Finish all 3 daily quests on 7 different days.', () => (state.questFullDays || 0) >= 7);
+addAch('quest_week', 'Week’s work', 'Finish a weekly quest.', () => (state.weekliesDone || 0) >= 1);
+addAch('quest_week10', 'Season’s work', 'Finish 10 weekly quests.', () => (state.weekliesDone || 0) >= 10);
+addSecret('egg_questchaos', 'Multitasker', 'Claim a quest while Chaos is running.', eggFound('questchaos'));
+addSecret('egg_allin', 'All in', 'Have Farmer’s Coffee, Rain Dance and a Chaos mode running at the same time.', eggFound('allin'));
 // Potato Skins and the story
 addAch('skins5', 'Dress-up', 'Unlock 5 Potato Skins.', () => (state.skinsUnlocked || []).length >= 5);
 addAch('skins15', 'Wardrobe', 'Unlock 15 Potato Skins.', () => (state.skinsUnlocked || []).length >= 15);
@@ -1582,6 +1736,10 @@ addSecret('egg_fastday', 'Time flies', 'Turn on fast days.', eggFound('fastday')
    Icons (24×24 line drawings) and ribbons
    ===================================================================== */
 const ICON = {
+  moonbase:  '<circle cx="12" cy="14" r="7"/><path d="M7 12a5 4 0 0 1 10 0z"/><path d="M12 8V3h4l-1 1 1 1h-4"/>',
+  reactor:   '<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(-60 12 12)"/>',
+  multiverse:'<ellipse cx="9" cy="13" rx="6" ry="4.5"/><ellipse cx="15" cy="10" rx="6" ry="4.5" stroke-dasharray="2 2"/>',
+  singularity:'<circle cx="12" cy="12" r="3.5"/><path d="M12 3a9 9 0 0 1 9 9M12 21a9 9 0 0 1-9-9"/>',
   hoe:       '<path d="M5 19L15 9"/><path d="M13 7h7v3.5c-2.5 0-4.5-1-7-3.5z"/>',
   patch:     '<path d="M3 20h18"/><path d="M6 20v-5c-2 0-3-1.5-3-3.5 2 0 3 1.5 3 3.5 0-2 1-3.5 3-3.5 0 2-1 3.5-3 3.5"/><path d="M15 20v-6c-2 0-3-1.5-3-3.5 2 0 3 1.5 3 3.5 0-2 1-3.5 3-3.5 0 2-1 3.5-3 3.5"/>',
   stand:     '<path d="M3 10h18l-2-5H5z"/><path d="M3 10c0 1.5 1.5 2.5 3 2.5S9 11.5 9 10c0 1.5 1.5 2.5 3 2.5s3-1 3-2.5c0 1.5 1.5 2.5 3 2.5s3-1 3-2.5"/><path d="M5 12.5V20M19 12.5V20M4 20h16M8 20v-4h8v4"/>',
@@ -1624,6 +1782,14 @@ const ICON = {
 const SYM_ART = { hoe: ['hoe', 16, 40], patch: ['sprout', 20, 20], stand: ['stand', 60, 52], tractor: ['tractor', 60, 42],
   farm: ['barn', 70, 56], harvester: ['harvester', 80, 46], fryline: ['factory', 70, 60] };
 const ART = {
+  moonbase: '<circle cx="24" cy="28" r="17" fill="url(#gl-metal)" stroke="#6c757b" stroke-width=".8"/><circle cx="16" cy="24" r="3" fill="#b8c1c7"/><circle cx="31" cy="34" r="2.4" fill="#b8c1c7"/><path d="M12 22a12 10 0 0 1 24 0z" fill="rgba(160,215,255,.75)" stroke="#2f2117" stroke-width="1.6"/><ellipse cx="22" cy="20" rx="5" ry="3.5" fill="url(#gl-spud)"/><path d="M24 12V4" stroke="#2f2117" stroke-width="1.6"/><path d="M24 4h8l-2 2.5 2 2.5h-8z" fill="url(#gl-red)"/>',
+  reactor: '<circle cx="24" cy="25" r="18" fill="#1a2a3a"/><circle cx="24" cy="25" r="18" fill="none" stroke="#7ed957" stroke-width="2"/><g fill="none" stroke="#8cf0ff" stroke-width="2"><ellipse cx="24" cy="25" rx="15" ry="5.5"/><ellipse cx="24" cy="25" rx="15" ry="5.5" transform="rotate(60 24 25)"/><ellipse cx="24" cy="25" rx="15" ry="5.5" transform="rotate(-60 24 25)"/></g><ellipse cx="24" cy="25" rx="6" ry="4.6" fill="url(#gl-spud)"/><circle cx="24" cy="25" r="9" fill="#b8ff4a" opacity=".25"/>',
+  multiverse: '<g opacity=".45"><ellipse cx="14" cy="18" rx="10" ry="7.5" fill="url(#gl-purple)"/><ellipse cx="35" cy="16" rx="9" ry="7" fill="#3b8ed0"/></g><g opacity=".7"><ellipse cx="34" cy="34" rx="10" ry="7.5" fill="#5cb85c"/></g><ellipse cx="22" cy="29" rx="13" ry="10" fill="url(#gl-spud)" stroke="#2f2117" stroke-width="1.6"/><g fill="#6e4520"><ellipse cx="17" cy="27" rx="2" ry="1.3"/><ellipse cx="27" cy="31" rx="2" ry="1.3"/></g><path d="M4 42q20-8 40 0" fill="none" stroke="#b9a3ff" stroke-width="1.8" stroke-dasharray="3 3"/>',
+  singularity: '<circle cx="24" cy="24" r="21" fill="url(#gl-portal)"/><circle cx="24" cy="24" r="21" fill="#120a24" opacity=".55"/><g fill="none" stroke="#ffb02e" stroke-width="2.2" stroke-linecap="round"><path d="M24 6a18 18 0 0 1 17 12"/><path d="M42 30a18 18 0 0 1-14 12"/><path d="M8 34A18 18 0 0 1 6 20"/></g><circle cx="24" cy="24" r="8.5" fill="#000"/><circle cx="24" cy="24" r="8.5" fill="none" stroke="#fff3c0" stroke-width="1.4"/><ellipse cx="33" cy="15" rx="3.2" ry="2.4" fill="url(#gl-spud)" transform="rotate(30 33 15)"/>',
+  evo: '<path d="M24 44c-9 0-15-6-15-14 0-10 7-15 15-15s15 5 15 15c0 8-6 14-15 14z" fill="url(#gl-spud)" stroke="#2f2117" stroke-width="1.6"/><path d="M24 15c0-6 3-10 8-12-1 5-4 9-8 12z" fill="url(#gl-leaf)"/><path d="M24 15c0-5-3-8-7-9 1 4 3 7 7 9z" fill="url(#gl-leaf)"/><path d="M8 20l-4-3M40 20l4-3M6 32H1M42 32h5" stroke="#f4c542" stroke-width="2.4" stroke-linecap="round"/>',
+  chaos: '<circle cx="24" cy="24" r="19" fill="#2a1040"/><path d="M24 7c9 0 16 7 16 16-7 0-11-5-11-11-6 2-9 7-8 13 1 5 6 8 10 7-3 5-12 7-18 2S6 18 13 11c3-3 7-4 11-4z" fill="url(#gl-purple)"/><circle cx="24" cy="24" r="3" fill="#ffd45c"/><path d="M38 8l3-4M9 40l-4 3M40 38l4 3" stroke="#ff5c3a" stroke-width="2.2" stroke-linecap="round"/>',
+  power: '<path d="M28 3 12 27h10l-4 18 18-26H26z" fill="url(#gl-yellow)" stroke="#2f2117" stroke-width="1.6" stroke-linejoin="round"/><circle cx="36" cy="36" r="7" fill="url(#gl-red)"/><path d="M33 36h6M36 33v6" stroke="#fff" stroke-width="2"/>',
+  book: '<path d="M6 10c6-3 12-3 18 1v31c-6-4-12-4-18-1z" fill="url(#gl-red)" stroke="#2f2117" stroke-width="1.4"/><path d="M42 10c-6-3-12-3-18 1v31c6-4 12-4 18-1z" fill="#c8372d" stroke="#2f2117" stroke-width="1.4"/><path d="M9 14c4-2 8-2 12 0v26c-4-2-8-2-12 0z" fill="#fff6e2"/><path d="M39 14c-4-2-8-2-12 0v26c4-2 8-2 12 0z" fill="#fff6e2"/><ellipse cx="15" cy="25" rx="4" ry="3" fill="url(#gl-spud)"/><path d="M29 20h7M29 24h7M29 28h5" stroke="#8a6a3a" stroke-width="1.2"/>',
   mars: '<circle cx="24" cy="27" r="16" fill="url(#gl-orange)"/><circle cx="18" cy="31" r="3" fill="#9e3b22" opacity=".6"/><circle cx="31" cy="34" r="2.2" fill="#9e3b22" opacity=".6"/><path d="M14 14a10 10 0 0 1 20 0z" fill="url(#gl-glass)" opacity=".85"/><path d="M24 14v-5" stroke="#3c7628" stroke-width="2"/><path d="M24 10c-3 0-4-2-4-4 3 0 4 2 4 4 0-2 1-4 4-4 0 2-1 4-4 4z" fill="url(#gl-leaf)"/>',
   spudnik: '<path d="M18 36 Q24 47 30 36Z" fill="url(#gl-flame)"/><path d="M24 4C31 11 32 23 30 35H18C16 23 17 11 24 4Z" fill="url(#gl-white)"/><path d="M18 26 12 36h6zM30 26l6 10h-6z" fill="url(#gl-red)"/><circle cx="24" cy="17" r="3.6" fill="url(#gl-glass)" stroke="#7c868d" stroke-width="1"/>',
   portal: '<circle cx="24" cy="24" r="19" fill="url(#gl-portal)"/><path d="M24 10a14 14 0 1 1-13 9M24 16a8 8 0 1 1-7 5" fill="none" stroke="#e6d8ff" stroke-width="2" opacity=".8" stroke-linecap="round"/>',
@@ -1795,7 +1961,7 @@ function freshState() {
     seasons: {}, weekdays: {}, leaves: 0, petals: 0, bolts: 0, camp: 0, lunchTaps: 0, marketBuys: 0, rainbows: 0, streak: { last: '', count: 0, best: 0 },
     holidays: {}, powers: {}, baskets: 0, spent: 0, playSeconds: 0,
     spudTeam: '', teamChangedAt: 0, raidHits: 0, raidsWon: 0, raidCrowns: 0, raidLog: {}, raidDone: {}, bossesBeaten: {}, localRaid: null,
-    skinsUnlocked: ['buttons'], skin: {}, raidItems: {}, raidPowerUsed: 0, raidCrates: 0, seenStory: false, daysPlayed: 0, bestDayTaps: 0, teamTapsSent: 0 };
+    skinsUnlocked: ['buttons'], skin: {}, raidItems: {}, raidPowerUsed: 0, raidCrates: 0, seenStory: false, evo: 0, chaos: 0, chaosCount: 0, chaosSeen: {}, powerInv: {}, powerUsed: 0, powerKinds: {}, lore: [], quests: null, questsDone: 0, questFullDays: 0, weekliesDone: 0, bought: 0, daysPlayed: 0, bestDayTaps: 0, teamTapsSent: 0 };
 }
 function loadState() {
   let s = null;
@@ -1821,12 +1987,12 @@ const cps = () => baseCps() * (Date.now() < live.frenzyUntil ? 7 : 1) * pestMult
 const fidgetMult = () => has('bt1') ? 3 : 2;
 function clickValue(allowHot = true) {
   let v = ['tool1', 'tool2', 'tool3', 'tool4'].reduce((m, id) => has(id) ? m * 2 : m, 1) * globalMult()
-    * (1 + 0.1 * kitLevel('pot')) * (has('potatocam') && state.settings.lowres ? 1.1 : 1) * (state.spudTeam === 'red' ? 1.1 : 1);
-  v += cps() * ((has('grip1') ? 0.01 : 0) + (has('grip2') ? 0.02 : 0));
+    * (1 + 0.1 * kitLevel('pot')) * (has('potatocam') && state.settings.lowres ? 1.1 : 1) * (state.spudTeam === 'red' ? 1.1 : 1) * evoTapMult() * powerTapMult() * chaosTapMult();
+  v += cps() * ((has('grip1') ? 0.01 : 0) + (has('grip2') ? 0.02 : 0) + (has('sing1') ? 0.05 : 0));
   if (allowHot && isHot()) v *= has('heat2') ? 5 : 3;
   return v;
 }
-function costOf(b, n = 1) { const r = 1.17; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1) * (nightMarket() ? 0.9 : 1); }   // each one costs 17% more than the last
+function costOf(b, n = 1) { const r = 1.17; return b.base * Math.pow(r, owned(b.id)) * (Math.pow(r, n) - 1) / (r - 1) * (nightMarket() ? 0.9 : 1) * (chaosMode() === 'sale' ? 0.5 : 1); }   // each one costs 17% more than the last
 function grow(n) { state.taters += n; state.run += n; state.allTime += n; }
 const seedGain = () => Math.floor(Math.cbrt(state.run / 1e6));
 
@@ -1855,7 +2021,7 @@ function doClick(count, { fidget = false, isLive = true, x, y } = {}) {
   const gain = clickValue(isLive) * (fidget ? fidgetMult() : 1) * count * (isLive && Date.now() < (live.nadoUntil || 0) ? 2 : 1) * (isLive && fullMoonNight() ? 1.5 : 1) * monday * (isLive && Date.now() < (live.sugarUntil || 0) ? 3 : 1);
   grow(gain);
   if (fidget) state.fidgetClicks += count; else state.clicks += count;
-  if (isLive) addHeat(3 * Math.min(count, 10));
+  if (isLive) { addHeat(3 * Math.min(count, 10)); addChaos(0.08 * Math.min(count, 20)); }
   if (isLive) { noteTap(fidget, count); if (fidget) { fidgetHitThreat(count); raidHit(count, true); } }
   if (isLive) haptic('tap');
   popText('+' + fmt(gain), x, y, fidget);
@@ -1882,6 +2048,7 @@ function buy(b) {
   state.taters -= c;
   state.spent = (state.spent || 0) + c;
   state.buildings[b.id] = owned(b.id) + live.buyQty;
+  state.bought = (state.bought || 0) + live.buyQty;
   if (nightMarket()) state.marketBuys = (state.marketBuys || 0) + 1;
   if (state.taters < 1 && c >= 1000) egg('small', 'Small potatoes. You spent every last tater.');
   save(); renderLive(); renderLists();
@@ -1893,6 +2060,7 @@ function buyUpgrade(u) {
   state.taters -= u.cost;
   state.spent = (state.spent || 0) + u.cost;
   state.upgrades.push(u.id);
+  state.upBought = (state.upBought || 0) + 1;
   if (state.taters < 1 && u.cost >= 1000) egg('small', 'Small potatoes. You spent every last tater.');
   save(); renderLive(); renderLists(true);
 }
@@ -1922,6 +2090,8 @@ function luckyTick() {
   }
 }
 $('lucky').addEventListener('click', () => {
+  addChaos(10);
+  if (Math.random() < 0.25) setTimeout(() => givePower(POWERUPS.at(Math.floor(Math.random() * POWERUPS.length)), 'The golden tater dropped'), 600);
   $('lucky').hidden = true;
   if (new Date().getDay() === 2) egg('tottuesday', 'A golden tater tot! Happy Tot Tuesday');
   state.goldenTaters++;
@@ -2200,6 +2370,9 @@ tabs.forEach(t => t.addEventListener('click', () => {
   document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
   if (t.dataset.tab === 'me') { renderMe(); renderSkinPanel(); renderTeamUI(); }
   if (t.dataset.tab === 'ranks') renderTeamUI();
+  if (t.dataset.tab === 'me') renderLore();
+  if (t.dataset.tab === 'upgrades') { renderEvo(true); renderPowers(true); }
+  if (t.dataset.tab === 'shop') renderQuests(true);
   if (t.dataset.tab === 'raid') { $('bossList').replaceChildren(); renderRaid(); }
 }));
 const showTab = name => tabs.find(t => t.dataset.tab === name).click();
@@ -2437,6 +2610,8 @@ document.querySelectorAll('[data-pt]').forEach(b => b.addEventListener('click', 
   if (act === 'phase') { const order = [6, 12, 15.5, 17.1, 18, 20.5, 23.5, 3.1]; const cur = order.indexOf(live.hourOverride); live.hourOverride = order[(cur + 1) % order.length]; dayTick(); }
   if (act === 'season') { const order = ['spring', 'summer', 'fall', 'winter']; live.seasonOverride = order[(order.indexOf(seasonNow()) + 1) % 4]; toast('Season: ' + live.seasonOverride); dayTick(); }
   if (act === 'weekday') { live.dowOverride = (weekday() + 1) % 7; toast(WEEKDAY_SPECIAL[live.dowOverride]); dayTick(); }
+  if (act === 'chaos') { state.chaos = 100; chaosTick(); }
+  if (act === 'evo') { const nx = EVOS.at((state.evo || 0) + 1); if (nx) { state.allTime = Math.max(state.allTime, nx.need); grow(evoCost(nx)); } }
   if (act === 'raid') { live.raidOverride = { id: 'practice' + Date.now(), start: Date.now(), end: Date.now() + 15 * 60000, practice: true }; raidTick(); }
   if (act === 'holiday') { const order = [...HOLIDAY_ORDER, '']; live.holidayOverride = order[(order.indexOf(holidayNow()) + 1) % order.length]; toast(live.holidayOverride ? HOLIDAY_NAME[live.holidayOverride] : 'No holiday'); state.day.holiday = ''; dayTick(); }
   if (act === 'power') { const k = HOLIDAY_POWER[holidayNow()]; if (k) spawnPower(k); else toast('Pick a holiday first with Next holiday'); }
@@ -2623,7 +2798,8 @@ function hitUnit(unit, dmg) {
   unit.el.classList.remove('hit'); void unit.el.offsetWidth; unit.el.classList.add('hit');
   if (unit.hp <= 0) {
     state.pests[PEST_KEY[a.type]] = (state.pests[PEST_KEY[a.type]] || 0) + 1;
-    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward) * (1 + 0.2 * kitLevel('cauldron')) * (state.spudTeam === 'purple' ? 1.25 : 1);
+    const bonus = Math.max(5, baseCps() * PESTS[a.type].reward) * (1 + 0.2 * kitLevel('cauldron')) * (state.spudTeam === 'purple' ? 1.25 : 1) * (chaosMode() === 'stampede' ? 5 : 1);
+    addChaos(6);
     grow(bonus);
     const fr = $('field').getBoundingClientRect(), er = unit.el.getBoundingClientRect();
     popText('+' + fmt(bonus), er.left - fr.left + er.width / 2 - 20, er.top - fr.top - 10, true);
@@ -2759,12 +2935,16 @@ const DINO = `<svg viewBox="0 0 64 48"><path d="M4 30 C10 22 22 18 34 20 C40 10 
 let skyKey = '';
 function renderSky() {
   const rockets = Math.min(owned('spudnik'), 2), portals = owned('portal'), pets = Math.min(owned('dragon'), 1);
-  const key = [rockets, portals, pets].join();
+  const cosmic = [owned('moonbase') > 0, owned('reactor') > 0, owned('singularity') > 0];
+  const key = [rockets, portals, pets, ...cosmic].join();
   if (key === skyKey) return;
   skyKey = key;
   let html = '';
   for (let i = 0; i < rockets; i++) html += `<button class="rocket" aria-label="Spudnik rocket" style="left:${[91, 2][i]}%;animation-delay:${(-i * 4.7).toFixed(1)}s">${ROCKET}</button>`;
   if (portals) html += `<div class="pbld" aria-hidden="true"><i></i>${portals > 1 ? `<b>×${portals}</b>` : ''}</div>`;
+  if (cosmic[0]) html += '<span class="smoon" aria-hidden="true">🌙</span>';
+  if (cosmic[1]) html += '<span class="sreactor" aria-hidden="true"></span>';
+  if (cosmic[2]) html += '<span class="shole" aria-hidden="true"></span>';
   for (let i = 0; i < pets; i++) html += `<button class="pet" aria-label="Your pet dragon" style="animation-delay:${-i * 9}s">${PET}</button>`;
   $('sky').innerHTML = html;
   $('sky').querySelectorAll('.rocket').forEach(b => b.addEventListener('pointerdown', () => egg('spudnik', 'Houston, we have a potato.')));
@@ -3184,7 +3364,7 @@ fillFeel();
 /* ---------- Kitchen, Risky Root, cursed rings and other pop culture ---------- */
 const kitLevel = id => (state.kitchen && state.kitchen[id]) || 0;
 function extraMult() {
-  return streakBonus() * (state.spudTeam === 'russet' ? 1.05 : 1) * (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
+  return streakBonus() * evoMult() * powerGrowMult() * chaosGrowMult() * (has('multi1') ? 1.25 : 1) * (state.spudTeam === 'russet' ? 1.05 : 1) * (has('aibattery') ? 1.1 : 1) * (1 + 0.04 * kitLevel('press')) * (has('onestarch') ? 3 : 1);
 }
 const couchActive = () => has('couch') && !document.hidden && Date.now() - lastTapAt > 10000;
 const doomLevel = () => has('onestarch') ? Math.min(1, (state.ringTime || 0) / 1800) : 0;   // full lava after 30 minutes of play
@@ -3965,7 +4145,7 @@ function holidayTick(day) {
 // and the arrow opens the full list.
 function signItems() {
   const h = holidayNow(), st = state.streak || {};
-  const items = [raidSignLine(), phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
+  const items = [...chaosSignLines(), raidSignLine(), phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
   if (h) items.push(HOLIDAY_NAME[h]);
   if (streakBonus() > 1) items.push(`Day ${st.count} streak: +${Math.round((streakBonus() - 1) * 100)}% to everything`);
   return [...(live.buffList || []), ...items];
@@ -4544,6 +4724,347 @@ function endStory(skipped) {
 $('story').addEventListener('click', () => { if (storyStep < STORY.length - 1) showStory(storyStep + 1); });
 $('storyBtn').addEventListener('click', () => showStory(0));
 
+/* ---------- Evolutions, Chaos, farm power-ups and the Almanac ---------- */
+const EVOS = [
+  { name: 'Seed Spud', need: 0, lore: 'A single glowing seed potato from the starch comet. It hums when you tap it.' },
+  { name: 'Sprout Spud', need: 1e6, lore: 'Roots burst through the field in every direction. The Mother Spud has found its footing, and its leaves turn toward you when you walk by.' },
+  { name: 'Russet Titan', need: 1e9, lore: 'Its skin hardens like cast iron and its eyes open wide. Gophers who tunnel too close come back out the other side very, very quickly.' },
+  { name: 'Golden Tuber', need: 1e12, lore: 'The comet’s starch rises to the surface and the Mother Spud glows like a harvest sun. Team Yukon Gold say they predicted this. They did not.' },
+  { name: 'Cosmic Spud', need: 1e15, lore: 'It starts pulling stars toward it. Astronomers file reports about “a large potato-shaped gravitational event.” The Purple Majesty mystics say it is remembering where it came from.' },
+  { name: 'Starch Ascendant', need: 1e18, lore: 'The rot can’t reach it anymore. Every raid boss that rises now trembles a little first. The Mother Spud speaks for the first time. It says one word: “Tap.”' },
+  { name: 'The Infinite Potato', need: 1e21, lore: 'It is every potato in every universe at once. It is the comet, the seed, the farm, and you. Somewhere, a farmer with a garden hoe looks up and smiles.' },
+];
+const evoStep = () => has('evo1') ? 1.75 : 1.5;
+const evoMult = () => Math.pow(evoStep(), state.evo || 0);
+const evoTapMult = () => 1 + 0.5 * (state.evo || 0);
+const evoCost = e => e.need * 0.25 * (has('evo2') ? 0.5 : 1);
+function evolve() {
+  const nx = EVOS.at((state.evo || 0) + 1);
+  if (!nx) return;
+  if (state.allTime < nx.need) { toast(`The Mother Spud needs ${fmt(nx.need)} all-time taters to evolve.`); return; }
+  const cost = evoCost(nx);
+  if (state.taters < cost) { toast(`Evolving costs ${fmt(cost)} taters.`); return; }
+  state.taters -= cost; state.spent = (state.spent || 0) + cost;
+  state.evo = (state.evo || 0) + 1;
+  const h = new Date().getHours(); if (h === 0) egg('evomidnight', 'Evolved at the stroke of midnight!');
+  const fx = document.querySelector('.flashfx'); if (fx) { fx.classList.remove('go'); void fx.offsetWidth; fx.classList.add('go'); }
+  sfx.win(); setTimeout(() => sfx.gold(), 450); haptic('win');
+  $('evoMTitle').textContent = nx.name;
+  $('evoMLore').textContent = nx.lore;
+  $('evoMBonus').textContent = `Everything grows ${fmt(evoMult())}× as fast, and taps are ${evoTapMult().toFixed(1).replace(/\.0$/, '')}× stronger.`;
+  $('evoModal').hidden = false;
+  save(); renderEvo(true); renderLists(true);
+}
+$('evoBtn').addEventListener('click', evolve);
+$('evoMOk').addEventListener('click', () => { $('evoModal').hidden = true; });
+let evoKey = '';
+function renderEvo(force) {
+  const st = state.evo || 0, cur = EVOS.at(st), nx = EVOS.at(st + 1);
+  const t = $('tater');
+  for (let i = 1; i <= 6; i++) t.classList.toggle('evo' + i, st === i);
+  const key = [st, nx && state.allTime >= nx.need, nx && state.taters >= evoCost(nx), has('evo1'), has('evo2')].join();
+  if (!force && key === evoKey) return;
+  evoKey = key;
+  $('evoStage').textContent = st + 1;
+  $('evoName').textContent = `Mother Spud: ${cur.name}`;
+  $('evoBonus').textContent = st ? `Evolution bonus: everything ×${fmt(evoMult())}, taps ×${evoTapMult().toFixed(1).replace(/\.0$/, '')}` : 'Evolve the Mother Spud for permanent bonuses that last through replants.';
+  $('evoLadder').innerHTML = EVOS.slice(1).map((_, i) => `<i class="${i < st ? 'on' : ''}"></i>`).join('');
+  const btn = $('evoBtn');
+  if (!nx) { $('evoNext').textContent = 'Fully evolved. There is nothing left to become.'; btn.hidden = true; return; }
+  btn.hidden = false;
+  const ready = state.allTime >= nx.need;
+  $('evoNext').textContent = ready ? `Next: ${nx.name}. Costs ${fmt(evoCost(nx))} taters.` : `Next: ${nx.name}, once you’ve grown ${fmt(nx.need)} taters all-time (${fmt(state.allTime)} so far).`;
+  btn.disabled = !ready || state.taters < evoCost(nx);
+  btn.textContent = ready ? `Evolve into ${nx.name}` : 'Not ready yet';
+}
+
+// ---- CHAOS: fill the meter and the farm goes wild for 30 seconds ----
+const CHAOS_MODES = {
+  frenzy:   { name: 'Tap Frenzy', desc: 'Taps are 7× stronger' },
+  gravity:  { name: 'Gravity Storm', desc: 'The world flips and everything grows 4× faster' },
+  stampede: { name: 'Pest Stampede', desc: 'Pests pour in, and each one is worth 5×' },
+  goldrush: { name: 'Gold Rush', desc: 'Golden taters keep appearing' },
+  tsunami:  { name: 'Tater Tsunami', desc: 'It rains taters, and everything grows 2× faster' },
+  nado:     { name: 'Spudnado Swarm', desc: 'Spudnados tear through, and taps are 3× stronger' },
+  sale:     { name: 'Fire Sale', desc: 'Every building costs half price' },
+  clones:   { name: 'Clone Army', desc: 'Your clones help: taps and growth are both doubled' },
+};
+const CHAOS_IDS = Object.keys(CHAOS_MODES);
+const chaosMode = () => Date.now() < (live.chaosUntil || 0) ? live.chaosMode : '';
+const chaosGrowMult = () => ({ gravity: 4, tsunami: 2, clones: 2 })[chaosMode()] || 1;
+const chaosTapMult = () => ({ frenzy: 7, nado: 3, clones: 2 })[chaosMode()] || 1;
+function addChaos(n) {
+  if (chaosMode()) return;
+  state.chaos = Math.min(100, (state.chaos || 0) + n * (has('chaos1') ? 1.5 : 1));
+}
+function startChaos() {
+  const pick = CHAOS_IDS.filter(id => id !== live.lastChaos), id = pick.at(Math.floor(Math.random() * pick.length));
+  live.lastChaos = id;
+  live.chaosMode = id;
+  const secs = 30 * (has('chaos2') ? 2 : 1);
+  live.chaosUntil = Date.now() + secs * 1000;
+  state.chaos = 0;
+  state.chaosCount = (state.chaosCount || 0) + 1;
+  state.chaosSeen = { ...(state.chaosSeen || {}), [id]: true };
+  if (raidActive && raidActive()) egg('chaosraid', 'CHAOS during a raid!');
+  const m = CHAOS_MODES[id];
+  toast(`🌀 CHAOS! ${m.name}: ${m.desc}!`);
+  sfx.alarm('ufo'); haptic('alarm');
+  const scene = document.querySelector('.scene');
+  scene.classList.add('chaos');
+  if (id === 'gravity') { scene.classList.add('flip'); setTimeout(() => scene.classList.remove('flip'), 12000); }
+  if (id === 'stampede') spawnThreat(true);
+  if (id === 'goldrush') live.nextLucky = 0;
+  if (id === 'tsunami') { startRain(); setTimeout(startRain, 9000); }
+  if (id === 'nado') { spawnNado(); setTimeout(spawnNado, 8000); }
+  save();
+}
+function chaosTick() {
+  const on = !!chaosMode(), bar = $('chaosBar');
+  if (!on && document.querySelector('.scene.chaos')) { document.querySelector('.scene').classList.remove('chaos'); toast('The chaos settles… for now.'); }
+  if (!on && (state.chaos || 0) >= 100) startChaos();
+  const mode = chaosMode();
+  bar.classList.toggle('on', !!mode);
+  if (mode) {
+    const left = Math.ceil((live.chaosUntil - Date.now()) / 1000);
+    $('chaosFill').style.width = (left / (30 * (has('chaos2') ? 2 : 1)) * 100) + '%';
+    $('chaosText').textContent = `${CHAOS_MODES[mode].name} ${left}s`;
+    if (mode === 'stampede' && !threat.active && Math.random() < 0.3) spawnThreat(true);
+    if (mode === 'goldrush' && $('lucky').hidden && Math.random() < 0.35) live.nextLucky = 0;
+  } else {
+    $('chaosFill').style.width = (state.chaos || 0) + '%';
+    $('chaosText').textContent = `Chaos ${Math.floor(state.chaos || 0)}%`;
+  }
+  bar.setAttribute('aria-valuenow', Math.round(mode ? 100 : state.chaos || 0));
+}
+function chaosSignLines() {
+  const out = [], m = chaosMode(), now = Date.now();
+  if (m) out.push(`🌀 ${CHAOS_MODES[m].name}: ${CHAOS_MODES[m].desc}, ${Math.ceil((live.chaosUntil - now) / 1000)}s`);
+  if (now < (live.coffeeUntil || 0)) out.push(`☕ Coffee: taps ×3, ${Math.ceil((live.coffeeUntil - now) / 1000)}s`);
+  if (now < (live.rainUntil || 0)) out.push(`🌧️ Rain Dance: growth ×2, ${Math.ceil((live.rainUntil - now) / 1000)}s`);
+  if (state.evo) out.push(`Mother Spud: ${EVOS.at(state.evo).name}`);
+  return out;
+}
+
+// ---- Farm power-ups ----
+const POWERUPS = [
+  { id: 'coffee', icon: '☕', name: 'Farmer’s Coffee', desc: 'Taps 3× stronger for 60 seconds', price: 90 },
+  { id: 'raindance', icon: '🌧️', name: 'Rain Dance', desc: 'Everything grows 2× for 60 seconds', price: 150 },
+  { id: 'magnet', icon: '🧲', name: 'Tater Magnet', desc: 'A golden tater appears right now', price: 240 },
+  { id: 'chaosorb', icon: '🌀', name: 'Chaos Orb', desc: 'Fills the Chaos meter by 40%', price: 300 },
+  { id: 'miracle', icon: '🧪', name: 'Miracle Grow', desc: 'Instantly harvest 10 minutes of growth', price: 360 },
+];
+const powerPrice = pw => Math.max(1000, Math.ceil(baseCps() * pw.price * (has('pwr2') ? 0.6 : 1)));
+const powerGrowMult = () => Date.now() < (live.rainUntil || 0) ? 2 : 1;
+const powerTapMult = () => Date.now() < (live.coffeeUntil || 0) ? 3 : 1;
+function givePower(pw, why) {
+  state.powerInv = state.powerInv || {};
+  state.powerInv[pw.id] = (state.powerInv[pw.id] || 0) + 1;
+  toast(`${why}: ${pw.icon} ${pw.name}! Use it from the Upgrades tab.`);
+  sfx.chime && sfx.chime(); save(); renderPowers(true);
+}
+function usePower(pw) {
+  const inv = state.powerInv || (state.powerInv = {});
+  if (!(inv[pw.id] > 0)) {
+    const cost = powerPrice(pw);
+    if (state.taters < cost) { toast(`${pw.name} costs ${fmt(cost)} taters.`); return; }
+    if (pw.id === 'chaosorb' && chaosMode()) { toast('Chaos is already running wild.'); return; }
+    state.taters -= cost; state.spent = (state.spent || 0) + cost;
+  } else {
+    if (pw.id === 'chaosorb' && chaosMode()) { toast('Chaos is already running wild.'); return; }
+    inv[pw.id]--;
+  }
+  const now = Date.now(), len = (has('pwr1') ? 120 : 60) * 1000;
+  if (pw.id === 'coffee') live.coffeeUntil = Math.max(now, live.coffeeUntil || 0) + len;
+  if (pw.id === 'raindance') live.rainUntil = Math.max(now, live.rainUntil || 0) + len;
+  if (pw.id === 'magnet') live.nextLucky = 0;
+  if (pw.id === 'chaosorb') addChaos(40 / (has('chaos1') ? 1.5 : 1));
+  if (pw.id === 'miracle') { const g = baseCps() * 600; grow(g); popText('+' + fmt(g)); }
+  state.powerUsed = (state.powerUsed || 0) + 1;
+  state.powerKinds = { ...(state.powerKinds || {}), [pw.id]: true };
+  if (now < (live.coffeeUntil || 0) && now < (live.rainUntil || 0) && chaosMode()) egg('allin', 'All in! Coffee, Rain Dance and Chaos at once.');
+  sfx.win(); haptic('win');
+  toast(`${pw.icon} ${pw.name}!`);
+  save(); renderPowers(true);
+}
+let pwrKey = '';
+function renderPowers(force) {
+  const show = state.allTime >= 5e4 || (state.powerUsed || 0) > 0;
+  $('pwrCard').hidden = !show;
+  if (!show || $('tab-upgrades').hidden) return;
+  const grid = $('pwrGrid');
+  if (!grid.children.length) POWERUPS.forEach(pw => {
+    const b = document.createElement('button');
+    b.className = 'pwr'; b.dataset.id = pw.id;
+    b.innerHTML = `<span class="ic"></span><b></b><small></small><span class="ct" hidden></span>`;
+    b.querySelector('.ic').textContent = pw.icon;
+    b.querySelector('b').textContent = pw.name;
+    b.addEventListener('click', () => usePower(pw));
+    grid.append(b);
+  });
+  const now = Date.now(), inv = state.powerInv || {};
+  POWERUPS.forEach(pw => {
+    const b = grid.querySelector(`[data-id="${pw.id}"]`), have = inv[pw.id] || 0;
+    const until = pw.id === 'coffee' ? live.coffeeUntil : pw.id === 'raindance' ? live.rainUntil : 0, left = Math.ceil(((until || 0) - now) / 1000);
+    b.classList.toggle('on', left > 0);
+    b.classList.toggle('poor', !have && state.taters < powerPrice(pw));
+    b.querySelector('small').textContent = left > 0 ? `${pw.desc}. ${left}s left` : `${pw.desc}. ${have ? 'Free, you have ' + have : fmt(powerPrice(pw)) + ' taters'}`;
+    const ct = b.querySelector('.ct'); ct.hidden = !have; ct.textContent = have;
+  });
+}
+
+// ---- The Farmer's Almanac: lore pages you unlock as you play ----
+const LORE = [
+  { id: 'comet', title: 'The Starch Comet', hint: 'Start playing', test: () => true,
+    text: 'Every forty thousand years, a comet of pure starch swings past the sun. This time a piece broke loose. Most of it burned up. One seed potato did not.' },
+  { id: 'firstfarmer', title: 'The First Farmer', hint: 'Grow 100K taters all-time', test: () => state.allTime >= 1e5,
+    text: 'Nobody remembers the first farmer’s name, only the hat: straw, sun-bleached, with a hole where a crow once pecked through it. The Russets swear they are descended from that hat.' },
+  { id: 'rot', title: 'The Rot Below', hint: 'Chase off 25 pests', test: () => Object.values(state.pests || {}).reduce((a, b) => a + b, 0) >= 25,
+    text: 'The comet had two halves. The bright half became the Mother Spud. The dark half sank into the soil and became the Rot, and the Rot is always hungry. Every gopher, crow and beetle is a little bit of it.' },
+  { id: 'banners', title: 'The Four Banners', hint: 'Join a team', test: () => !!state.spudTeam,
+    text: 'The first raid nearly ate the whole farm. Afterward, the farmers split into four teams so the Mother Spud would never be guarded by just one family again: plow, sun, flame and moon.' },
+  ...EVOS.slice(1).map((e, i) => ({ id: 'evo' + (i + 1), title: `Evolution: ${e.name}`, hint: `Evolve the Mother Spud into ${e.name}`, test: () => (state.evo || 0) >= i + 1, text: e.lore })),
+  { id: 'moon', title: 'Mash Craters', hint: 'Build a Spud Moon Base', test: () => owned('moonbase') >= 1,
+    text: 'The first astronaut-farmer stepped onto the Moon, dug a spade into a crater, and pulled out mashed potatoes. Scientists still can’t explain it. The astronaut-farmer did not wait for an explanation and went back for gravy.' },
+  { id: 'reactor', title: 'Splitting the Starch', hint: 'Build a Starch Reactor', test: () => owned('reactor') >= 1,
+    text: 'Split one starch molecule and you get two smaller potatoes and a flash of golden light. Split a billion and you power the whole county. Team Red Bliss immediately used it to run a deep fryer.' },
+  { id: 'multi', title: 'The Other Yous', hint: 'Open a Potato Multiverse', test: () => owned('multiverse') >= 1,
+    text: 'In one universe, you picked Team Purple. In another, the potato is a sweet potato. In one very strange universe, the potato taps you. All of them are happy to share.' },
+  { id: 'sing', title: 'One Potato', hint: 'Create a Spud Singularity', test: () => owned('singularity') >= 1,
+    text: 'Fold every potato in every universe into a single point and you get the Singularity: one potato, infinitely heavy, gently humming. If you listen closely, it is the same hum the seed made on its first night.' },
+  { id: 'chaos', title: 'Why Chaos?', hint: 'Fill the Chaos meter', test: () => (state.chaosCount || 0) >= 1,
+    text: 'Too much tapping in one place wrinkles reality a little. Fill the wrinkle all the way and it snaps back hard: gravity flips, taters rain, pests stampede. Farmers learned to ride the snap instead of fearing it.' },
+  { id: 'chaos10', title: 'The Chaos Spud', hint: 'Unleash Chaos 10 times', test: () => (state.chaosCount || 0) >= 10,
+    text: 'Some nights, when the meter is full, farmers see a second potato in the field, shimmering purple, grinning. It is the comet’s laugh, they say. It doesn’t want the Mother Spud gone. It just wants a little fun.' },
+  { id: 'jobs', title: 'The Job Board', hint: 'Finish 10 quests', test: () => (state.questsDone || 0) >= 10,
+    text: 'Every morning a new list goes up on the barn door, written in a handwriting nobody recognizes. Some farmers think the Mother Spud writes it at night. The Russets think it is just Grandma. Either way, the jobs get done.' },
+  { id: 'power', title: 'The Coffee Accords', hint: 'Use 10 farm power-ups', test: () => (state.powerUsed || 0) >= 10,
+    text: 'Early farmers argued for a week over whether coffee counted as farming equipment. Team Red Bliss settled it by drinking all of it. Now every farm keeps a thermos, a rain stick and one very suspicious bottle of Miracle Grow.' },
+];
+function checkLore() {
+  const have = state.lore || (state.lore = []);
+  LORE.forEach(l => { if (!have.includes(l.id) && l.test()) { have.push(l.id); if (have.length > 1) toast(`New Almanac page: ${l.title}. Read it on the Me tab.`, 'award'); } });
+  if (!$('tab-me').hidden) renderLore();
+}
+let loreKey = '';
+function renderLore() {
+  const have = state.lore || [];
+  if (have.join() === loreKey) return;
+  loreKey = have.join();
+  $('loreCount').textContent = `${have.length} of ${LORE.length} pages found. Tap a page to read it.`;
+  $('loreList').replaceChildren(...LORE.map(l => {
+    const got = have.includes(l.id);
+    const d = document.createElement(got ? 'details' : 'div');
+    d.className = 'lore' + (got ? '' : ' locked');
+    if (got) { d.innerHTML = '<summary></summary><p></p>'; d.querySelector('summary').textContent = l.title; d.querySelector('p').textContent = l.text; }
+    else d.textContent = `🔒 ${l.hint}`;
+    return d;
+  }));
+}
+
+/* ---------- Quests: 3 daily jobs and 1 weekly job ---------- */
+const sumPests = () => Object.values(state.pests || {}).reduce((a, b) => a + b, 0);
+const QUEST_POOL = [
+  { id: 'taps',    text: n => `Tap the potato ${fmt(n)} times`, metric: () => totalTaps(), size: [300, 600, 1000] },
+  { id: 'pests',   text: n => `Chase off ${n} pests`, metric: sumPests, size: [4, 8, 12] },
+  { id: 'golden',  text: n => `Catch ${n} golden tater${n > 1 ? 's' : ''}`, metric: () => state.goldenTaters, size: [1, 2] },
+  { id: 'buy',     text: n => `Buy ${n} buildings`, metric: () => state.bought || 0, size: [10, 25, 50] },
+  { id: 'grow',    text: n => `Grow ${fmt(n)} taters`, metric: () => state.allTime, size: [1800, 3600], scale: true },
+  { id: 'chaos',   text: () => 'Unleash Chaos', metric: () => state.chaosCount || 0, size: [1], need: () => state.allTime >= 1e4 },
+  { id: 'power',   text: n => `Use ${n} farm power-ups`, metric: () => state.powerUsed || 0, size: [2, 3], need: () => state.allTime >= 5e4 },
+  { id: 'raid',    text: n => `Land ${n} raid hits`, metric: () => state.raidHits || 0, size: [100, 250], need: () => !!state.spudTeam },
+  { id: 'fidget',  text: n => `Press your fidget ${n} times`, metric: () => state.fidgetClicks, size: [200, 500], need: () => !!state.fidgetConnected },
+  { id: 'fryer',   text: n => `Fill the fryer ${n} times`, metric: () => state.hotFryers, size: [2, 4] },
+  { id: 'upgrade', text: n => `Buy ${n} upgrades`, metric: () => (state.upBought || 0), size: [2, 3] },
+];
+const WEEKLY_POOL = [
+  { id: 'wtaps',  text: n => `Tap ${fmt(n)} times this week`, metric: () => totalTaps(), size: [5000] },
+  { id: 'wpests', text: n => `Chase off ${n} pests this week`, metric: sumPests, size: [40] },
+  { id: 'wchaos', text: n => `Unleash Chaos ${n} times this week`, metric: () => state.chaosCount || 0, size: [5], need: () => state.allTime >= 1e4 },
+  { id: 'wraid',  text: n => `Land ${fmt(n)} raid hits this week`, metric: () => state.raidHits || 0, size: [1000], need: () => !!state.spudTeam },
+  { id: 'wgrow',  text: n => `Grow ${fmt(n)} taters this week`, metric: () => state.allTime, size: [36000], scale: true },
+];
+const weekKey = () => state.settings && state.settings.fastDay ? 'fw' + Math.floor(Date.now() / (7 * 1440000)) : 'w' + Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000 - 3 * 864e5) / (7 * 864e5));
+function seeded(key) { let h = 2166136261; for (const c of key) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296; }
+function makeQuest(def, rnd) {
+  const n = def.size.at(Math.floor(rnd() * def.size.length));
+  const target = def.scale ? Math.max(1000, Math.round(baseCps() * n)) : n;
+  return { id: def.id, target, base: def.metric(), claimed: false };
+}
+function rollQuests() {
+  const q = state.quests || (state.quests = {});
+  const day = gameDay(), wk = weekKey();
+  if (q.day !== day) {
+    const rnd = seeded(day + (state.name || '')), pool = QUEST_POOL.filter(d => !d.need || d.need()), pick = [];
+    while (pick.length < 3 && pool.length) pick.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
+    q.day = day; q.list = pick.map(d => makeQuest(d, rnd)); q.bonus = false;
+  }
+  if (q.week !== wk) {
+    const rnd = seeded(wk), pool = WEEKLY_POOL.filter(d => !d.need || d.need());
+    q.week = wk; q.weekly = makeQuest(pool.at(Math.floor(rnd() * pool.length)), rnd);
+  }
+}
+const questDef = id => QUEST_POOL.find(d => d.id === id) || WEEKLY_POOL.find(d => d.id === id);
+const questProgress = qu => Math.max(0, questDef(qu.id).metric() - qu.base);
+function claimQuest(qu, weekly) {
+  if (qu.claimed || questProgress(qu) < qu.target) return;
+  qu.claimed = true;
+  const g = Math.max(500, baseCps() * (weekly ? 3600 : 600));
+  grow(g);
+  state.questsDone = (state.questsDone || 0) + 1;
+  if (chaosMode()) egg('questchaos', 'Quest done in the middle of Chaos!');
+  let msg = `Quest complete! +${fmt(g)} taters`;
+  if (weekly) {
+    state.weekliesDone = (state.weekliesDone || 0) + 1;
+    ['coffee', 'raindance', 'magnet'].forEach(id => { state.powerInv = state.powerInv || {}; state.powerInv[id] = (state.powerInv[id] || 0) + 1; });
+    msg += ', plus ☕ 🌧️ 🧲 power-ups';
+  } else if (Math.random() < 0.5) {
+    const pw = POWERUPS.at(Math.floor(Math.random() * POWERUPS.length));
+    state.powerInv = state.powerInv || {}; state.powerInv[pw.id] = (state.powerInv[pw.id] || 0) + 1;
+    msg += ` and a ${pw.icon} ${pw.name}`;
+  }
+  const q = state.quests;
+  if (!weekly && !q.bonus && q.list.every(x => x.claimed)) {
+    q.bonus = true;
+    state.questFullDays = (state.questFullDays || 0) + 1;
+    state.powerInv.chaosorb = (state.powerInv.chaosorb || 0) + 1;
+    state.powerInv.miracle = (state.powerInv.miracle || 0) + 1;
+    setTimeout(() => toast('All 3 daily quests done! Bonus: 🌀 Chaos Orb and 🧪 Miracle Grow', 'award'), 900);
+  }
+  toast(msg + '!', 'award');
+  sfx.win(); haptic('win');
+  save(); renderQuests(true); renderPowers(true);
+}
+let questKey = '';
+function renderQuests(force) {
+  rollQuests();
+  const q = state.quests, all = [...q.list.map(x => [x, false]), [q.weekly, true]];
+  const ready = all.filter(([x]) => !x.claimed && questProgress(x) >= x.target).length;
+  $('questDot').hidden = !ready;
+  if ($('tab-shop').hidden && !force) return;
+  const key = all.map(([x]) => [x.id, Math.min(x.target, Math.floor(questProgress(x))), x.claimed].join(':')).join() + q.bonus;
+  if (!force && key === questKey) return;
+  questKey = key;
+  const left = new Date(); left.setHours(24, 0, 0, 0);
+  $('questReset').textContent = state.settings && state.settings.fastDay ? 'New quests each fast day' : `New quests in ${fmtLeft(left - Date.now())}`;
+  $('questList').replaceChildren(...all.map(([x, weekly]) => {
+    const def = questDef(x.id), prog = Math.min(x.target, questProgress(x)), done = prog >= x.target;
+    const row = document.createElement('div');
+    row.className = 'quest' + (x.claimed ? ' claimed' : '');
+    row.innerHTML = `<b>${weekly ? '<em>WEEKLY</em>' : ''}<span></span></b><span class="qbar"><i style="width:${(prog / x.target * 100).toFixed(1)}%"></i></span><small></small><button class="btn${done && !x.claimed ? ' go' : ''}"></button>`;
+    row.querySelector('b span').textContent = def.text(x.target);
+    row.querySelector('small').textContent = `${fmt(Math.floor(prog))} / ${fmt(x.target)}`;
+    const btn = row.querySelector('button');
+    btn.textContent = x.claimed ? 'Done ✓' : done ? 'Claim' : `${Math.floor(prog / x.target * 100)}%`;
+    btn.disabled = x.claimed || !done;
+    btn.addEventListener('click', () => claimQuest(x, weekly));
+    return row;
+  }));
+  const b = document.createElement('p'); b.className = 'qbonus';
+  b.textContent = (q.bonus ? 'Daily bonus collected. ' : 'Finish all 3 dailies for a bonus 🌀 Chaos Orb and 🧪 Miracle Grow. ') + 'Rewards: 10 minutes of taters per daily (maybe a power-up), 1 hour plus 3 power-ups for the weekly.';
+  $('questList').append(b);
+}
+
 /* ---------- Easter eggs ---------- */
 function egg(id, msg) {
   if (state.eggs[id]) return false;
@@ -4732,6 +5253,7 @@ setInterval(() => {
   grow(cps() * dt);
   state.playSeconds = (state.playSeconds || 0) + dt;
   live.sessionSecs = (live.sessionSecs || 0) + dt;
+  addChaos(0.05 * dt);   // the meter creeps up on its own, about half an hour from empty
   if (has('onestarch')) state.ringTime = (state.ringTime || 0) + dt;
   live.heat = Math.max(0, live.heat - 15 * dt * (campfireLit() ? 0.5 : 1));
   luckyTick();
@@ -4742,6 +5264,11 @@ setInterval(() => {
 setInterval(() => {
   checkAchievements();
   checkSkins();
+  chaosTick();
+  checkLore();
+  renderQuests();
+  renderEvo();
+  renderPowers();
   raidTick();
   teamCloudTick();
   dayTick();
