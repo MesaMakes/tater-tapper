@@ -333,6 +333,7 @@
     .ledger .sheet { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin: 0 6px;
                      border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: none; padding-bottom: 0; }
     .toasts { bottom: calc(var(--peek) + var(--tick) + 10px); top: auto; }   /* messages pop up just above the menu, so the sign stays readable */
+    body.sheet-open .toasts { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 10px); }
   }
 
   /* Pests and aliens */
@@ -603,7 +604,7 @@
   .story .stage svg { filter: saturate(1.05); }
   .teamdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; border: 1.5px solid var(--outline); }
   /* Raid */
-  .raidcard { position: relative; z-index: 3; width: min(100%, 380px); margin-top: 8px; background: rgba(20,14,10,.82); color: #fff6e2; border: 2px solid #ff5c3a; border-radius: 16px; padding: 7px 12px 9px; display: grid; gap: 5px; }
+  .raidcard { position: relative; z-index: 3; width: 100%; margin: 0 0 10px; background: rgba(20,14,10,.82); color: #fff6e2; border: 2px solid #ff5c3a; border-radius: 16px; padding: 7px 12px 9px; display: grid; gap: 5px; }
   .raidtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .8rem; font-weight: 700; }
   .raidtop b { font: 400 1.02rem var(--slab); color: #ffb3a0; }
   .raidhp { position: relative; height: 14px; border-radius: 999px; background: rgba(255,255,255,.15); overflow: hidden; }
@@ -620,10 +621,22 @@
   .ritem.on { border-color: #ffd45c; background: rgba(255,212,92,.22); box-shadow: 0 0 10px rgba(255,212,92,.5); }
   .ritem.poor { opacity: .5; }
   .ritem .ct { position: absolute; top: -6px; right: -4px; min-width: 18px; padding: 0 4px; border-radius: 99px; background: #ffd45c; color: #2f2117; font-size: .64rem; }
+  .arena { position: relative; height: clamp(220px, 36dvh, 300px); margin: 4px 0 10px; border-radius: 18px; overflow: hidden; border: 2px solid var(--ink);
+           background: radial-gradient(circle at 50% 42%, #6a2a3a 0%, #2a1020 55%, #12070d 100%); container-type: inline-size; touch-action: manipulation; }
+  .arena::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; background: linear-gradient(#3a2418, #1c120a); border-top: 2px solid rgba(0,0,0,.4); }
+  .arena .pop { position: absolute; z-index: 8; }
+  .raidpill { position: absolute; z-index: 7; top: 2%; left: 50%; translate: -50% 0; border: 2px solid var(--outline); border-radius: 999px; background: #ff5c3a; color: #fff;
+              font: 700 .8rem var(--sans); padding: 5px 14px; cursor: pointer; white-space: nowrap; box-shadow: 0 3px 0 rgba(0,0,0,.25); animation: pulse 1.6s ease-in-out infinite; }
+  .rdot { position: absolute; top: 3px; right: 4px; width: 10px; height: 10px; border-radius: 50%; background: #ff5c3a; border: 2px solid var(--paper); animation: pulse 1.2s ease-in-out infinite; }
+  .bossrow { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; padding: 6px 0; border-top: 2px dashed var(--line); }
+  .bossrow:first-child { border-top: 0; }
+  .bossrow .art { width: 56px; height: 52px; display: grid; place-items: center; }
+  .bossrow .art svg { max-width: 56px; max-height: 52px; }
+  .bossrow small { display: block; color: var(--ink-soft); line-height: 1.35; }
   .crate { position: absolute; z-index: 6; width: clamp(40px, 11cqw, 56px); border: 0; padding: 0; background: none; cursor: pointer; animation: crateDrop .9s cubic-bezier(.3,1.4,.5,1) both; filter: drop-shadow(0 4px 3px rgba(0,0,0,.35)); }
   .crate svg { display: block; width: 100%; height: auto; animation: hover 1.4s ease-in-out infinite; }
   @keyframes crateDrop { from { transform: translateY(-120px) rotate(-12deg); opacity: 0; } }
-  .boss { position: absolute; z-index: 5; left: 2%; top: 0; width: min(34vw, 140px); border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 0 14px rgba(255,60,40,.7)); animation: bossIn .6s cubic-bezier(.3,1.5,.5,1) both; }
+  .boss { position: absolute; z-index: 5; left: calc(50% - min(23vw, 95px)); top: 6%; width: min(46vw, 190px); border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 0 14px rgba(255,60,40,.7)); animation: bossIn .6s cubic-bezier(.3,1.5,.5,1) both; }
   .boss svg { display: block; width: 100%; height: auto; overflow: visible; animation: hover 1.6s ease-in-out infinite; }
   .boss.hit svg { animation: hitShake .2s; }
   @keyframes bossIn { from { transform: scale(0) rotate(-20deg); } }
@@ -739,9 +752,6 @@
       <span class="tube"><i id="heatFill"></i></span>
       <small id="heatText">Fryer 250°F</small>
     </div>
-
-    <div class="raidcard" id="raidCard" hidden><div class="raidtop"><b id="raidName"></b><span id="raidTime"></span></div>
-      <div class="raidhp"><i id="raidHp"></i><span id="raidHpText"></span></div><div class="raidteams" id="raidTeams"></div><div class="raiditems" id="raidItems"></div></div>
 
     <div class="field" id="field">
       <div class="sky" id="sky"></div>
@@ -879,7 +889,7 @@
       <div class="walkers" id="walkers"></div>
       <div class="flies" id="flies"></div>
       <div class="seasonfx" id="seasonfx"></div>
-      <button class="boss" id="boss" hidden aria-label="The raid boss. Tap it!"></button>
+      <button class="raidpill" id="raidPill" hidden></button>
       <div class="holifx" id="holifx"></div>
       <button class="root" id="rootBtn" hidden aria-label="The Risky Root. Tap to see the gamble"><svg viewBox="0 0 60 72" aria-hidden="true">
         <ellipse cx="30" cy="68" rx="16" ry="4" fill="rgba(0,0,0,.3)"/>
@@ -909,6 +919,7 @@
       <button role="tab" data-tab="upgrades" aria-selected="false" aria-label="Upgrades"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 5.5a4 4 0 0 0 4.9 4.9l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8a4 4 0 0 0-1.9-1.9z"/></svg><span class="lbl">Upgrades</span><span class="badge" id="upBadge" hidden></span></button>
       <button role="tab" data-tab="awards" aria-selected="false" aria-label="Ribbons"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M9 14l-1.5 7 2.5-1.5 2 1.5M15 14l1.5 7-2.5-1.5-2 1.5"/></svg><span class="lbl">Ribbons</span></button>
       <button role="tab" data-tab="ranks" aria-selected="false" aria-label="Ranks"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V13h5v7M9 20V8h6v12M15 20v-9h5v9M3 20h18"/></svg><span class="lbl">Ranks</span></button>
+      <button role="tab" data-tab="raid" aria-selected="false" aria-label="Raid"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></svg><span class="lbl">Raid</span><i class="rdot" id="raidDot" hidden></i></button>
       <button role="tab" data-tab="me" aria-selected="false" aria-label="Me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span class="lbl">Me</span></button>
     </nav>
     </div>
@@ -947,6 +958,18 @@
         <ol class="board" id="board"></ol>
       </div>
 
+      <div class="panel" id="tab-raid" role="tabpanel" hidden>
+        <div class="panel-head"><h2>Raid</h2><span id="raidHeadNote"></span></div>
+        <div class="arena" id="arena" hidden><button class="boss" id="boss" aria-label="The raid boss. Tap it!"></button></div>
+        <div class="raidcard" id="raidCard" hidden><div class="raidtop"><b id="raidName"></b><span id="raidTime"></span></div>
+      <div class="raidhp"><i id="raidHp"></i><span id="raidHpText"></span></div><div class="raidteams" id="raidTeams"></div><div class="raiditems" id="raidItems"></div></div>
+        <div id="raidIdle">
+          <div class="card"><h3>Next raid</h3><p class="note" id="raidNext"></p></div>
+          <div class="card"><h3>Your raid record</h3><p class="note" id="raidStats"></p></div>
+          <div class="card"><h3>Power-ups on hand</h3><p class="note" id="raidInv"></p></div>
+          <div class="card"><h3>The bosses</h3><div id="bossList"></div></div>
+        </div>
+      </div>
       <div class="panel" id="tab-me" role="tabpanel" hidden>
         <div class="panel-head"><h2>Farmer</h2></div>
         <div class="topbar">
@@ -2117,6 +2140,7 @@ let sheetOpen = false, closedY = 0, drag = null, swallowClick = false;
 const readY = () => new DOMMatrix(getComputedStyle(ledger).transform).m42;
 function setSheet(open) {
   sheetOpen = open;
+  document.body.classList.toggle('sheet-open', open);   // messages move to the top so they don't cover the menu
   ledger.classList.toggle('open', open);
   ledger.style.transform = '';
   $('grabber').setAttribute('aria-expanded', open);
@@ -2176,6 +2200,7 @@ tabs.forEach(t => t.addEventListener('click', () => {
   document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
   if (t.dataset.tab === 'me') { renderMe(); renderSkinPanel(); renderTeamUI(); }
   if (t.dataset.tab === 'ranks') renderTeamUI();
+  if (t.dataset.tab === 'raid') { $('bossList').replaceChildren(); renderRaid(); }
 }));
 const showTab = name => tabs.find(t => t.dataset.tab === name).click();
 
@@ -4074,17 +4099,17 @@ function nextRaidStart(now = Date.now()) {
   return Math.min(...starts);
 }
 const fmtLeft = ms => { const m = Math.max(0, Math.ceil(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
-const raid = { info: null, doc: null, unsub: null, pending: 0, lastSend: 0, creating: false };
-const raidIsLive = () => !!(raid.info && !raid.info.practice && cloud.user && cloud.db);
+const raid = { info: null, doc: null, unsub: null, pending: 0, inflight: 0, lastSend: 0, creating: false, offline: false };
+const raidIsLive = () => !!(raid.info && !raid.info.practice && !raid.offline && cloud.user && cloud.db);
 function raidHp() {
   if (!raid.info) return 0;
-  if (raidIsLive()) return raid.doc ? raid.doc.hp - raid.pending : RAID_HP_LIVE;
+  if (raidIsLive()) return (raid.doc ? raid.doc.hp : RAID_HP_LIVE) - raid.pending - raid.inflight;
   return state.localRaid && state.localRaid.id === raid.info.id ? state.localRaid.hp : RAID_HP_PRACTICE;
 }
 const raidMax = () => raidIsLive() ? (raid.doc ? raid.doc.maxHp : RAID_HP_LIVE) : RAID_HP_PRACTICE;
 function raidTeams() {
   const t = raidIsLive() ? { ...((raid.doc || {}).teams || {}) } : { ...((state.localRaid || {}).teams || {}) };
-  if (raidIsLive() && state.spudTeam) t[state.spudTeam] = (t[state.spudTeam] || 0) + raid.pending;
+  if (raidIsLive() && state.spudTeam) t[state.spudTeam] = (t[state.spudTeam] || 0) + raid.pending + raid.inflight;
   return t;
 }
 function startRaid(w) {
@@ -4098,9 +4123,9 @@ function startRaid(w) {
       if (snap.exists()) raid.doc = snap.data();
       else if (!raid.creating) {
         raid.creating = true;
-        F.setDoc(ref, { boss: boss.id, maxHp: RAID_HP_LIVE, hp: RAID_HP_LIVE, starts: w.start, ends: w.end, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } }).catch(() => {});
+        F.setDoc(ref, { boss: boss.id, maxHp: RAID_HP_LIVE, hp: RAID_HP_LIVE, starts: w.start, ends: w.end, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } }).catch(goPractice);
       }
-    }, err => cloudProblem('load the raid', err));
+    }, goPractice);
   } else if (!state.localRaid || state.localRaid.id !== w.id) {
     state.localRaid = { id: w.id, hp: RAID_HP_PRACTICE, teams: { russet: 0, yukon: 0, red: 0, purple: 0 } };
   }
@@ -4108,12 +4133,29 @@ function startRaid(w) {
   $('boss').setAttribute('aria-label', `${boss.name}, the raid boss. Tap it!`);
   if (!(state.raidDone || {})[w.id]) {
     $('boss').hidden = false;
+    raid.offline = false;
     sfx.alarm('dragon'); haptic('alarm');
     toast(`Raid! ${boss.name} is attacking the Mother Spud. Tap it with your team!`);
     if (!state.spudTeam) setTimeout(openTeamPicker, 1200);
   }
 }
-function stopRaid() { document.querySelectorAll('.crate').forEach(c => c.remove()); raid.unsub?.(); raid.unsub = null; raid.doc = null; raid.pending = 0; raid.info = null; $('boss').hidden = true; $('raidCard').hidden = true; }
+function goPractice(err) {
+  if (raid.offline || !raid.info) return;
+  raid.offline = true;
+  console.warn('Live raid unavailable, using a practice raid', err);
+  const hits = (state.raidLog || {})[raid.info.id] || 0;
+  state.localRaid = { id: raid.info.id, hp: Math.max(1, RAID_HP_PRACTICE - hits), teams: { russet: 0, yukon: 0, red: 0, purple: 0, [state.spudTeam || 'russet']: hits } };
+  raid.pending = 0; raid.inflight = 0;
+  toast('Live raids need the latest Firebase rules (Firestore → Rules → Publish). Fighting a practice raid for now.');
+  renderRaid();
+}
+function raidPop(text, x, y) {
+  const a = $('arena'), el = document.createElement('div');
+  el.className = 'pop'; el.textContent = text;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  a.appendChild(el); setTimeout(() => el.remove(), 950);
+}
+function stopRaid() { raid.offline = false; raid.inflight = 0; document.querySelectorAll('.crate').forEach(c => c.remove()); raid.unsub?.(); raid.unsub = null; raid.doc = null; raid.pending = 0; raid.info = null; $('boss').hidden = true; $('raidCard').hidden = true; }
 function raidHit(n, fromFidget, raw) {
   if (!raid.info || (state.raidDone || {})[raid.info.id] || raidHp() <= 0) return;
   if (!state.spudTeam) { if (!fromFidget) openTeamPicker(); return; }
@@ -4132,8 +4174,8 @@ function raidHit(n, fromFidget, raw) {
 }
 $('boss').addEventListener('pointerdown', e => {
   e.stopPropagation();
-  const fr = $('field').getBoundingClientRect();
-  popText('-' + raidMult(), e.clientX - fr.left - 8, e.clientY - fr.top - 24);
+  const ar = $('arena').getBoundingClientRect();
+  raidPop('-' + raidMult() * (1), e.clientX - ar.left - 8, e.clientY - ar.top - 24);
   raidHit(1, false);
 });
 function flushRaid() {
@@ -4141,8 +4183,10 @@ function flushRaid() {
   const F = cloud.F, dmg = Math.min(raid.pending, 400);
   raid.lastSend = Date.now();
   raid.pending -= dmg;
+  raid.inflight += dmg;
   F.updateDoc(F.doc(cloud.db, 'raids', raid.info.id), { hp: F.increment(-dmg), ['teams.' + state.spudTeam]: F.increment(dmg) })
-    .catch(err => { raid.pending += dmg; cloudProblem('send your raid hits', err); });
+    .then(() => { raid.inflight = Math.max(0, raid.inflight - dmg); })
+    .catch(err => { raid.inflight = Math.max(0, raid.inflight - dmg); raid.pending += dmg; goPractice(err); });
 }
 function finishRaid(defeated) {
   const w = raid.info;
@@ -4198,8 +4242,8 @@ function useRaidItem(it) {
     const dmg = 40 * raidMult();
     raidHit(dmg, 'item', true);
     if (dmg >= 240) egg('overkill', 'Overkill! A six-times Fry Bomb.');
-    const b = $('boss').getBoundingClientRect(), fr = $('field').getBoundingClientRect();
-    popText('-' + dmg, b.left - fr.left + b.width / 2 - 14, b.top - fr.top + 10);
+    const b = $('boss').getBoundingClientRect(), ar = $('arena').getBoundingClientRect();
+    if (b.width) raidPop('-' + dmg, b.left - ar.left + b.width / 2 - 14, b.top - ar.top + 10);
     sfx.boom ? sfx.boom() : sfx.hit();
   } else sfx.win();
   haptic('win');
@@ -4235,8 +4279,8 @@ function dropCrate() {
   c.className = 'crate';
   c.setAttribute('aria-label', 'Raid supply crate. Tap to open');
   c.innerHTML = CRATE_SVG;
-  c.style.left = (12 + Math.random() * 70) + '%';
-  c.style.top = (30 + Math.random() * 35) + '%';
+  c.style.left = (Math.random() < 0.5 ? 4 + Math.random() * 16 : 70 + Math.random() * 16) + '%';
+  c.style.top = (50 + Math.random() * 22) + '%';
   c.addEventListener('pointerdown', e => {
     e.stopPropagation();
     const roll = Math.random(), it = RAID_ITEMS[roll < 0.35 ? 1 : roll < 0.65 ? 0 : roll < 0.85 ? 3 : 2];
@@ -4247,7 +4291,7 @@ function dropCrate() {
     sfx.chime(); haptic('win');
     c.remove(); save(); renderRaidItems();
   }, { once: true });
-  $('field').append(c);
+  $('arena').append(c);
   setTimeout(() => c.remove(), 14000);
 }
 function raidPowerTick() {
@@ -4258,13 +4302,19 @@ function raidPowerTick() {
 }
 function renderRaid() {
   const w = raid.info, card = $('raidCard');
-  if (!w || (state.raidDone || {})[w.id]) { card.hidden = true; return; }
-  card.hidden = false;
+  if (!w || (state.raidDone || {})[w.id]) { card.hidden = true; $('arena').hidden = true; $('raidPill').hidden = true; $('raidDot').hidden = true; renderRaidIdle(); return; }
+  card.hidden = false; $('arena').hidden = false; $('raidIdle').hidden = true; $('raidDot').hidden = false;
+  {
+    const pct = Math.round(Math.max(0, raidHp()) / raidMax() * 100), pill = $('raidPill'), raidTabOpen = !$('tab-raid').hidden && (sheetOpen || !isPhone());
+    pill.hidden = raidTabOpen;
+    pill.textContent = `⚔ Raid: ${bossFor(w.id).name} · ${pct}% HP · Join`;
+    $('raidHeadNote').textContent = raidIsLive() ? 'Live with every team' : 'Practice';
+  }
   const boss = bossFor(w.id), hp = Math.max(0, raidHp()), max = raidMax();
   $('raidName').textContent = (w.practice || !cloud.user ? 'Practice raid: ' : 'Raid: ') + boss.name;
   $('raidTime').textContent = fmtLeft(w.end - Date.now()) + ' left';
   $('raidHp').style.width = (hp / max * 100).toFixed(1) + '%';
-  $('raidHpText').textContent = `${fmt(hp)} / ${fmt(max)} HP`;
+  $('raidHpText').textContent = `${Math.round(hp).toLocaleString()} / ${max.toLocaleString()} HP`;
   const t = raidTeams(), total = Math.max(1, TEAM_IDS.reduce((a, id) => a + (t[id] || 0), 0));
   renderRaidItems();
   $('raidTeams').replaceChildren(...TEAM_IDS.map(id => {
@@ -4274,11 +4324,32 @@ function renderRaid() {
     return d;
   }));
 }
+function renderRaidIdle() {
+  if ($('tab-raid').hidden) return;
+  $('raidIdle').hidden = false;
+  $('raidHeadNote').textContent = '';
+  const next = nextRaidStart(), t = new Date(next);
+  $('raidNext').textContent = `${bossFor(new Date(next).toISOString().slice(0, 13).replace(/[-T]/g, '')).name} attacks in ${fmtLeft(next - Date.now())} (${t.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}). Raids run twice a day for 2 hours.` + (cloud.user ? '' : ' Sign in to fight live with every team; otherwise you get a practice raid.');
+  $('raidStats').textContent = `${fmt(state.raidHits || 0)} hits landed · ${state.raidsWon || 0} bosses defeated · ${state.raidCrowns || 0} crowns` + (state.spudTeam ? ` · ${TEAMS[state.spudTeam].name}` : ' · No team yet');
+  const inv = state.raidItems || {}, list = RAID_ITEMS.filter(it => inv[it.id] > 0).map(it => `${it.icon} ${it.name} ×${inv[it.id]}`);
+  $('raidInv').textContent = list.length ? list.join(' · ') : 'None yet. Grab supply crates during raids, or buy power-ups from the raid bar.';
+  if (!$('bossList').children.length) {
+    const lore = { blight: 'Rot from the comet’s dark side, oozing up through the soil.', beetle: 'A potato beetle the size of a tractor, with a shell like a cast-iron skillet.', kinggopher: 'The gopher who crowned himself. He tunnels in from below.', frost: 'An ice giant that wakes in the cold and freezes everything it touches.' };
+    $('bossList').replaceChildren(...RAID_BOSSES.map(b => {
+      const r = document.createElement('div'); r.className = 'bossrow';
+      r.innerHTML = `<span class="art">${b.art()}</span><span><b></b><small></small></span>`;
+      r.querySelector('b').textContent = b.name + ((state.bossesBeaten || {})[b.id] ? ' ✓' : '');
+      r.querySelector('small').textContent = lore[b.id];
+      return r;
+    }));
+  }
+}
+$('raidPill').addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); if ($('tab-raid').hidden || !sheetOpen) { if (!$('tab-raid').hidden && isPhone()) setSheet(true); else showTab('raid'); } });
 function raidTick() {
   const w = raidWindow();
   if (raid.info && (!w || w.id !== raid.info.id)) { if (!(state.raidDone || {})[raid.info.id]) finishRaid(raidHp() <= 0); stopRaid(); }
   if (w && !raid.info && !document.hidden) startRaid(w);
-  if (!raid.info) return;
+  if (!raid.info) { renderRaidIdle(); return; }
   flushRaid();
   raidPowerTick();
   if (raidHp() <= 0 && !(state.raidDone || {})[raid.info.id]) finishRaid(true);
@@ -4695,7 +4766,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
 // In the game area, quick taps must never turn into a double-tap zoom. Taps there are handled on
 // pointerdown, so cancelling the browser's own touch handling loses nothing.
 document.addEventListener('touchend', e => {
-  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard, .signmore')) e.preventDefault();
+  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard, .signmore, .raidpill')) e.preventDefault();
 }, { passive: false });
 document.addEventListener('dblclick', e => e.preventDefault());
 // Double-tap zoom is turned off by touch-action: manipulation in the CSS, so every fast tap still counts
