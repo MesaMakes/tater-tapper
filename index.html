@@ -103,6 +103,26 @@
   .app { padding-bottom: 64px; }
   /* The sign: count, taters per second and time, with everything else in a scrolling line and a drop-down */
   .sign .clock { font-weight: 700; font-size: .78rem; opacity: .9; }
+  /* Compact sign: count, rate and time, then one row of boost symbols; tap it to pop open the details */
+  .sign { width: min(80vw, 300px); min-width: 0; padding: 4px 18px 6px; cursor: pointer; }
+  .sign b { font-size: clamp(1.7rem, 7.5vw, 2.5rem); }
+  .srow { display: flex; gap: 8px; align-items: baseline; justify-content: center; font-size: .84rem; }
+  .srow > span { font-weight: 600; opacity: .92; }
+  .mchips { flex: 1; min-width: 0; display: flex; gap: 4px; overflow: hidden; justify-content: center; }
+  .mchip { flex: none; display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: 999px; background: rgba(0,0,0,.24); font: 800 .72rem/1.3 var(--sans); white-space: nowrap; }
+  .mchip.hot { background: rgba(255,150,40,.45); }
+  .signmore { padding: 3px 4px 3px 6px; }
+  .signdetails { position: absolute; z-index: 20; top: calc(100% + 10px); left: 50%; translate: -50% 0; width: min(92vw, 360px); max-height: 52vh; overflow-y: auto;
+                 margin: 0; padding: 10px; display: grid; gap: 6px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: 16px;
+                 box-shadow: 0 6px 0 var(--ink), 0 12px 30px rgba(0,0,0,.3); transform-origin: 50% 0; animation: signPop .22s cubic-bezier(.3,1.5,.5,1); cursor: default; }
+  .signdetails::before { content: ""; position: absolute; top: -9px; left: 50%; width: 14px; height: 14px; translate: -50% 0; rotate: 45deg; background: var(--paper); border: 2px solid var(--ink); border-right: 0; border-bottom: 0; }
+  .signdetails h4 { margin: 0 2px 2px; font: 400 1.05rem var(--slab); }
+  .signdetails div.mrow { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 10px; background: var(--paper-2); font-size: .84rem; font-weight: 600; text-align: left; }
+  .mrow .mi { font-size: 1.15rem; text-align: center; }
+  .mrow .mx { font: 800 .8rem var(--sans); color: var(--green); white-space: nowrap; }
+  .mrow.kind-time { opacity: .85; }
+  @keyframes signPop { from { transform: scale(.6); opacity: 0; } }
+  @media (max-width: 879px) { .sign { padding: 3px 16px 5px; } .sign b { font-size: clamp(1.5rem, 6.8vw, 2.1rem); } }
   .sign { width: min(88vw, 330px); }
   .signmore { display: flex; align-items: center; gap: 4px; width: 100%; min-width: 0; border: 0; color: inherit; cursor: pointer; margin-top: 4px;
               background: rgba(0,0,0,.2); border-radius: 999px; padding: 2px 4px 2px 10px; font: 600 .72rem var(--sans); }
@@ -305,6 +325,7 @@
 
   /* Phones: the menu becomes a sheet that slides up from the bottom */
   .grabber { display: none; }
+  .sheetclose { display: none; }
   @media (max-width: 879px) {
     :root { --peek: 62px; --tick: calc(28px + env(safe-area-inset-bottom, 0px)); }
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
@@ -336,6 +357,29 @@
     body.sheet-open .toasts { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 10px); }
   }
 
+  /* Phones: the tab bar stays put; Farm slides in from the left, Upgrades from the right, everything else rises from the bottom */
+  @media (max-width: 879px) {
+    .ledger { transform: none !important; height: auto; display: block; background: none; border-top: 0; border-radius: 0; box-shadow: none; pointer-events: none; transition: none; }
+    .ledger .sheet-top { pointer-events: auto; position: relative; z-index: 2; background: var(--kraft); border-top: 2px solid var(--ink); border-radius: 18px 18px 0 0;
+                         box-shadow: 0 -6px 20px rgba(0,0,0,.15); padding-top: 8px; }
+    .grabber { display: none; }
+    .ledger .sheet { pointer-events: auto; position: fixed; z-index: 1; margin: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y;
+                     border: 2px solid var(--ink); box-shadow: 0 0 34px rgba(0,0,0,.28); visibility: hidden;
+                     transition: transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s linear .34s; }
+    .ledger[data-dir="up"] .sheet { left: 6px; right: 6px; bottom: calc(var(--tick) + var(--peek) - 4px); height: min(68dvh, 640px); border-radius: 18px 18px 0 0; border-bottom: 0;
+                                    transform: translateY(calc(100% + var(--peek) + var(--tick))); }
+    .ledger[data-dir="left"] .sheet { left: 0; top: calc(env(safe-area-inset-top, 0px) + 8px); bottom: calc(var(--tick) + var(--peek) + 6px); width: min(90vw, 430px);
+                                      border-radius: 0 18px 18px 0; border-left: 0; transform: translateX(-105%); }
+    .ledger[data-dir="right"] .sheet { right: 0; top: calc(env(safe-area-inset-top, 0px) + 8px); bottom: calc(var(--tick) + var(--peek) + 6px); width: min(90vw, 430px);
+                                       border-radius: 18px 0 0 18px; border-right: 0; transform: translateX(105%); }
+    .ledger.open .sheet { visibility: visible; transform: none; transition: transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+    .sheetclose { display: grid; place-items: center; position: sticky; top: 8px; float: right; z-index: 3; width: 34px; height: 34px; margin: 8px 8px -42px 0;
+                  border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); font: 700 1.3rem/1 var(--sans); cursor: pointer; box-shadow: 0 2px 0 var(--ink); }
+    .ledger[data-dir="right"] .sheetclose { float: left; margin: 8px 0 -42px 8px; }
+    .ledger .panel-head { padding-right: 44px; }
+    .ledger[data-dir="right"] .panel-head { padding-left: 44px; padding-right: 2px; }
+  }
+  @media (max-width: 879px) and (prefers-reduced-motion: reduce) { .ledger .sheet { transition: visibility 0s !important; } }
   /* Pests and aliens */
   .threats { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
   .pest { position: absolute; pointer-events: auto; border: 0; background: none; padding: 0; cursor: pointer;
@@ -775,10 +819,6 @@
 
   .tater-btn.roll svg { animation: roll 1s ease-in-out; }
   @keyframes roll { to { transform: rotate(360deg); } }
-  .smoke-screen { position: fixed; inset: 0; z-index: 40; pointer-events: none; animation: smokeOut 5s ease-in forwards;
-                  background: radial-gradient(circle at 30% 40%, rgba(120,110,100,.95), transparent 45%), radial-gradient(circle at 70% 60%, rgba(90,85,80,.95), transparent 50%),
-                              radial-gradient(circle at 50% 80%, rgba(140,130,120,.95), transparent 55%), rgba(70,65,60,.85); }
-  @keyframes smokeOut { 0%, 40% { opacity: 1; } 100% { opacity: 0; } }
   .kicker { font: 700 .74rem var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); margin: 12px 2px 0; }
   .row .lvl { font: 400 1.3rem/1 var(--slab); }
   .credits { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; color: var(--ink-soft); font-size: .82rem; }
@@ -789,7 +829,7 @@
     .ticker span { animation: none; padding-left: 10px; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .stars, .clouds i, .fly, .fly::before, .rooster svg, .ghost svg { animation: none !important; }
     .star-shot { animation-duration: 6s; }
-    .eye, .eye .flames, .tater-btn.roll svg, .smoke-screen { animation: none !important; }
+    .eye, .eye .flames, .tater-btn.roll svg { animation: none !important; }
     .pest, .pest svg, .pest-ufo .beam, .alert, .tater-btn.disco svg, .walker svg, .rocket .flame, .pet .wing, .pbld i, .rift, .nado svg { animation: none !important; }
     .pest::before { animation: none; transform: scale(1.05); }
     .scene { transition: none; }
@@ -822,8 +862,8 @@
     <div class="doom" aria-hidden="true"></div>
     <div class="alert" id="alert" hidden role="alert"><strong id="alertTitle"></strong><span id="alertMsg"></span><i><b id="alertBar"></b></i></div>
     <h1 class="logo">Tater Tapper</h1>
-    <div class="sign" aria-live="polite"><b id="taters">0</b><span id="cpsText">0 taters per second</span><small class="clock" id="clockText"></small>
-      <button class="signmore" id="signMore" aria-expanded="false" aria-label="Show farm details"><span class="sticker"><span id="signTicker"></span></span>
+    <div class="sign" id="sign" aria-live="polite"><b id="taters">0</b><span class="srow"><span id="cpsText">0 per second</span><small class="clock" id="clockText"></small></span>
+      <button class="signmore" id="signMore" aria-expanded="false" aria-label="Show what’s boosting your farm"><span class="mchips" id="signChips"></span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <div class="signdetails" id="signDetails" hidden></div>
       <small id="phaseText" hidden></small><small class="daytext" id="dayText" hidden></small></div>
@@ -1007,7 +1047,7 @@
       <button role="tab" data-tab="me" aria-selected="false" aria-label="Me"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6.5 8-6.5s7 2 8 6.5"/></svg><span class="lbl">Me</span></button>
     </nav>
     </div>
-    <div class="sheet">
+    <div class="sheet"><button class="sheetclose" id="sheetClose" aria-label="Close the menu">×</button>
       <div class="panel" id="tab-shop" role="tabpanel">
         <div class="card questcard" id="questCard"><div class="qhead"><h3>Quests</h3><small id="questReset"></small></div><div id="questList"></div></div>
         <div class="panel-head"><h2>Your farm</h2><div class="seg"><button data-qty="1" aria-pressed="true">Buy 1</button><button data-qty="10" aria-pressed="false">Buy 10</button></div></div>
@@ -1462,7 +1502,6 @@ addAch('totem1', 'Undying', 'Let your Tater-Totem save you from disaster.', () =
 addSecret('egg_stew', 'Boil, Mash & Stew', 'Get the Boiling Pot, Mashing Press and Stew Cauldron to the same level (3 or higher).', eggFound('stew'));
 addSecret('egg_leeroy', 'LEEROY JENK-YAMS!', 'Grab the Risky Root and lose half your taters.', eggFound('leeroy'));
 addSecret('egg_cake', 'The Cake is a Fry', 'Find the cake hiding in the credits.', eggFound('cake'));
-addSecret('egg_baked', 'Hey, You. You’re Finally Baked', 'Come back after more than an hour away.', eggFound('baked'));
 addSecret('egg_salad', 'The $55,492 Salad', 'Grow exactly enough taters to fund one very famous bowl of potato salad.', eggFound('salad'));
 addSecret('egg_pressf', 'Press F to Pay Respects', 'Let a golden tater get away.', eggFound('pressf'));
 addSecret('egg_barrel', 'Do a Barrel Roll', 'Type “do a barrel roll” on a keyboard, or save it as your leaderboard name.', eggFound('barrel'));
@@ -2076,7 +2115,10 @@ function replant() {
 }
 
 // Golden taters are rare: one every 4–10 minutes, a bit sooner with the Lucky Horseshoe
-function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 / (has('luck1') ? 1.4 : 1) / (isGoldenHour() ? 2 : 1) / (Date.now() < (live.cloverUntil || 0) ? 3 : 1) / (state.spudTeam === 'yukon' ? 1.15 : 1); }
+// Outside of Chaos, pests, bonuses and events show up this many times less often. Chaos brings them back at full speed.
+const CALM = 2.2;
+const pace = () => Date.now() < (live.chaosUntil || 0) ? 1 : CALM;
+function scheduleLucky() { live.nextLucky = Date.now() + (240 + Math.random() * 360) * 1000 * pace() / 1.25 / (has('luck1') ? 1.4 : 1) / (isGoldenHour() ? 2 : 1) / (Date.now() < (live.cloverUntil || 0) ? 3 : 1) / (state.spudTeam === 'yukon' ? 1.15 : 1); }
 function luckyTick() {
   const now = Date.now(), el = $('lucky');
   if (el.hidden && now >= live.nextLucky) {
@@ -2169,7 +2211,7 @@ document.querySelectorAll('[data-qty]').forEach(q => q.addEventListener('click',
 function renderLive() {
   const now = Date.now();
   $('taters').textContent = fmt(state.taters);
-  $('cpsText').textContent = `${fmt(cps())} taters per second`;
+  $('cpsText').textContent = `${fmt(cps())} per second`;
   const heatPct = isHot() ? 100 : live.heat;
   $('heatFill').style.width = heatPct + '%';
   $('fryer').setAttribute('aria-valuenow', Math.round(heatPct));
@@ -2319,17 +2361,32 @@ function setSheet(open) {
 }
 function measureSheet() {
   if (!isPhone()) { ledger.classList.remove('open', 'dragging'); ledger.style.transform = ''; sheetBody.inert = false; return; }
-  const was = ledger.style.transition;
-  ledger.style.transition = 'none';
-  ledger.classList.remove('open');
-  closedY = readY();
   ledger.classList.toggle('open', sheetOpen);
-  void ledger.offsetHeight;
-  ledger.style.transition = was;
   sheetBody.inert = !sheetOpen;
 }
+// Which side each tab's panel slides in from on a phone
+const TAB_DIR = { shop: 'left', upgrades: 'right' };
+function placeDir(dir) {
+  if (ledger.dataset.dir === dir) return;
+  sheetBody.style.transition = 'none';
+  ledger.dataset.dir = dir;
+  void sheetBody.offsetHeight;
+  sheetBody.style.transition = '';
+}
+ledger.dataset.dir = 'left';
+$('sheetClose').addEventListener('click', () => setSheet(false));
+let swipe = null;
+sheetBody.addEventListener('touchstart', e => { if (isPhone() && sheetOpen) swipe = { x: e.touches[0].clientX, y: e.touches[0].clientY, top: sheetBody.scrollTop }; }, { passive: true });
+sheetBody.addEventListener('touchend', e => {
+  if (!swipe) return;
+  const t = e.changedTouches[0], dx = t.clientX - swipe.x, dy = t.clientY - swipe.y, dir = ledger.dataset.dir;
+  if ((dir === 'left' && dx < -70 && Math.abs(dx) > 1.5 * Math.abs(dy)) || (dir === 'right' && dx > 70 && Math.abs(dx) > 1.5 * Math.abs(dy))
+      || (dir === 'up' && dy > 90 && swipe.top <= 0 && Math.abs(dy) > 1.5 * Math.abs(dx))) setSheet(false);
+  swipe = null;
+}, { passive: true });
 $('grabber').addEventListener('click', () => setSheet(!sheetOpen));
 sheetTop.addEventListener('pointerdown', e => {
+  return;   // the tab bar no longer drags; panels slide in from their own side
   if (!isPhone()) return;
   drag = { y0: e.clientY, start: sheetOpen ? 0 : closedY, y: sheetOpen ? 0 : closedY, moved: false, lastY: e.clientY, lastT: performance.now(), v: 0, id: e.pointerId };
 });
@@ -2361,11 +2418,7 @@ window.addEventListener('resize', measureSheet);
 requestAnimationFrame(measureSheet);
 
 const tabs = [...document.querySelectorAll('[data-tab]')];
-tabs.forEach(t => t.addEventListener('click', () => {
-  if (isPhone()) {
-    if (sheetOpen && t.getAttribute('aria-selected') === 'true') { setSheet(false); return; }   // tap the open tab again to close
-    setSheet(true);
-  }
+function selectTab(t) {
   tabs.forEach(o => o.setAttribute('aria-selected', o === t));
   document.querySelectorAll('[role="tabpanel"]').forEach(p => p.hidden = p.id !== 'tab-' + t.dataset.tab);
   if (t.dataset.tab === 'me') { renderMe(); renderSkinPanel(); renderTeamUI(); }
@@ -2374,6 +2427,18 @@ tabs.forEach(t => t.addEventListener('click', () => {
   if (t.dataset.tab === 'upgrades') { renderEvo(true); renderPowers(true); }
   if (t.dataset.tab === 'shop') renderQuests(true);
   if (t.dataset.tab === 'raid') { $('bossList').replaceChildren(); renderRaid(); }
+}
+tabs.forEach(t => t.addEventListener('click', () => {
+  if (!isPhone()) { selectTab(t); return; }
+  const dir = TAB_DIR[t.dataset.tab] || 'up';
+  if (sheetOpen && t.getAttribute('aria-selected') === 'true') { setSheet(false); return; }   // tap the open tab again to close
+  if (sheetOpen && ledger.dataset.dir !== dir) {                                                // slide the old panel out, then the new one in from its side
+    setSheet(false);
+    setTimeout(() => { placeDir(dir); selectTab(t); requestAnimationFrame(() => setSheet(true)); }, 260);
+    return;
+  }
+  placeDir(dir); selectTab(t);
+  requestAnimationFrame(() => setSheet(true));
 }));
 const showTab = name => tabs.find(t => t.dataset.tab === name).click();
 
@@ -2731,7 +2796,7 @@ const WIN_MSG = { gopher: 'Bonk! The gopher dove back underground', crows: 'Shoo
                   leprechaun: 'You caught the leprechaun! He paid you in gold to let him go', bunnies: 'The bunnies hopped home' };
 const threat = { active: null, next: Date.now() + 150000 };
 
-function scheduleThreat() { threat.next = Date.now() + (120 + Math.random() * 180) * 1000; }
+function scheduleThreat() { threat.next = Date.now() + (120 + Math.random() * 180) * 1000 * pace(); }
 function beetleMult() {
   const a = threat.active;
   return a && a.type === 'beetles' ? Math.max(0.3, 1 - 0.08 * a.units.filter(u => u.hp > 0).length) : 1;
@@ -3026,7 +3091,7 @@ function stepThrough() {
 }
 
 // Bigfoot wanders by every 6–15 minutes once your farm is big; portals open every 3–6 minutes once you own one
-const later = (min, max) => Date.now() + (min + Math.random() * (max - min)) * 1000;
+const later = (min, max) => Date.now() + (min + Math.random() * (max - min)) * 1000 * pace();
 const wonder = { bigfoot: later(360, 900), rift: later(180, 360), parade: later(480, 900), rain: later(600, 1200), nado: later(900, 1500), hotpot: later(600, 1080), hpower: later(240, 420), fw: later(45, 90), idaho: later(300, 480), snark: later(120, 260), last: Date.now(), wish: '' };
 function wonderTick() {
   const now = Date.now(), gap = now - wonder.last;
@@ -3048,13 +3113,13 @@ function wonderTick() {
   }
   if (now >= wonder.snark) { wonder.snark = later(150, 320); if (has('aibattery')) toast('AI: ' + AI_LINES[Math.floor(Math.random() * AI_LINES.length)]); }
   if (now >= wonder.bigfoot) {
-    wonder.bigfoot = now + (360 + Math.random() * 540) * 1000 * (isNight() ? 0.5 : 1);   // Bigfoot prefers the dark
+    wonder.bigfoot = now + (360 + Math.random() * 540) * 1000 * (isNight() ? 0.5 : 1) * pace();   // Bigfoot prefers the dark
     if (totalOwned() >= 20) spawnBigfoot();
   }
   if (weekday() === 3) ['parade', 'rain', 'bigfoot', 'nado', 'hotpot'].forEach(k => { wonder[k] -= gap; });   // Wild Wednesday
   if (weekday() === 4) wonder.rift -= gap;                                                              // Throwback Thursday
   if (now >= wonder.rift) {
-    wonder.rift = now + (180 + Math.random() * 180) * 1000;
+    wonder.rift = now + (180 + Math.random() * 180) * 1000 * pace();
     if (owned('portal') > 0) openRift();
   }
 }
@@ -3504,14 +3569,6 @@ $('cake').addEventListener('click', () => {
   $('cake').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12l-1.5 10h-9z"/><path d="M8.5 10V4M11 10V3M13.5 10V4.5M16 10V6"/></svg>';
 });
 
-// Coming back after more than an hour
-function bakedReturn() {
-  const s = document.createElement('div');
-  s.className = 'smoke-screen';
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 5200);
-  egg('baked', 'Hey, you. You’re finally baked.');
-}
 
 const AI_LINES = [
   'Oh good, you’re tapping again. How original.',
@@ -3635,11 +3692,11 @@ function dayTick() {
   if (h >= 3 && h < 3.5 && state.day.ghost !== day) { state.day.ghost = day; spawnGhost(); }
   if (h >= 3 && h < 4) egg('insomniac', 'It’s 3 AM. The potato is worried about you.');
   // fireflies from 6 PM to 5 AM
-  const want = (h >= 18 || h < 5) ? (has('firejar') ? 3 : 2) : 0, have = document.querySelectorAll('.fly:not(.caught)').length;
+  const want = (h >= 18 || h < 5) ? (has('firejar') ? 2 : 1) + (chaosMode() ? 2 : 0) : 0, have = document.querySelectorAll('.fly:not(.caught)').length;
   if (have < want && Math.random() < 0.35) spawnFly();
   if (want === 0) document.querySelectorAll('.fly').forEach(f => f.remove());
   // shooting stars at night
-  if (ph === 'night' && Date.now() >= (live.nextStar || 0)) { live.nextStar = Date.now() + (180 + Math.random() * 180) * 1000; spawnStar(); }
+  if (ph === 'night' && Date.now() >= (live.nextStar || 0)) { live.nextStar = Date.now() + (180 + Math.random() * 180) * 1000 * pace(); spawnStar(); }
   dayExtras(h, ph, day);
 }
 function timeTap(count) {
@@ -3916,11 +3973,11 @@ function dayExtras(h, ph, day) {
   if (state.day.dow !== day) { state.day.dow = day; setTimeout(() => toast(WEEKDAY_SPECIAL[dow] + '. ' + SEASON_SPECIAL[season] + '.'), 2500); }
   // Falling leaves in the fall, blossoms in the spring
   const falling = season === 'fall' ? 'leaf' : season === 'spring' ? 'petal' : '';
-  if (falling && ph !== 'night' && document.querySelectorAll('.leaf:not(.got)').length < 5 && Math.random() < 0.4) spawnFalling(falling);
+  if (falling && ph !== 'night' && document.querySelectorAll('.leaf:not(.got)').length < (chaosMode() ? 5 : 2) && Math.random() < (chaosMode() ? 0.4 : 0.035)) spawnFalling(falling);
   // Afternoon thunderstorms, then a rainbow
   const storm = stormNow();
   sc.classList.toggle('storm', storm);
-  if (storm && Date.now() >= (live.nextBolt || 0)) { live.nextBolt = Date.now() + (12 + Math.random() * 14) * 1000; spawnBolt(); }
+  if (storm && Date.now() >= (live.nextBolt || 0)) { live.nextBolt = Date.now() + (12 + Math.random() * 14) * 1000 * pace(); spawnBolt(); }
   if (!storm && stormDay() && h >= 17 && h < 17.25 && state.day.rainbow !== day) { state.day.rainbow = day; spawnRainbow(); }
   if (!(h >= 17 && h < 17.25)) document.querySelectorAll('.rainbow').forEach(r => r.remove());
   // Campfire from 8 to 10 PM
@@ -4141,35 +4198,64 @@ function holidayTick(day) {
   }
 }
 
-// The sign shows the count, taters per second and the time. Everything else scrolls in one line,
-// and the arrow opens the full list.
-function signItems() {
-  const h = holidayNow(), st = state.streak || {};
-  const items = [...chaosSignLines(), raidSignLine(), phaseLabel(), WEEKDAY_SPECIAL[weekday()], SEASON_SPECIAL[seasonNow()]];
-  if (h) items.push(HOLIDAY_NAME[h]);
-  if (streakBonus() > 1) items.push(`Day ${st.count} streak: +${Math.round((streakBonus() - 1) * 100)}% to everything`);
-  return [...(live.buffList || []), ...items];
+// The sign shows the count, taters per second and the time, then a row of symbols for everything boosting the farm.
+// Tap the sign to pop open a card that explains each one.
+const BUFF_ICONS = [[/Hot Fryer/, '🍟'], [/Bumper/, '🌾'], [/Harvest feast/, '🍽️'], [/Spudnado/, '🌪️'], [/breakfast/, '🥞'], [/couch/i, '🛋️'], [/Lunch/, '🥪'],
+  [/Night market/, '🏮'], [/Campfire/, '🔥'], [/Thunder/, '⛈️'], [/Sugar/, '🍬'], [/Gravy/, '🥣'], [/Sweetheart/, '💘'], [/clover/, '🍀'], [/frozen/, '🧊'], [/Fidget/, '🎛️']];
+const SEASON_ICON = { spring: '🌸', summer: '🌻', fall: '🍂', winter: '❄️' };
+function signEntries() {
+  const out = [], add = (icon, text, kind) => text && out.push({ icon, text, kind });
+  (live.buffList || []).forEach(t => add((BUFF_ICONS.find(([re]) => re.test(t)) || [0, '✨'])[1], t, 'buff'));
+  chaosSignLines().forEach(t => { const m = t.match(/^(🌀|☕|🌧️)\s*/u); m ? add(m[1], t.slice(m[0].length), 'buff') : add('🧬', t, 'evo'); });
+  const st = state.streak || {}, h = holidayNow();
+  if (streakBonus() > 1) add('📈', `Day ${st.count} streak: +${Math.round((streakBonus() - 1) * 100)}% to everything`, 'perk');
+  if (h) add('🎉', HOLIDAY_NAME[h], 'perk');
+  add('⚔️', raidSignLine(), /^Raid/.test(raidSignLine()) ? 'perk' : 'time');   // only a chip while a boss is up
+  const ph = phaseOf(gameHour());
+  add(fullMoonNight() && ph === 'night' ? '🌕' : { dawn: '🌅', day: '☀️', dusk: '🌇', night: '🌙' }[ph], phaseLabel(), 'time');
+  add('📅', WEEKDAY_SPECIAL[weekday()], 'time');
+  add(SEASON_ICON[seasonNow()] || '🌱', SEASON_SPECIAL[seasonNow()], 'time');
+  return out;
+}
+const signItems = () => signEntries().map(e => e.text);
+function shortMult(t) {
+  const m = t.match(/×\s?([\d.]+[A-Za-z]*)/) || t.match(/([\d.]+)×/) || t.match(/(\+\d+%)/) || t.match(/(\d+% off)/);
+  if (!m) return '';
+  return /^[\d.]+[A-Za-z]*$/.test(m[1]) ? '×' + m[1] : m[1];
 }
 let signKey = '';
 function renderSignInfo() {
   $('clockText').textContent = fmtClock(gameHour());
-  const items = signItems();
-  const line = items.map(t => t.replace(/,?\s*\d+s$/, '')).join('   ·   ');
-  if (line !== signKey) {
-    signKey = line;
-    const sp = $('signTicker');
-    sp.textContent = line;
-    sp.style.setProperty('--dur', Math.max(10, line.length * 0.16).toFixed(1) + 's');
+  const items = signEntries();
+  const chips = items.filter(e => e.kind !== 'time' || /[×+%]/.test(e.text));
+  const key = chips.map(e => e.icon + shortMult(e.text)).join('|');
+  if (key !== signKey) {
+    signKey = key;
+    $('signChips').replaceChildren(...(chips.length ? chips : items.slice(0, 1)).map(e => {
+      const c = document.createElement('span');
+      c.className = 'mchip' + (e.kind === 'buff' ? ' hot' : '');
+      c.textContent = e.icon + shortMult(e.text);
+      return c;
+    }));
   }
-  if (!$('signDetails').hidden) $('signDetails').replaceChildren(...items.map(t => Object.assign(document.createElement('div'), { textContent: t })));
+  if (!$('signDetails').hidden) {
+    const h = document.createElement('h4'); h.textContent = 'What’s going on';
+    $('signDetails').replaceChildren(h, ...items.map(e => {
+      const r = document.createElement('div'); r.className = 'mrow kind-' + e.kind;
+      r.innerHTML = '<span class="mi"></span><span class="mt"></span><span class="mx"></span>';
+      r.querySelector('.mi').textContent = e.icon; r.querySelector('.mt').textContent = e.text; r.querySelector('.mx').textContent = shortMult(e.text);
+      return r;
+    }));
+  }
 }
-$('signMore').addEventListener('click', () => {
-  const open = $('signDetails').hidden;
+function setSignOpen(open) {
   $('signDetails').hidden = !open;
   $('signMore').setAttribute('aria-expanded', open);
-  $('signMore').setAttribute('aria-label', open ? 'Hide farm details' : 'Show farm details');
+  $('signMore').setAttribute('aria-label', open ? 'Hide the details' : 'Show what’s boosting your farm');
   renderSignInfo();
-});
+}
+$('sign').addEventListener('click', e => { if (!e.target.closest('.signdetails')) setSignOpen($('signDetails').hidden); });
+document.addEventListener('pointerdown', e => { if (!$('signDetails').hidden && !e.target.closest('#sign')) setSignOpen(false); });
 
 // Howl at the full moon
 document.querySelector('.sun').addEventListener('pointerdown', () => {
@@ -4815,6 +4901,12 @@ function startChaos() {
   if (id === 'gravity') { scene.classList.add('flip'); setTimeout(() => scene.classList.remove('flip'), 12000); }
   if (id === 'stampede') spawnThreat(true);
   if (id === 'goldrush') live.nextLucky = 0;
+  // the floodgates open: pests, golden taters and wonders all arrive within the next few seconds
+  { const soon = (a, b) => Date.now() + (a + Math.random() * (b - a)) * 1000;
+    threat.next = Math.min(threat.next || Infinity, soon(4, 15));
+    live.nextLucky = Math.min(live.nextLucky || Infinity, soon(6, 20));
+    live.nextStar = Math.min(live.nextStar || Infinity, soon(3, 12));
+    ['parade', 'rain', 'nado', 'hotpot', 'bigfoot', 'rift', 'hpower'].forEach(k => { wonder[k] = Math.min(wonder[k], soon(5, 28)); }); }
   if (id === 'tsunami') { startRain(); setTimeout(startRain, 9000); }
   if (id === 'nado') { spawnNado(); setTimeout(spawnNado, 8000); }
   save();
@@ -4842,7 +4934,7 @@ function chaosSignLines() {
   if (m) out.push(`🌀 ${CHAOS_MODES[m].name}: ${CHAOS_MODES[m].desc}, ${Math.ceil((live.chaosUntil - now) / 1000)}s`);
   if (now < (live.coffeeUntil || 0)) out.push(`☕ Coffee: taps ×3, ${Math.ceil((live.coffeeUntil - now) / 1000)}s`);
   if (now < (live.rainUntil || 0)) out.push(`🌧️ Rain Dance: growth ×2, ${Math.ceil((live.rainUntil - now) / 1000)}s`);
-  if (state.evo) out.push(`Mother Spud: ${EVOS.at(state.evo).name}`);
+  if (state.evo) out.push(`Mother Spud: ${EVOS.at(state.evo).name}, everything ×${evoMult().toFixed(2).replace(/\.?0+$/, '')}`);
   return out;
 }
 
@@ -5213,7 +5305,6 @@ const awayPlan = () => has('away3') ? { rate: 0.75, hours: 8, who: 'foreman' }
   : has('away1') ? { rate: 0.25, hours: 1, who: 'farmhand' } : null;
 let awayHinted = false;
 function applyAway(ms) {
-  if (ms >= 3600e3) setTimeout(bakedReturn, 300);
   if (has('breakfast') && ms >= 300000) {
     live.breakfastUntil = Date.now() + 60000;
     egg('breakfast');
@@ -5293,7 +5384,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
 // In the game area, quick taps must never turn into a double-tap zoom. Taps there are handled on
 // pointerdown, so cancelling the browser's own touch handling loses nothing.
 document.addEventListener('touchend', e => {
-  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard, .signmore, .raidpill')) e.preventDefault();
+  if (e.target.closest('.scene') && !e.target.closest('.pill, .alert, .rootcard, .sign, .raidpill')) e.preventDefault();
 }, { passive: false });
 document.addEventListener('dblclick', e => e.preventDefault());
 // Double-tap zoom is turned off by touch-action: manipulation in the CSS, so every fast tap still counts
